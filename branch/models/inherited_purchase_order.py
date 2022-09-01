@@ -51,6 +51,7 @@ class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
     
+    
     @api.model
     def default_get(self,fields):
         res = super(PurchaseOrder, self).default_get(fields)
@@ -75,6 +76,16 @@ class PurchaseOrder(models.Model):
         return res
 
     branch_id = fields.Many2one('res.branch', string='Branch')
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        res = super(PurchaseOrder,self).create(vals_list)
+        sale = self.env['sale.order'].search([('display_name','=',self.origin)],limit=1)  
+        res.update({
+         'branch_id':sale.branch_id.id
+        })
+        return res
+
 
     @api.model
     def _prepare_picking(self):
