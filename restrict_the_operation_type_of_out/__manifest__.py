@@ -18,19 +18,18 @@
     # for the full list
     'category': 'Inventory/Restringir el tipo de operación de salida ',
     'version': '1.0',
+
     'license': 'Other proprietary',
-    
 
     # any module necessary for this one to work correctly
-    'depends': ['stock',
-    ],
+    'depends': ['base', 'stock', 'account', 'branch'],
 
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
         'security/restringir_operaciones_envio.xml',
-        #'views/views.xml',
-        #'views/templates.xml',
+        # 'views/views.xml',
+        # 'views/templates.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

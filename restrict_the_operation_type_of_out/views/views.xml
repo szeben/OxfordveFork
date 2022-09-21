@@ -1,6 +1,7 @@
 <odoo>
   <data>
-<record id="account_journal_view_form_defaults_branch" model="ir.ui.view">
+
+    <record id="account_journal_view_form_defaults_branch" model="ir.ui.view">
       <field name="name">account.journal.form.defaults.branch</field>
       <field name="model">account.journal</field>
       <field name="inherit_id" ref="account.view_account_journal_form"/>
@@ -10,5 +11,6 @@
         </field>
       </field>
     </record>
+
   </data>
 </odoo>
