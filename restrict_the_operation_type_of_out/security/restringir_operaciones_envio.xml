@@ -7,7 +7,7 @@
             <field name="comment">The user will be able to only create receipts and internal transfers.</field>
         </record>
 
-        <record id="only_create_to_stock_picking_type_out" model="ir.rule">
+        <record id="only_create_to_stogit ck_picking_type_out" model="ir.rule">
             <field name="name">Regla para restringir tipo de operación de salida</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
