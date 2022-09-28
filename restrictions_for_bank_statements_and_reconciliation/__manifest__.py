@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Restringir el tipo de operación de salida",
+    'name': "Restricciones para extractos bancarios y conciliacion",
 
     'summary': """
-        Restricciones de Operaciones de tipo Envio""",
+        Restringe el proceso de gestion de extractos bancarios y conciliacion de pagos""",
 
     'description': """
-        Restringe la posibilidad de crear operaciones de inventario de tipo envio, con excepcion de un grupo de usuario especial.
+        Crea grupos de usuarios especiales para la gestion de extractos bancarios (guardar, publicar y validar) y la conciliacion de pagos.
     """,
 
     'author': "Techne Studio IT & Consulting",
@@ -16,10 +16,10 @@
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Inventory/Restringir el tipo de operación de salida ',
+    'category': 'Accounting/Restricciones para extractos bancarios y conciliacion ',
     'version': '1.0',
 
-    'license': 'Other proprietary',
+    'license': 'Other propietary',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'stock', 'account', 'branch'],
