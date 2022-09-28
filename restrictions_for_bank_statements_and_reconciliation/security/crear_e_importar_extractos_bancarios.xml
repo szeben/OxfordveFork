@@ -4,95 +4,51 @@
         <record id="group_crear_e_importar_extractos_bancarios" model="res.groups">
             <field name="name">Crear e importar extractos bancarios</field>
             <field name="category_id" ref="base.module_category_inventory_inventory"/>
-            <field name="comment">The user will be able to only create receipts and internal transfers.</field>
+            <field name="comment">The user will be able to only create bank statements and reconciliation.</field>
         </record>
 
-        <record id="only_create_stock_picking_type_out" model="ir.rule">
-            <field name="name">Regla para restringir tipo de operación de salida</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">[('code', '=', 'outgoing'), ('sequence_code', '=', 'OUT')]</field>
-            <field name="model_id" ref="stock.model_stock_picking_type"/> 
-            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_envio'))]"/>       
-        </record>
-
-        <record id="only_create__stock_picking_type_incoming_and_internal" model="ir.rule">
-            <field name="name">Regla para crear tipo de operación solo de recepción y transferencia interna</field>
+        <record id="only_create_account_bank_statement_line" model="ir.rule">
+            <field name="name">Regla para solo crear e importar línea de extracto bancario </field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">[('code', '!=', 'outgoing'), ('sequence_code', '!=', 'OUT')]</field>
-            <field name="model_id" ref="stock.model_stock_picking_type"/>
-            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_envio'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="model_id" ref="account.model_account_bank_statement_line"/> 
+            <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>       
         </record>
 
-        <record id="only_create__stock_move_line_incoming_and_internal" model="ir.rule">
-            <field name="name">Regla para crear movimiento de una linea de stock solo de tipo recepción e interno</field>
+        <record id="only_create__account_move_line" model="ir.rule">
+            <field name="name">Regla para crear apunte contable</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">[('picking_id.picking_type_id.code', '!=', 'outgoing'), ('picking_id.picking_type_id.sequence_code', '!=', 'OUT')]</field>
-            <field name="model_id" ref="stock.model_stock_move_line"/>
-            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_envio'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>
         </record>
 
-        <record id="only_create__stock_move_line_outgoing" model="ir.rule">
-            <field name="name">Regla para restringir movimiento de una linea de stock de tipo salida</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">[('picking_id.picking_type_id.code', '=', 'outgoing'), ('picking_id.picking_type_id.sequence_code', '=', 'OUT')]</field>
-            <field name="model_id" ref="stock.model_stock_move_line"/>
-            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_envio'))]"/>
-        </record>
-
-        <record id="only_create__stock_move_incoming_internal" model="ir.rule">
-            <field name="name">Regla para crear movimientos de stock solo de tipo recepción e interno</field>
+        <record id="only_create__stock_	account_bank_statement" model="ir.rule">
+            <field name="name">Regla para crear extracto de cuenta</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">[('picking_id.picking_type_id.code', '!=', 'outgoing'), ('picking_id.picking_type_id.sequence_code', '!=', 'OUT')]</field>
-            <field name="model_id" ref="stock.model_stock_move"/>
-            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_envio'))]"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="model_id" ref="account.model_account_bank_statement"/>
+            <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>
         </record>
 
-        <record id="only_create__stock_move_out" model="ir.rule">
-            <field name="name">Regla para restringir movimientos de stock de tipo salida</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">[('picking_id.picking_type_id.code', '=', 'outgoing'), ('picking_id.picking_type_id.sequence_code', '=', 'OUT')]</field>
-            <field name="model_id" ref="stock.model_stock_move"/>
-            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_envio'))]"/>
-        </record>
-
-        <record id="only_create__stock_picking_incoming_internal" model="ir.rule">
-            <field name="name">Regla para crear operaciones de recepción y transferencias internas</field>
+        <record id="only_create_account_move" model="ir.rule">
+            <field name="name">Regla para crear asiento contable</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">[('picking_type_id.code', '!=', 'outgoing'), ('picking_type_id.sequence_code', '!=', 'OUT')]</field>
-            <field name="model_id" ref="stock.model_stock_picking"/>
-            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_envio'))]"/>
-        </record>
-
-        <record id="only_create__stock_picking_outgoing" model="ir.rule">
-            <field name="name">Regla para restringir operaciones de envío</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">[('picking_type_id.code', '=', 'outgoing'), ('picking_type_id.sequence_code', '=', 'OUT')]</field>
-            <field name="model_id" ref="stock.model_stock_picking"/>
-            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_envio'))]"/>
-        </record> 
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>
+        </record>        
     </data>
 </odoo>

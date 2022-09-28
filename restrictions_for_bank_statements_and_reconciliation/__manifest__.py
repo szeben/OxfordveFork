@@ -27,7 +27,7 @@
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'security/restringir_operaciones_envio.xml',
+        'security/crear_e_importar_extractos_bancarios.xml',
         # 'views/views.xml',
         # 'views/templates.xml',
     ],
