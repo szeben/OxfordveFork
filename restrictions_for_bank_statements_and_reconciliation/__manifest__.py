@@ -19,7 +19,7 @@
     'category': 'Accounting/Restricciones para extractos bancarios y conciliacion ',
     'version': '1.0',
 
-    'license': 'Other propietary',
+    'license': 'Other proprietary',
 
     # any module necessary for this one to work correctly
     'depends': ['base','account', 'account.bank.statement', 'branch'],
