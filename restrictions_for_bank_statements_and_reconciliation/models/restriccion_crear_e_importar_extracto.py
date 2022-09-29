@@ -22,11 +22,12 @@ class AccountBankStatementInherit(models.Model):
     @api.model
     def create(self, vals):
     #   g = self.env['res.groups'].search([('id', 'in', self.user_id.groups_id)])
+        
+        res = super(AccountBankStatementInherit,self).create(vals)
         raise exceptions.UserError(('This badge can not be sent by users.'))
 
-
         # Then call super to execute the parent method
-        return super(AccountBankStatementInherit, self).create(vals)
+        return res
     
     def check_create(self):
         """Verificar si el usuario tiene el permiso para crear un extracto bancario.
