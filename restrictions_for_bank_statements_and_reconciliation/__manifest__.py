@@ -28,6 +28,7 @@
     'data': [
         # 'security/ir.model.access.csv',
         'security/crear_e_importar_extractos_bancarios.xml',
+        'models/restriccion_crear_e_importar_extracto.py',
         # 'views/views.xml',
         # 'views/templates.xml',
     ],
