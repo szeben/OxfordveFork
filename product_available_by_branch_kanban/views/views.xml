@@ -1,0 +1,45 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="product_template_kanban_stock_view_inherited">
+      <field name="name">product.template.kanban.stock.inherited</field>
+      <field name="model">product.template</field>
+      <field name="inherit_id" ref="product.product_template_kanban_view"/>
+      <field name="arch" type="xml">
+
+        <xpath expr="//div[@name='product_lst_price']/following-sibling::div[last()]" position="after">
+          <div t-if="record.type.raw_value == 'product'">
+            Stock general: 
+            <field name="overall_stock" />
+            <field name="uom_id"/>
+          </div>
+        </xpath>
+
+      </field>
+    </record>
+
+    <record id="view_warehouse_branch_main_inherit" model="ir.ui.view">
+      <field name="name">view.warehouse.branch.main.inherit</field>
+      <field name="model">stock.warehouse</field>
+      <field name="inherit_id" ref="stock.view_warehouse"/>
+      <field name="arch" type="xml">
+        <field name="partner_id" position="after">
+          <field name="is_main"/>
+        </field>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="product_product_tree_view_inherited">
+      <field name="name">product.product.tree.inherited</field>
+      <field name="model">product.product</field>
+      <field name="inherit_id" ref="stock.view_stock_product_tree"/>
+      <field name="arch" type="xml">
+
+        <field name="virtual_available" position="after">
+          <field name="overall_stock" attrs="{'invisible':[('type', '!=', 'product')]}" optional="show" />
+        </field>
+
+      </field>
+    </record>
+
+  </data>
+</odoo>
