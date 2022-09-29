@@ -5,7 +5,6 @@ from odoo import models, fields, api, exceptions
 
 
 class AccountBankStatementInherit(models.Model):
-    _name = 'account.bank.statement.inherit'
     _inherit = 'account.bank.statement'
 #     _description = 'name.name'
 
@@ -21,12 +20,12 @@ class AccountBankStatementInherit(models.Model):
 
     @api.model
     def create(self, vals):
-    #   g = self.env['res.groups'].search([('id', 'in', self.user_id.groups_id)])
+    
         
         res = super(AccountBankStatementInherit,self).create(vals)
-        raise exceptions.UserError(('This badge can not be sent by users.'))
+        g = self.env['res.groups'].search([('id', 'in', self.user_id.groups_id)])
 
-        # Then call super to execute the parent method
+        raise exceptions.UserError(('No tienes permiso para crear extractos bancarios. %s') %(self.user_id.id))
         return res
     
     def check_create(self):
