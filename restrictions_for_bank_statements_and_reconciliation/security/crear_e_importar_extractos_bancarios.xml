@@ -29,15 +29,15 @@
             <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>
         </record>
 
-        <record id="only_create__stock_	account_bank_statement" model="ir.rule">
-            <field name="name">Regla para crear extracto de cuenta</field>
+        <record id="only_create_account_bank_statement" model="ir.rule">
+            <field name="name">Regla para solo crear e importar extracto bancario </field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
             <field name="domain_force">[(1,'=',1)]</field>
-            <field name="model_id" ref="account.model_account_bank_statement"/>
-            <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>
+            <field name="model_id" ref="account.model_account_bank_statement"/> 
+            <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>       
         </record>
 
         <record id="only_create_account_move" model="ir.rule">
