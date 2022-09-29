@@ -22,7 +22,7 @@
     'license': 'Other proprietary',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','account', 'account.bank.statement', 'branch'],
+    'depends': ['base','account', 'branch'],
 
     # always loaded
     'data': [
