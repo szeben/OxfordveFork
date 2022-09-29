@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+
+from odoo import models, fields, api, exceptions
 
 
 class AccountBankStatementInherit(models.Model):
@@ -20,9 +21,9 @@ class AccountBankStatementInherit(models.Model):
 
      @api.model
          def create(self, vals):
-             g = self.env['res.groups'].search([('id', 'in', self.user_id.groups_id)])
-             raise UserError(('El valor del grupo %s') %(g.id))
+#             g = self.env['res.groups'].search([('id', 'in', self.user_id.groups_id)])
+              raise exceptions.UserError(_('This badge can not be sent by users.'))
 
              
-             # Then call super to execute the parent method
-             return super().create(vals)
+              # Then call super to execute the parent method
+              return super().create(vals)
