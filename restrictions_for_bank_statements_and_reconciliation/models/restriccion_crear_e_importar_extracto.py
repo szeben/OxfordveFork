@@ -28,7 +28,7 @@ class AccountBankStatementInherit(models.Model):
             #xml_id = g.get_metadata()[0].get('xmlid')
             #xml_id = g.get_external_id()
             #raise exceptions.UserError(('No tienes permiso para crear extractos bancarios. %s %s %s') %((self.env.uid),(u.name),(xml_id)))
-            if(id == 91):
+            if(g.id == 91):
                 raise exceptions.UserError(('No tienes permiso para crear extractos bancarios. %s %s %s') %((self.env.uid),(u.name),(xml_id)))
 
 
