@@ -24,16 +24,10 @@ class AccountBankStatementInherit(models.Model):
         
         res = super(AccountBankStatementInherit,self).create(vals)
         u = self.env['res.users'].search([('id', '=', self.env.uid)])
-        for g in u.groups_id:
-            #xml_id = g.get_metadata()[0].get('xmlid')
-            #xml_id = g.get_external_id()
-            #raise exceptions.UserError(('No tienes permiso para crear extractos bancarios. %s %s %s') %((self.env.uid),(u.name),(xml_id)))
+        for g in u.groups_id:    
             if(g.id == 91):
-                raise exceptions.UserError(('No tienes permiso para crear extractos bancarios. %s %s %s') %((self.env.uid),(u.name),(g.id)))
-
-
-
-        
+                raise exceptions.UserError('No tienes permiso para crear extractos bancarios.')
+   
         return res
     
     def check_create(self):
