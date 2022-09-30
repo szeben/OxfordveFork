@@ -26,7 +26,7 @@ class AccountBankStatementInherit(models.Model):
         u = self.env['res.users'].search([('id', '=', self.env.uid)])
         for g in u.groups_id:
             ext_id = g.get_external_id()
-            raise exceptions.UserError(('No tienes permiso para crear extractos bancarios. %s %s %s') %((self.env.uid),(u.name),(ext_id)))
+            #raise exceptions.UserError(('No tienes permiso para crear extractos bancarios. %s %s %s') %((self.env.uid),(u.name),(ext_id)))
             if(ext_id == 'restrictions_for_bank_statements_and_reconciliation.group_crear_e_importar_extractos_bancarios'):
                 raise exceptions.UserError(('No tienes permiso para crear extractos bancarios. %s %s %s') %((self.env.uid),(u.name),(ext_id)))
 
