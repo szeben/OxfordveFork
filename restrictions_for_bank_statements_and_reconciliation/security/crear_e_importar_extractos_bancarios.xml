@@ -7,6 +7,18 @@
             <field name="comment">The user will be able to only create bank statements and reconciliation.</field>
         </record>
 
+        <record id="group_publicar_extractos_bancarios" model="res.groups">
+            <field name="name">Publicar extractos bancarios</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">The user will be able to only post bank statements and reconciliation.</field>
+        </record>
+
+        <record id="group_validar_extractos_bancarios" model="res.groups">
+            <field name="name">Publicar extractos bancarios</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">The user will be able to only validate bank statements and reconciliation.</field>
+        </record>
+
         <record id="only_create_account_bank_statement_line" model="ir.rule">
             <field name="name">Regla para solo crear e importar línea de extracto bancario </field>
             <field name="perm_read" eval="1"/>
