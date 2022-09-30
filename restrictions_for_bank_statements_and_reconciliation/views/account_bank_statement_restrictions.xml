@@ -7,10 +7,11 @@
       <field name="inherit_id" ref="account.view_bank_statement_form"/>
       <field name="arch" type="xml">
         <xpath expr="//button[@name='button_post']" position="attributes">
-          <attribute name="groups">base.group_system,group_publicar_extractos_bancarios </attribute>
+          <attribute name="groups">group_publicar_extractos_bancarios </attribute>
         </xpath>
+        
         <xpath expr="//button[@name='button_validate_or_action']" position="attributes">
-          <attribute name="groups">base.group_system,group_validar_extractos_bancarios </attribute>
+          <attribute name="groups">group_validar_extractos_bancarios </attribute>
         </xpath>
       </field>
     </record>  
