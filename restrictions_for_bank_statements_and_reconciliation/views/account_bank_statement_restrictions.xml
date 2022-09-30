@@ -1,8 +1,8 @@
 <odoo>
   <data>
 
-    <record id="account_view_bank_statement_form_inherited" model="ir.ui.view">
-      <field name="name">account.view.bank.statement.form.inherited</field>
+    <record id="account_view_bank_statement_form_inherit" model="ir.ui.view">
+      <field name="name">account.view.bank.statement.form.inherit</field>
       <field name="model">account.bank.statement</field>
       <field name="inherit_id" ref="account.view_bank_statement_form"/>
       <field name="arch" type="xml">
