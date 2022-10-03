@@ -7,9 +7,9 @@
       <field name="inherit_id" ref="account.view_bank_statement_form"/>
       <field name="arch" type="xml">
         
-          <xpath expr="//button[@name='button_post']" position="attributes">
-            <attribute name="groups">restrictions_for_bank_statements_and_reconciliation.group_publicar_extractos_bancarios</attribute>
-          </xpath>
+        <xpath expr="//button[@name='button_post']" position="attributes">
+          <attribute name="groups">restrictions_for_bank_statements_and_reconciliation.group_publicar_extractos_bancarios</attribute>
+        </xpath>
  
       </field>
     </record>  
