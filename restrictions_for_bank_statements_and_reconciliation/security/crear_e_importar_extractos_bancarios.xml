@@ -17,7 +17,6 @@
         <record id="group_validar_extractos_bancarios" model="res.groups">
             <field name="name">Validar extractos bancarios</field>
             <field name="category_id" ref="base.module_category_accounting"/>
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/> 
             <field name="comment">The user will be able to only validate bank statements.</field>
         </record>
 

@@ -27,6 +27,8 @@ class AccountBankStatementInherit(models.Model):
         for g in u.groups_id:
 
             if(g.id == 91):
+                return True
+            else:
                 raise exceptions.UserError('No tienes permiso para crear extractos bancarios.')
    
         return res 
