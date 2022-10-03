@@ -9,14 +9,21 @@
 
         <record id="group_publicar_extractos_bancarios" model="res.groups">
             <field name="name">Publicar extractos bancarios</field>
-            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="category_id" ref="base.module_category_accounting"/>            
             <field name="comment">The user will be able to only post bank statements.</field>
         </record>
+
 
         <record id="group_validar_extractos_bancarios" model="res.groups">
             <field name="name">Validar extractos bancarios</field>
             <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/> 
             <field name="comment">The user will be able to only validate bank statements.</field>
+        </record>
+
+        <record model="res.groups" id="group_user">
+            <field name="name">Employee</field>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
         </record>
 
         <record id="only_create_account_bank_statement_line" model="ir.rule">
