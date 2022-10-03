@@ -29,10 +29,10 @@ class AccountBankStatementInherit(models.Model):
         return res
     
     @api.model
-    def button_post(self, vals):
+    def button_post(self):
     
         
-        res = super(AccountBankStatementInherit,self).button_post(vals)
+        res = super(AccountBankStatementInherit,self).button_post()
         u = self.env['res.users'].search([('id', '=', self.env.uid)])
         if(not u.has_group('restrictions_for_bank_statements_and_reconciliation.group_publicar_extractos_bancarios')):
            raise exceptions.UserError('No tienes permiso para publicar extractos bancarios.')
