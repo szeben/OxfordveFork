@@ -28,11 +28,5 @@ class AccountBankStatementInherit(models.Model):
             if(g.id == 91):
                 raise exceptions.UserError('No tienes permiso para crear extractos bancarios.')
    
-        return res
+        return res 
     
-    def check_create(self):
-        """Verificar si el usuario tiene el permiso para crear un extracto bancario.
-        """
-       
-        raise exceptions.UserError(_('You have already sent this badge too many time this month.'))
-        return False
