@@ -8,11 +8,11 @@
       <field name="arch" type="xml">       
         
         <xpath expr="//button[@name='button_post'][1]" position="attributes">
-          <attribute name="groups">restrictions_for_bank_statements_and_reconciliation.group_publicar_extractos_bancarios</attribute>
+          <attribute name="groups">restrictions_for_bank_statements_and_conciliation.group_publicar_extractos_bancarios</attribute>
         </xpath>
 
         <xpath expr="//button[@name='button_validate_or_action'][1]" position="attributes">
-          <attribute name="groups">restrictions_for_bank_statements_and_reconciliation.group_validar_extractos_bancarios</attribute>
+          <attribute name="groups">restrictions_for_bank_statements_and_conciliation.group_validar_extractos_bancarios</attribute>
         </xpath>       
  
       </field>
@@ -25,7 +25,7 @@
       <field name="arch" type="xml">       
         
         <xpath expr="//button[@name='action_reconcile'][1]" position="attributes">
-          <attribute name="groups">restrictions_for_bank_statements_and_reconciliation.group_conciliar_extractos_bancarios</attribute>
+          <attribute name="groups">restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios</attribute>
         </xpath>
 
       </field>
@@ -38,7 +38,7 @@
       <field name="arch" type="xml">       
         
         <xpath expr="//button[@name='action_reconcile'][1]" position="attributes">
-          <attribute name="groups">restrictions_for_bank_statements_and_reconciliation.group_conciliar_extractos_bancarios</attribute>
+          <attribute name="groups">restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios</attribute>
         </xpath>
 
       </field>
