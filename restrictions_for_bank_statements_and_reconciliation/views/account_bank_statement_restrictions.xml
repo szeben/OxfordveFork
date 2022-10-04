@@ -5,15 +5,12 @@
       <field name="name">account.view.bank.statement.form.inherit</field>
       <field name="model">account.bank.statement</field>
       <field name="inherit_id" ref="account.view_bank_statement_form"/>
-      <field name="arch" type="xml">
+      <field name="arch" type="xml">       
         
-        <xpath expr="//form/header/button[@name='button_post']" position="attributes">
-          <attribute name="groups">restrictions_for_bank_statements_and_reconciliation.group_validar_extractos_bancarios</attribute>
-        </xpath>
 
-        <xpath expr="////form/header/button[@name='button_validate_or_action']" position="attributes">
-          <attribute name="groups">restrictions_for_bank_statements_and_reconciliation.group_validar_extractos_bancarios</attribute>
-        </xpath>
+        <button name="button_post" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </button>
  
       </field>
     </record>  
