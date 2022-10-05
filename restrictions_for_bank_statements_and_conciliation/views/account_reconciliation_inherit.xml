@@ -3,8 +3,8 @@
 <odoo>
    
 
-    <template>
-        <t t-name="reconciliation.manual.line.inherit" t-inherit="reconciliation.manual.line" t-inherit-mode="extension">
+    <template id = "reconciliation_manual_line_inherit">
+        <t t-call="reconciliation.manual.line">
             
         </t>
     </template>
