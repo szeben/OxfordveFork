@@ -2,7 +2,7 @@
 
 <templates xml:space="preserve">
     <t t-name="reconciliation.manual.line.inherit" t-inherit="reconciliation.manual.line" t-inherit-mode="extension">
-        <xpath expr="//button[@t-attf-class=o_validate btn btn-secondary #{!state.balance.type ? '' : 'd-none'}']" position="attributes">
+        <xpath expr="//div[contains(@class=float-right o_buttons)]" position="attributes">
             <attribute name="groups">restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios</attribute>
         </xpath>
     </t>
