@@ -3,7 +3,7 @@
 <odoo>
    
 
-    <template xml:space="preserve">
+    <template>
         <t t-name="reconciliation.manual.line.inherit" t-inherit="reconciliation.manual.line" t-inherit-mode="extension">
             
         </t>
