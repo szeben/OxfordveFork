@@ -55,23 +55,8 @@
         </xpath>
 
       </field>
-    </record>
-
-    <record id="action_manual_reconciliation_inherit" model="ir.actions.client">
-      <field name="name">action.manual.reconciliation.inherit</field>
-      <field name="model">account.account</field>
-      <field name="inherit_id" ref="action_manual_reconciliation"/>
-      <field name="arch" type="xml">       
-        
-        <xpath expr="//field[@name='name']" position="attributes">
-          <attribute name="groups">restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios</attribute>
-        </xpath>
-
-      </field>
-    </record>
-
-
-    
+    </record> 
+ 
 
     
 
