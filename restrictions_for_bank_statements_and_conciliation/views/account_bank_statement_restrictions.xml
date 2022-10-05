@@ -44,5 +44,22 @@
       </field>
     </record>
 
+    <record id="account_view_account_form_inherit" model="ir.ui.view">
+      <field name="name">account.view.account.form.inherit</field>
+      <field name="model">account.account</field>
+      <field name="inherit_id" ref="view_account_form"/>
+      <field name="arch" type="xml">       
+        
+        <xpath expr="//button[@name='action_open_reconcile'][1]" position="attributes">
+          <attribute name="groups">restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios</attribute>
+        </xpath>
+
+      </field>
+    </record>
+
+    
+
+    
+
   </data>
 </odoo>

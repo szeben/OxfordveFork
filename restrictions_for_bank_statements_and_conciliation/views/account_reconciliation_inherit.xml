@@ -1,13 +1,10 @@
 <!--<?xml version="1.0" encoding="UTF-8"?> -->
 
-<odoo>
-   
+<odoo>  
 
     <template id = "reconciliation_manual_line_inherit">
         <t t-call="reconciliation.manual.line">
-            <xpath expr="//button[@name='action_reconcile'][1]" position="attributes">
-                <attribute name="groups">restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios</attribute>
-            </xpath>
+            
         </t>
     </template>
 
