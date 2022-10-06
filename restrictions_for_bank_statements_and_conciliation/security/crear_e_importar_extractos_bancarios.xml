@@ -9,7 +9,7 @@
 
         <record id="group_publicar_extractos_bancarios" model="res.groups">
             <field name="name">Publicar extractos bancarios</field>
-            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="category_id" ref="base.module_category_accounting"/>            
             <field name="comment">El usuario solo puede publicar extractos bancarios. Creado por: Techne.</field>
         </record>
 
@@ -33,8 +33,8 @@
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
             <field name="domain_force">[(1,'=',1)]</field>
-            <field name="model_id" ref="account.model_account_bank_statement_line"/>
-            <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>
+            <field name="model_id" ref="account.model_account_bank_statement_line"/> 
+            <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>       
         </record>
 
         <record id="only_create__account_move_line" model="ir.rule">
@@ -55,8 +55,8 @@
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
             <field name="domain_force">[(1,'=',1)]</field>
-            <field name="model_id" ref="account.model_account_bank_statement"/>
-            <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>
+            <field name="model_id" ref="account.model_account_bank_statement"/> 
+            <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>       
         </record>
 
         <record id="only_create_account_move" model="ir.rule">
@@ -68,6 +68,6 @@
             <field name="domain_force">[(1,'=',1)]</field>
             <field name="model_id" ref="account.model_account_move"/>
             <field name="groups" eval="[Command.link(ref('group_crear_e_importar_extractos_bancarios'))]"/>
-        </record>
+        </record>        
     </data>
 </odoo>
