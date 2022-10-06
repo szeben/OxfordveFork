@@ -50,7 +50,7 @@
       <field name="inherit_id" ref="account_accountant.view_account_form"/>
       <field name="arch" type="xml">       
         
-        <xpath expr="//button[@name='action_open_reconcile'][1]" position="attributes">
+        <xpath expr="//button[@name='action_open_reconcile']" position="attributes">
           <attribute name="groups">restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios</attribute>
         </xpath>
 
