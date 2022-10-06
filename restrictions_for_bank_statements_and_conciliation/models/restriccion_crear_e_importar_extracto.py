@@ -30,3 +30,27 @@ class AccountMoveLineInherit(models.Model):
 
         return res
 
+
+class AccountAccountInherit(models.Model):
+    _inherit = "account.account"
+
+    @api.model
+    def action_open_reconcile(self):
+        res = super(AccountAccountInherit,self).action_open_reconcile()
+        u = self.env['res.users'].search([('id', '=', self.env.uid)])
+        if(not u.has_group('restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios')):
+           raise exceptions.UserError('No tienes permiso para conciliar extractos bancarios.')
+        
+        return res
+
+class AccountReportManagerInherit(models.Model):
+    _inherit = "account.report.manager"
+
+    @api.model
+    def action_partner_reconcile(self, options, params):
+        res = super(AccountReportManagerInherit,self).action_partner_reconcile(options, params)
+        u = self.env['res.users'].search([('id', '=', self.env.uid)])
+        if(not u.has_group('restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios')):
+           raise exceptions.UserError('No tienes permiso para conciliar extractos bancarios.')
+        
+        return res
