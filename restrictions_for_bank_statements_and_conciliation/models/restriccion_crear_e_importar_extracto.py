@@ -16,3 +16,17 @@ class AccountBankStatementInherit(models.Model):
            raise exceptions.UserError('No tienes permiso para crear extractos bancarios.')    
 
         return res
+
+
+class AccountMoveLineInherit(models.Model):
+    _inherit = "account.move.line"
+
+    @api.model
+    def action_reconcile(self):
+        res = super(AccountMoveLineInherit,self).action_reconcile()
+        u = self.env['res.users'].search([('id', '=', self.env.uid)])
+        if(not u.has_group('restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios')):
+           raise exceptions.UserError('No tienes permiso para conciliar extractos bancarios.')    
+
+        return res
+

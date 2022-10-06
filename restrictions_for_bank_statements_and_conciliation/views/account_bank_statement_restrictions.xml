@@ -44,10 +44,10 @@
       </field>
     </record>
 
-    <record id="account_view_account_form_inherit" model="ir.ui.view">
-      <field name="name">account.view.account.form.inherit</field>
+    <record id="account_accountant.view_account_form_inherit" model="ir.ui.view">
+      <field name="name">account.accountant.view.account.form.inherit</field>
       <field name="model">account.account</field>
-      <field name="inherit_id" ref="view_account_form"/>
+      <field name="inherit_id" ref="account_accountant.view_account_form"/>
       <field name="arch" type="xml">       
         
         <xpath expr="//button[@name='action_open_reconcile'][1]" position="attributes">
@@ -56,7 +56,19 @@
 
       </field>
     </record> 
- 
+    
+    <record id="view_account_payment_form_inherit_account_accountant_inherit" model="ir.ui.view">
+      <field name="name">view.account.payment.form.inherit.account.accountant.inherit</field>
+      <field name="model">account.payment</field>
+      <field name="inherit_id" ref="account_accountant.view_account_payment_form_inherit_account_accountant"/>
+      <field name="arch" type="xml">       
+        
+        <xpath expr="//buttom[@name='action_open_manual_reconciliation_widget']" position="atributes">
+          <attribute name="groups">restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios</attribute>
+        </xpath>
+
+      </field>
+    </record>
 
     
 
