@@ -48,6 +48,7 @@ class AccountReportInherit(models.AbstractModel):
 
     @api.model
     def action_partner_reconcile(self, vals1, vals2):
+        raise exceptions.UserError('No tienes permiso para conciliar extractos bancarios.')
         res = super(AccountReportInherit,self).action_partner_reconcile(vals1, vals2)
         u = self.env['res.users'].search([('id', '=', self.env.uid)])
         if(not u.has_group('restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios')):
