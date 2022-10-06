@@ -43,7 +43,7 @@ class AccountAccountInherit(models.Model):
         
         return res
 
-class AccountReportInherit(models.Model):
+class AccountReportInherit(models.AbstractModel):
     _inherit = "account.report"
 
     @api.model
