@@ -63,4 +63,3 @@ class AccountReconciliationInherit(models.AbstractModel):
         if(not u.has_group('restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios')):
            raise exceptions.UserError('No tienes permiso para conciliar extractos bancarios.')        
         return res
-
