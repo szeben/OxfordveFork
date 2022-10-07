@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>    
+    <data>
         <record id="acceder_a_contactos_de_acuerdo_a_las_ramas" model="ir.rule">
             <field name="name">Regla para acceder a contactos de acuerdo a las ramas permitidas </field>
             <field name="perm_read" eval="1" />
@@ -11,3 +11,5 @@
             <field name="model_id" ref="account.model_account_bank_statement_line" />
             <field name="global" eval="True" />
         </record>
+    </data>
+</odoo>
