@@ -7,7 +7,7 @@
             <field name="perm_write" eval="1" />
             <field name="perm_create" eval="1" />
             <field name="perm_unlink" eval="1" />
-            <field name="domain_force">['|', ('branch_id', '=', False),('branch_id.id', 'in', [b.id for b in user.branch_ids])]</field>
+            <field name="domain_force">['|', ('branch_id.id', '=', False),('branch_id.id', 'in', [b.id for b in user.branch_ids])]</field>
             <field name="model_id" ref="base.model_res_partner" />
             <field name="global" eval="True" />
         </record>
