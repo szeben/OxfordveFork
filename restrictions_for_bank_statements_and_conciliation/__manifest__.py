@@ -22,15 +22,12 @@
     'license': 'Other proprietary',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','account', 'branch'],
+    'depends': ['base', 'account', 'branch'],
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
         'security/crear_e_importar_extractos_bancarios.xml',
         'views/account_bank_statement_restrictions.xml',
-        # 'views/views.xml',
-        # 'views/templates.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
