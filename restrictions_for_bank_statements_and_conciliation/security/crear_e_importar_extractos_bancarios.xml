@@ -22,7 +22,7 @@
 
         <record id="group_conciliar_extractos_bancarios" model="res.groups">
             <field name="name">Conciliar extractos bancarios</field>
-            <field name="category_ide" ref="base.module_category_accounting" />
+            <field name="category_id" ref="base.module_category_accounting" />
             <field name="comment">El usuario solo puede conciliar extractos bancarios. Creado por: Techne.</field>
         </record>
 
