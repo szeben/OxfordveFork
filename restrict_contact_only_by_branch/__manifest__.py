@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Acceder a contactos de acuerdo a las ramas permitidas",
+    'name': "Acceder a contactos de acuerdo a las ramas",
 
     'summary': """
         Permite el acceso a los contactos de acuerdo a las ramas permitidas para el usuario""",
