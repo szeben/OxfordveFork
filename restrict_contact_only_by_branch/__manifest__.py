@@ -22,7 +22,7 @@
     'license': 'Other proprietary',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'contacs', 'branch'],
+    'depends': ['base', 'branch'],
 
     # always loaded
     'data': [
