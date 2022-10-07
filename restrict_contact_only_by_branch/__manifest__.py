@@ -26,7 +26,7 @@
 
     # always loaded
     'data': [
-        'security/acceder_a_contactos_de acuerdo_a_las_ramas_permitidas.xml',
+        'security/acceder_a_contactos_de_acuerdo_a_las_ramas_permitidas.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
