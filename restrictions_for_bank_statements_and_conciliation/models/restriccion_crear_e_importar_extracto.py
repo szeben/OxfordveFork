@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-
-from odoo import api, exceptions, fields, models
+from odoo import models, fields, api, exceptions
 
 
 class AccountBankStatementInherit(models.Model):
@@ -28,8 +27,7 @@ class AccountMoveLineInherit(models.Model):
         u = self.env['res.users'].search([('id', '=', self.env.uid)])
         if not u.has_group('restrictions_for_bank_statements_and_conciliation.group_conciliar_extractos_bancarios'):
             raise exceptions.UserError(
-                'No tienes permiso para conciliar extractos bancarios.'
-            )
+                'No tienes permiso para conciliar extractos bancarios.')
 
         return res
 

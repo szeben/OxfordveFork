@@ -1,6 +1,6 @@
 <odoo>
-  <data>
-    <!--
+    <data>
+<!--
         <template id="listing">
           <ul>
             <li t-foreach="objects" t-as="object">
@@ -19,6 +19,6 @@
             </t>
           </dl>
         </template>
-    -->
-  </data>
+-->
+    </data>
 </odoo>

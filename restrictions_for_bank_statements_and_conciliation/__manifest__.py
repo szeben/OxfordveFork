@@ -26,11 +26,8 @@
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
         'security/crear_e_importar_extractos_bancarios.xml',
         'views/account_bank_statement_restrictions.xml',
-        # 'views/views.xml',
-        # 'views/templates.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
