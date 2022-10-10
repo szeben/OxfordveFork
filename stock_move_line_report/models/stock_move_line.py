@@ -1,91 +1,81 @@
-# -*3- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# -*- coding: utf-8 -*-
 
-from odoo import models, api, fields, _
-import re
+from functools import reduce
+
+from odoo import _, api, fields, models
+
+
+def compute_existence(previous, record):
+    if (record.product_id.qty_available - record.qty_done) == 0:
+        return record.qty_done
+    elif record.location_id.usage == 'inventory' and record.location_id.scrap_location == False:
+        return record.qty_done + previous
+    elif not record.picking_code and record.location_dest_id.scrap_location == False and record.location_dest_id.usage == 'inventory':
+        return previous - record.qty_done
+    elif record.picking_code == "internal":
+        return previous
+    elif record.picking_code == "outgoing":
+        return previous - record.qty_done
+    else:
+        return record.qty_done + previous
+
 
 class StockMoveLine(models.Model):
-    #_name = "account.aged.partner.inherit"
     _inherit = 'stock.move.line'
 
+    number = fields.Char(
+        string='Numero',
+        related='picking_id.origin'
+    )
+    customer_id = fields.Many2one(
+        'res.partner',
+        string='Cliente o Proveedor',
+        related='picking_id.partner_id'
+    )
+    entrada = fields.Float(
+        string='Entrada',
+        compute='_compute_in_out'
+    )
+    salida = fields.Float(
+        string='Salida',
+        compute='_compute_in_out'
+    )
+    saldo_existencia = fields.Float(
+        string='Saldo en existencia',
+        compute='_compute_in_out'
+    )
 
-    codigo_id = fields.Many2one('res.users', string='Codigo',)
-    number = fields.Char(string='Numero',related='picking_id.origin')
-    customer_id = fields.Many2one('res.partner', string='Cliente o Proveedor',related='picking_id.partner_id')
-    entrada = fields.Float(string='Entrada',compute='_compute_entrada')
-    salida = fields.Float(string='Salida',compute='_compute_salida')
-    saldo_existencia = fields.Float(string='Saldo en existencia', compute='_compute_saldo_existencia')
+    @api.depends('qty_done', 'reference')
+    def _compute_in_out(self):
+        anterior = 0.0
 
-    @api.depends('qty_done','reference')
-    def _compute_entrada(self):        
-        for record in self:
-            #   Cantidad de producto actualizada
-            if record.location_id.id == 14 and record.location_id.name == 'Inventory adjustment':
-                record.entrada = record.qty_done
-
-            # Recibo
-            elif record.picking_code == "incoming":
-                record.entrada = record.qty_done
-
-            #Transferencia Interna
-            elif record.picking_code == "internal":
-                record.entrada = record.qty_done
-
-            #Fabricacion
-            elif record.picking_code == "mrp_operation":
-                record.entrada = record.qty_done
-            else:
-                record.entrada = 0.0
-
-    @api.depends('qty_done','reference')
-    def _compute_salida(self):
-        for record in self:
-            #   Cantidad de producto actualizada
-            if record.picking_code == False and record.location_dest_id.name == 'Inventory adjustment':
-                record.salida = record.qty_done
-
-            #Transferencia Interna
-            elif record.picking_code == "internal":
-                record.salida = record.qty_done
-
-            #Envio
-            elif record.picking_code == "outgoing":
-                record.salida = record.qty_done
-
-            else:
-                record.salida = 0.0
-
-    @api.depends('entrada','salida')
-    def _compute_saldo_existencia(self):
-        anterior =0.0
+        if self:
+            anterior = reduce(
+                compute_existence,
+                self.search([
+                    ('id', 'not in', self.ids),
+                    ('date', '<=', self[0].date),
+                ], order='date'),
+                anterior
+            )
 
         for record in self:
-            #record.saldo_existencia = record.salida + record.entrada
-            existencia = record.product_id.qty_available - record.qty_done
+            entrada = 0.0
+            salida = 0.0
 
-            if existencia == 0:
-                record.saldo_existencia = record.qty_done
-            elif record.location_id.id == 14 and record.location_id.name == 'Inventory adjustment':
-                record.saldo_existencia = record.qty_done + anterior 
-            elif record.picking_code == False and record.location_dest_id.name == 'Inventory adjustment':
-                record.saldo_existencia = anterior - record.qty_done
-            elif record.picking_code == "internal":
-                record.saldo_existencia = anterior
-            elif record.picking_code == "outgoing":
-                record.saldo_existencia = anterior - record.qty_done
-            else:
-                record.saldo_existencia = record.qty_done + anterior            
-            anterior = record.saldo_existencia
+            if (
+                record.location_id.usage == 'inventory' and
+                record.location_id.scrap_location == False
+            ) or record.picking_code in {'incoming', 'internal', 'mrp_operation'}:
+                entrada = record.qty_done
 
+            if (
+                not record.picking_code and record.location_dest_id.usage == 'inventory' and
+                record.location_dest_id.scrap_location == False
+            ) or record.picking_code in {'outgoing', 'internal'}:
+                salida = record.qty_done
 
-
-            # x = record.product_id.qty_available
-            # if x == record.qty_done:
-            #     record.saldo_existencia = x
-            # #indice = record.index(self)
-            # #if record[0] in self:
-            #     #record.saldo_existencia = x
-            # else:
-            #     indice = record.index(self)
-            #     position = indice - 1
-            #     record.saldo_existencia = self[position].product_id.qty_available - self[position].product_id.qty_done
+            record.salida = salida
+            record.entrada = entrada
+            record.saldo_existencia = anterior = compute_existence(
+                anterior, record)
