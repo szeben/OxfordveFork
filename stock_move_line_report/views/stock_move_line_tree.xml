@@ -8,14 +8,14 @@
             <field name="arch" type="xml">
                 <field name="qty_done" position="after">
                     <field name="create_uid" string="Código"/>
-                    <!--<field name="codigo_id"/>-->
                     <field name="number"/>
                     <field name="customer_id"/>
                     <field name="entrada"/>
                     <field name="salida"/>
-                    <field name="saldo_existencia"/>                    
+                    <field name="saldo_existencia"/>
                 </field>
             </field>
         </record>
+
     </data>
 </odoo>
