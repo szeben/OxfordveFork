@@ -3,6 +3,7 @@
 from functools import reduce
 
 from odoo import _, api, fields, models
+from odoo.osv.expression import AND
 
 
 def compute_existence(previous, record):
@@ -45,19 +46,33 @@ class StockMoveLine(models.Model):
         compute='_compute_in_out'
     )
 
+    extra_context = {}
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        self.extra_context.update({
+            "domain": args,
+            "offset": offset,
+            "limit": limit,
+            "order": order
+        })
+        return super().search(args, offset=offset, limit=limit, order=order, count=count)
+
     @api.depends('qty_done', 'reference')
     def _compute_in_out(self):
-        anterior = 0.0
+        order = self.extra_context.get('order', 'date asc')
+        extra_domain = self.extra_context.get('domain', [])
+        domain = [('id', 'not in', self.ids)]
 
-        if self:
-            anterior = reduce(
-                compute_existence,
-                self.search([
-                    ('id', 'not in', self.ids),
-                    ('date', '<=', self[0].date),
-                ], order='date'),
-                anterior
-            )
+        if extra_domain:
+            # domain = AND([domain, extra_domain])
+            pass
+
+        anterior = reduce(
+            compute_existence,
+            self.search(domain, order=order),
+            0.0
+        )
 
         for record in self:
             entrada = 0.0
