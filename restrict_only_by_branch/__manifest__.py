@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Acceder a contactos de acuerdo a las ramas",
+    'name': "Restricciones por rama activa o permitida",
 
     'summary': """
-        Permite el acceso a los contactos de acuerdo a las ramas permitidas para el usuario""",
+        Restringe el la visualización de información de acuerdo a la rama activa o la rama permitida de un usuario.""",
 
     'description': """
-        Crea reglas para permitir el acceso a los contactos de acuerdo a las ramas permitidas.
+        Restringe el la visualización de información (contactos, pagos, facturas, pedidos de ventas, pedidos de compra y diarios) de acuerdo a la rama activa o la rama permitida de un usuario.
     """,
 
     'author': "Techne Studio IT & Consulting",
@@ -26,7 +26,7 @@
 
     # always loaded
     'data': [
-        'security/acceder_a_contactos_de_acuerdo_a_las_ramas_permitidas.xml',
+        'security/restricciones_por_rama.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
