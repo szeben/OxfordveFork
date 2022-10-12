@@ -1,0 +1,26 @@
+<odoo>
+  <data>
+
+    <record model="ir.ui.view" id="stock_replenishment_report_list">
+      <field name="name">Reposición de inventario</field>
+      <field name="model">stock.replenishment.report</field>
+      <field name="arch" type="xml">
+        <tree js_class="stock_replenishment" create="false" edit="false" delete="false" export_xlsx="true">
+          <field name="product_id" filter_domain="[('product_id', '&gt;=', '2020-10-02')]" />
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="stock_replenishment_report_action_window">
+      <field name="name">Reposición de inventario</field>
+      <field name="res_model">stock.replenishment.report</field>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="stock_replenishment_report_list"/>
+      <field name="type">ir.actions.act_window</field>
+      <field name="context">{'search_default_last_fortnight_move_date': 1}</field>
+    </record>
+
+    <menuitem name="Reposición de inventario" id="stock_replenishment_report_menu" parent="stock.menu_warehouse_report" action="stock_replenishment_report_action_window" sequence="99" />
+
+  </data>
+</odoo>
