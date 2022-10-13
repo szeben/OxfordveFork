@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Restricciones por rama activa o permitida",
+    'name': "Validación de producto único",
 
     'summary': """
-        Restringe el la visualización de información de acuerdo a la rama activa o la rama permitida de un usuario.""",
+        Valida que en un presupuesto u orden de venta no existan productos repetidos.""",
 
     'description': """
-        Restringe el la visualización de información (contactos, pagos, facturas, pedidos de ventas, pedidos de compra y diarios) de acuerdo a la rama activa o la rama permitida de un usuario.
+        Establece una validación en los presupuestos y ordenes de venta, que muestra un mensaje si existe algún producto repetido entre las líneas de pedido.
     """,
 
     'author': "Techne Studio IT & Consulting",
@@ -16,17 +16,18 @@
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Accounting/Restricciones por rama activa o permitida',
+    'category': 'Sales/Validación de producto único',
     'version': '1.0',
 
     'license': 'Other proprietary',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'branch'],
+    'depends': ['base', 'sale_management', 'branch'],
 
     # always loaded
     'data': [
-        'security/restricciones_por_rama.xml',
+        #'security/crear_e_importar_extractos_bancarios.xml',
+        #'views/account_bank_statement_restrictions.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
