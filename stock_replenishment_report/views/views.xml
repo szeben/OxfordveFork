@@ -1,6 +1,29 @@
 <odoo>
   <data>
 
+    <record id="view_account_journal_form_inherit" model="ir.ui.view">
+      <field name="name">account.journal.form.inherit</field>
+      <field name="model">account.journal</field>
+      <field name="inherit_id" ref="account.view_account_journal_form"/>
+      <field name="arch" type="xml">
+        <field name="currency_id" position="after">
+          <field name="input_type"/>
+        </field>
+      </field>
+    </record>
+
+    <record id="branch_res_branch_view_form_inherit" model="ir.ui.view">
+      <field name="name">branch.res.branch.view.form.inherit</field>
+      <field name="model">res.branch</field>
+      <field name="inherit_id" ref="branch.branch_res_branch_view_form"/>
+      <field name="arch" type="xml">
+        <field name="address" position="after">
+          <field name="is_main"/>
+          <field name="is_mainland"/>
+        </field>
+      </field>
+    </record>
+
     <record model="ir.ui.view" id="stock_replenishment_report_list">
       <field name="name">Reposición de inventario</field>
       <field name="model">stock.replenishment.report</field>
