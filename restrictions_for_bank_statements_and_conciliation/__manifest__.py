@@ -16,7 +16,7 @@
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Accounting/Restricciones para extractos bancarios y conciliacion ',
+    'category': 'Accounting/Restricciones para extractos bancarios y conciliacion',
     'version': '1.0',
 
     'license': 'Other proprietary',
