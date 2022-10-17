@@ -23,7 +23,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'stock', 'branch', 'product_available_by_branch_kanban'],
+    'depends': ['base', 'account', 'stock', 'branch', 'product_available_by_branch_kanban'],
 
     # always loaded
     'data': [
