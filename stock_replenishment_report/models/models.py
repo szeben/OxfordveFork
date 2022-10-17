@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from itertools import chain, groupby, islice
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 from datetime import timedelta
 
 from lxml import etree
@@ -18,8 +18,20 @@ def get_name(branch_id):
 class ResBranch(models.Model):
     _inherit = 'res.branch'
 
-    is_main = fields.Boolean(string="Is Main Branch", default=False)
-    is_mainland = fields.Boolean(string="Is Mainland Branch", default=True)
+    is_main = fields.Boolean(string="¿Es la rama principal?", default=False)
+    is_mainland = fields.Boolean(string="¿Esta en tierra firme?", default=True)
+
+
+class AccountJournal(models.Model):
+    _inherit = "account.journal"
+
+    input_type = fields.Selection(
+        selection=[
+            ('invoice', 'Factura'),
+            ('delivery_note', 'Nota de entrega')
+        ],
+        string="Tipo de entrada",
+    )
 
 
 class StockReplenishmentReport(models.Model):

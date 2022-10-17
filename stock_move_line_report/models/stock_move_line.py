@@ -3,7 +3,8 @@
 from functools import reduce
 
 from odoo import _, api, fields, models
-from odoo.osv.expression import AND
+from odoo.osv.expression import (AND, AND_OPERATOR, OR_OPERATOR, is_leaf,
+                                 is_operator, normalize_domain, normalize_leaf)
 
 
 def compute_existence(previous, record):
@@ -50,29 +51,46 @@ class StockMoveLine(models.Model):
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
-        self.extra_context.update({
-            "domain": args,
-            "offset": offset,
-            "limit": limit,
-            "order": order
-        })
+        self.extra_context.update(
+            {"domain": args, "offset": offset, "order": order})
         return super().search(args, offset=offset, limit=limit, order=order, count=count)
 
     @api.depends('qty_done', 'reference')
     def _compute_in_out(self):
-        order = self.extra_context.get('order', 'date asc')
-        extra_domain = self.extra_context.get('domain', [])
-        domain = [('id', 'not in', self.ids)]
+        order = self.extra_context.get('order', 'date ASC')
+        show_existence = False
+        anterior = 0.0
 
-        if extra_domain:
-            # domain = AND([domain, extra_domain])
-            pass
+        first_order, *_ = order.split(",")
 
-        anterior = reduce(
-            compute_existence,
-            self.search(domain, order=order),
-            0.0
-        )
+        if first_order.lower().strip() in {"date asc", "date"}:
+            show_existence = True
+            offset = self.extra_context.get('offset', 0)
+            extra_domain = self.extra_context.get('domain', [])
+            domain = [('id', 'not in', self.ids)]
+
+            if extra_domain:
+                new_domain = []
+
+                for i, elm in enumerate(extra_domain):
+                    if is_leaf(elm) and i > 0:
+                        field, operator, value = normalize_leaf(elm)
+                        if field == 'date' and operator in {'>', '>='}:
+                            for j, olm in enumerate(new_domain[::-1]):
+                                if is_operator(olm):
+                                    new_domain.pop(-j-1)
+                                    if olm in {AND_OPERATOR, OR_OPERATOR}:
+                                        break
+                            continue
+                    new_domain.append(elm)
+
+                domain = AND([domain, normalize_domain(new_domain)])
+
+            anterior = reduce(
+                compute_existence,
+                self.sudo().search(domain, limit=(offset if offset > 0 else None), order=order),
+                anterior
+            )
 
         for record in self:
             entrada = 0.0
@@ -92,5 +110,9 @@ class StockMoveLine(models.Model):
 
             record.salida = salida
             record.entrada = entrada
-            record.saldo_existencia = anterior = compute_existence(
-                anterior, record)
+
+            if show_existence:
+                record.saldo_existencia = anterior = compute_existence(
+                    anterior, record)
+            else:
+                record.saldo_existencia = False
