@@ -42,20 +42,48 @@ class StockReplenishmentReport(models.Model):
     @property
     def _table_query(self):
         select_ = """
+            WITH product_with_branch AS (
+                    SELECT
+                        pp.id AS product_id,
+                        rb.id AS branch_id
+                    FROM
+                        product_product pp
+                        CROSS JOIN res_branch rb
+                        INNER JOIN product_template pt ON (pt.id = pp.product_tmpl_id)
+                    WHERE
+                        pt.sale_ok = TRUE
+                ),
+                account_move_line_with_branch AS (
+                    SELECT
+                        aml.product_id,
+                        aml.quantity,
+                        am.invoice_date,
+                        aj.input_type,
+                        aj.branch_id
+                    FROM
+                        account_move_line aml
+                        LEFT OUTER JOIN account_move am ON (aml.move_id = am.id)
+                        LEFT OUTER JOIN account_journal aj ON (am.journal_id = aj.id)
+                    WHERE
+                        aml.product_id IS NOT NULL
+                        AND am.state = 'posted'
+                        AND am.move_type = 'out_invoice'
+                        AND aj.input_type IS NOT NULL
+                )
             SELECT
                 ROW_NUMBER() OVER () AS id,
-                aml.product_id,
-                aj.branch_id,
-                am.invoice_date AS move_date, (
+                pb.product_id,
+                COALESCE(aml.branch_id, pb.branch_id) AS branch_id,
+                aml.invoice_date AS move_date, (
                     SELECT sq.id
                     FROM stock_quant sq
-                        INNER JOIN stock_warehouse sw ON (
+                        LEFT JOIN stock_warehouse sw ON (
                             sw.lot_stock_id = sq.location_id
                         )
                     WHERE
-                        sw.branch_id = aj.branch_id
+                        COALESCE(aml.branch_id, pb.branch_id) = sw.branch_id
                         AND sw.is_main = TRUE
-                        AND sq.product_id = aml.product_id
+                        AND sq.product_id = pb.product_id
                     ORDER BY
                         sw.write_date DESC
                     LIMIT
@@ -63,32 +91,31 @@ class StockReplenishmentReport(models.Model):
                 ) AS quant_id,
                 SUM(
                     CASE
-                        WHEN am.move_type = 'out_invoice' THEN aml.quantity
+                        WHEN aml.input_type = 'invoice' THEN aml.quantity
                         ELSE 0.0
                     END
                 ) AS qty_invoice,
                 SUM(
                     CASE
-                        WHEN am.move_type = 'out_refund' THEN aml.quantity
+                        WHEN aml.input_type = 'delivery_note' THEN aml.quantity
                         ELSE 0.0
                     END
-                ) AS qty_refund,
-                SUM(aml.quantity) AS quantity
-            FROM account_move_line AS aml
-                INNER JOIN account_move am ON (aml.move_id = am.id)
-                LEFT JOIN account_journal aj ON (am.journal_id = aj.id)
-            WHERE
-                aml.product_id IS NOT NULL
-                AND am.state = 'posted'
-                AND am.move_type IN ('out_invoice', 'out_refund')
+                ) AS qty_delivery_note,
+                COALESCE(SUM(aml.quantity), 0.0) AS quantity
+            FROM product_with_branch pb
+                LEFT JOIN account_move_line_with_branch aml ON (
+                    pb.product_id = aml.product_id AND pb.branch_id = aml.branch_id
+                )
             GROUP BY
-                aml.product_id,
-                aj.branch_id,
-                am.invoice_date
+                pb.product_id,
+                pb.branch_id,
+                aml.branch_id,
+                aml.invoice_date
             ORDER BY
-                aml.product_id,
-                aj.branch_id,
-                am.invoice_date
+                pb.product_id,
+                pb.branch_id,
+                aml.branch_id,
+                aml.invoice_date
         """
         return select_
 
@@ -120,7 +147,7 @@ class StockReplenishmentReport(models.Model):
         'Cantidad por factura',
         readonly=True
     )
-    qty_refund = fields.Float(
+    qty_delivery_note = fields.Float(
         'Cantidad por nota de entrega',
         readonly=True
     )
@@ -295,17 +322,17 @@ class StockReplenishmentReport(models.Model):
                 branch_name = get_name(branch_id)
                 row[f"inv_{branch_name}"] = qty_on_hand = first.qty_on_hand
 
-                qty_invoice, qty_refund, quantity = map(
+                qty_invoice, qty_delivery_note, quantity = map(
                     sum,
                     zip(*(
-                        (record.qty_invoice, record.qty_refund, record.quantity)
+                        (record.qty_invoice, record.qty_delivery_note, record.quantity)
                         for record in chain((first,), group_branch)
                     ))
                 )
                 stock = qty_on_hand/quantity
 
                 row[f"invoice_{branch_name}"] = qty_invoice
-                row[f"refund_{branch_name}"] = qty_refund
+                row[f"refund_{branch_name}"] = qty_delivery_note
                 row[f"quantity_{branch_name}"] = quantity
                 row[f"stock_{branch_name}"] = stock
 
