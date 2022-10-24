@@ -31,6 +31,7 @@ class AccountJournal(models.Model):
             ('delivery_note', 'Nota de entrega')
         ],
         string="Tipo de entrada",
+        help='Campo de uso exclusivo para el informe "Reposición de Inventario"'
     )
 
 
@@ -329,7 +330,11 @@ class StockReplenishmentReport(models.Model):
                         for record in chain((first,), group_branch)
                     ))
                 )
-                stock = qty_on_hand/quantity
+
+                if quantity != 0.0:
+                    stock = qty_on_hand/quantity
+                else:
+                    stock = 0.0
 
                 row[f"invoice_{branch_name}"] = qty_invoice
                 row[f"refund_{branch_name}"] = qty_delivery_note
