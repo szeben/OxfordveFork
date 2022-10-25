@@ -6,6 +6,7 @@ from datetime import timedelta
 
 from lxml import etree
 from odoo import _, api, fields, models, tools
+from odoo.osv.expression import OR
 
 DEFAULT_MIN_BY_BRANCH = 2
 DEFAULT_MIN_GLOBAL = 6
@@ -285,6 +286,8 @@ class StockReplenishmentReport(models.Model):
 
     @api.model
     def search_count(self, args):
+        if args:
+            args = OR([args, [('move_date', '=', False)]])
         return len(self._read_group_raw(args, ['product_id'], ['product_id']))
 
     def _search_read_report(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
@@ -299,10 +302,15 @@ class StockReplenishmentReport(models.Model):
         branches = self.env['res.branch'].search([])
 
         data = []
-        groups = groupby(
-            self if domain is None else self.search(domain),
-            keyfunc_product
-        )
+
+        if domain is None:
+            groups = groupby(self, keyfunc_product)
+        else:
+            domain = OR([domain, [('move_date', '=', False)]])
+            groups = groupby(
+                self.search(domain),
+                keyfunc_product
+            )
 
         if limit or offset:
             if limit:
@@ -316,6 +324,7 @@ class StockReplenishmentReport(models.Model):
 
             stock_main = 0.0
             stock_mainland = 0.0
+            total_quantity_mainland = 0.0
 
             for branch_id, group_branch in groupby(group_product, keyfun_branch):
                 first = next(group_branch)
@@ -331,10 +340,7 @@ class StockReplenishmentReport(models.Model):
                     ))
                 )
 
-                if quantity != 0.0:
-                    stock = qty_on_hand/quantity
-                else:
-                    stock = 0.0
+                stock = qty_on_hand/(quantity or 1.0)
 
                 row[f"invoice_{branch_name}"] = qty_invoice
                 row[f"refund_{branch_name}"] = qty_delivery_note
@@ -342,12 +348,14 @@ class StockReplenishmentReport(models.Model):
                 row[f"stock_{branch_name}"] = stock
 
                 if branch_id.is_mainland:
-                    stock_mainland += stock
+                    stock_mainland += qty_on_hand
+                    total_quantity_mainland += quantity
 
                 if branch_id.is_main:
                     stock_main += stock
 
-            row["stock_mainland"] = stock_mainland
+            row["stock_mainland"] = stock_mainland / \
+                (total_quantity_mainland or 1.0)
 
             for branch_id in branches:
                 branch_name = get_name(branch_id)

@@ -29,7 +29,7 @@
       <field name="model">stock.replenishment.report</field>
       <field name="arch" type="xml">
         <tree js_class="stock_replenishment" create="false" edit="false" delete="false" export_xlsx="true">
-          <field name="product_id" filter_domain="[('product_id', '&gt;=', '2020-10-02')]" />
+          <field name="product_id" />
         </tree>
       </field>
     </record>
