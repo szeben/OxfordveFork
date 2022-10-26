@@ -222,11 +222,11 @@ class StockReplenishmentReport(models.Model):
                 "string": f"Stock {branch.name}"
             }
 
-            if branch.is_mainland:
+            if branch.is_main:
                 alerts[f"replenishment_{name}"] = {
                     **default_values,
                     "type": 'boolean',
-                    "string": f"Reposición {branch.name}?"
+                    "string": f"Rep. {branch.name}?"
                 }
 
         stock[f"stock_mainland"] = {
