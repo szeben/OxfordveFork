@@ -222,7 +222,7 @@ class StockReplenishmentReport(models.Model):
                 "string": f"Stock {branch.name}"
             }
 
-            if branch.is_main:
+            if not branch.is_main:
                 alerts[f"replenishment_{name}"] = {
                     **default_values,
                     "type": 'boolean',
