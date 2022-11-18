@@ -257,28 +257,14 @@ class StockReplenishmentReport(models.Model):
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         res = super().fields_view_get(view_id, view_type, toolbar, submenu)
 
-        if view_type in {'search', 'tree'}:
+        if view_type == 'tree':
             doc = etree.fromstring(res['arch'])
 
-            if view_type == 'tree':
-                for name, field in self._dynamic_fields().items():
-                    doc.append(
-                        etree.Element('field', name=name, optional="show")
-                    )
-                    res['fields'][name] = field
-
-            else:
-                date_last_15_days = fields.Date.to_string(
-                    fields.Date.today() - timedelta(days=15)
-                )
+            for name, field in self._dynamic_fields().items():
                 doc.append(
-                    etree.Element(
-                        'filter',
-                        name='last_fortnight_move_date',
-                        string="Ultimos 15 días",
-                        domain=str([('move_date', '>=', date_last_15_days)])
-                    )
+                    etree.Element('field', name=name, optional="show")
                 )
+                res['fields'][name] = field
 
             res['arch'] = etree.tostring(doc, encoding='unicode')
 
