@@ -262,6 +262,22 @@ class StockReplenishmentReport(models.Model):
             args = OR([args, [('move_date', '=', False)]])
         return len(self._read_group_raw(args, ['product_id'], ['product_id']))
 
+    @api.model
+    def _read_group_raw(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
+        if not groupby:
+            return super()._read_group_raw(
+                domain, fields, groupby, offset, limit, orderby, lazy
+            )
+
+        if fields:
+            fields = list(set(fields).difference(
+                self._dynamic_fields().keys()
+            ))
+
+        return super()._read_group_raw(
+            domain, fields, groupby, offset, limit, orderby, lazy
+        )
+
     def _search_read_report(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
         def keyfunc_product(record):
             return record.product_id
