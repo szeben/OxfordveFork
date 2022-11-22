@@ -2,7 +2,6 @@
 
 from itertools import chain, groupby, islice
 from collections import OrderedDict
-from datetime import timedelta
 
 from lxml import etree
 from odoo import _, api, fields, models, tools
@@ -19,8 +18,19 @@ def get_name(branch_id):
 class ResBranch(models.Model):
     _inherit = 'res.branch'
 
-    is_main = fields.Boolean(string="¿Es la rama principal?", default=False)
-    is_mainland = fields.Boolean(string="¿Esta en tierra firme?", default=True)
+    is_main = fields.Boolean(
+        string="¿Es la rama principal?",
+        default=False
+    )
+    is_mainland = fields.Boolean(
+        string="¿Esta en tierra firme?",
+        default=True
+    )
+    warehouse_ids = fields.One2many(
+        'stock.warehouse',
+        'branch_id',
+        string="Almacenes"
+    )
 
 
 class AccountJournal(models.Model):
@@ -76,21 +86,7 @@ class StockReplenishmentReport(models.Model):
                 ROW_NUMBER() OVER () AS id,
                 pb.product_id,
                 COALESCE(aml.branch_id, pb.branch_id) AS branch_id,
-                aml.invoice_date AS move_date, (
-                    SELECT sq.id
-                    FROM stock_quant sq
-                        LEFT JOIN stock_warehouse sw ON (
-                            sw.lot_stock_id = sq.location_id
-                        )
-                    WHERE
-                        COALESCE(aml.branch_id, pb.branch_id) = sw.branch_id
-                        AND sw.is_main = TRUE
-                        AND sq.product_id = pb.product_id
-                    ORDER BY
-                        sw.write_date DESC
-                    LIMIT
-                        1
-                ) AS quant_id,
+                aml.invoice_date AS move_date,
                 SUM(
                     CASE
                         WHEN aml.input_type = 'invoice' THEN aml.quantity
@@ -129,16 +125,6 @@ class StockReplenishmentReport(models.Model):
     branch_id = fields.Many2one(
         'res.branch',
         'Rama',
-        readonly=True
-    )
-    quant_id = fields.Many2one(
-        'stock.quant',
-        'Cantidad',
-        readonly=True
-    )
-    qty_on_hand = fields.Float(
-        'Depósito',
-        related='quant_id.inventory_quantity_auto_apply',
         readonly=True
     )
     move_date = fields.Date(
@@ -257,28 +243,14 @@ class StockReplenishmentReport(models.Model):
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         res = super().fields_view_get(view_id, view_type, toolbar, submenu)
 
-        if view_type in {'search', 'tree'}:
+        if view_type == 'tree':
             doc = etree.fromstring(res['arch'])
 
-            if view_type == 'tree':
-                for name, field in self._dynamic_fields().items():
-                    doc.append(
-                        etree.Element('field', name=name, optional="show")
-                    )
-                    res['fields'][name] = field
-
-            else:
-                date_last_15_days = fields.Date.to_string(
-                    fields.Date.today() - timedelta(days=15)
-                )
+            for name, field in self._dynamic_fields().items():
                 doc.append(
-                    etree.Element(
-                        'filter',
-                        name='last_fortnight_move_date',
-                        string="Ultimos 15 días",
-                        domain=str([('move_date', '>=', date_last_15_days)])
-                    )
+                    etree.Element('field', name=name, optional="show")
                 )
+                res['fields'][name] = field
 
             res['arch'] = etree.tostring(doc, encoding='unicode')
 
@@ -289,6 +261,22 @@ class StockReplenishmentReport(models.Model):
         if args:
             args = OR([args, [('move_date', '=', False)]])
         return len(self._read_group_raw(args, ['product_id'], ['product_id']))
+
+    @api.model
+    def _read_group_raw(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
+        if not groupby:
+            return super()._read_group_raw(
+                domain, fields, groupby, offset, limit, orderby, lazy
+            )
+
+        if fields:
+            fields = list(set(fields).difference(
+                self._dynamic_fields().keys()
+            ))
+
+        return super()._read_group_raw(
+            domain, fields, groupby, offset, limit, orderby, lazy
+        )
 
     def _search_read_report(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
         def keyfunc_product(record):
@@ -319,28 +307,47 @@ class StockReplenishmentReport(models.Model):
             else:
                 groups = islice(groups, offset, None)
 
+        groups = tuple(
+            (product_id, tuple(rows))
+            for product_id, rows in groups
+        )
+        product_ids = [product.id for product, _ in groups]
+
+        virtual_availables = {
+            branch_id.id: {
+                product_id: values.get('virtual_available', 0)
+                for product_id, values in self.env['product.product'].with_context(
+                    warehouse=branch_id.warehouse_ids.ids
+                ).search([
+                    ('id', 'in', product_ids)
+                ])._compute_quantities_dict(None, None, None).items()
+                if values.get('virtual_available')
+            } for branch_id in branches
+        }
+
         for product_id, group_product in groups:
             row = {"product_id": (product_id.id, product_id.display_name)}
 
+            stock = 0.0  # ojnhibguvf
             stock_main = 0.0
             stock_mainland = 0.0
             total_quantity_mainland = 0.0
 
             for branch_id, group_branch in groupby(group_product, keyfun_branch):
-                first = next(group_branch)
-
                 branch_name = get_name(branch_id)
-                row[f"inv_{branch_name}"] = qty_on_hand = first.qty_on_hand
+                row[f"inv_{branch_name}"] = virtual_available = (
+                    virtual_availables[branch_id.id].get(product_id.id, 0.0)
+                )
 
                 qty_invoice, qty_delivery_note, quantity = map(
                     sum,
                     zip(*(
                         (record.qty_invoice, record.qty_delivery_note, record.quantity)
-                        for record in chain((first,), group_branch)
+                        for record in group_branch
                     ))
                 )
 
-                stock = qty_on_hand/(quantity or 1.0)
+                stock = virtual_available/(quantity or 1.0)
 
                 row[f"invoice_{branch_name}"] = qty_invoice
                 row[f"refund_{branch_name}"] = qty_delivery_note
@@ -348,7 +355,7 @@ class StockReplenishmentReport(models.Model):
                 row[f"stock_{branch_name}"] = stock
 
                 if branch_id.is_mainland:
-                    stock_mainland += qty_on_hand
+                    stock_mainland += virtual_available
                     total_quantity_mainland += quantity
 
                 if branch_id.is_main:
