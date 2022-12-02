@@ -1,0 +1,31 @@
+<odoo>
+  <data>
+
+    <record id="view_partner_form_contact_state_inherited" model="ir.ui.view">
+      <field name="name">Contact state form - ResPartner extension</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//form/*" position="after">
+          <header>
+            <button name="action_validated"  type='object' string="Confirmar" class="btn-primary" states="new" groups="contact_state.group_contact_state"/>
+            <button name="action_new"  type='object' string="Nuevo" class="btn-primary" states="validated" groups="contact_state.group_contact_state"/>            
+            <field name="state" widget="statusbar" statusbar_visible="new,validated"/>           
+          </header>
+        </xpath> 
+      </field>      
+    </record>
+
+    <record id="view_res_partner_filter_contact_state_inherited" model="ir.ui.view">
+      <field name="name">Contact state filter - ResPartner filter</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_res_partner_filter"/>
+      <field name="arch" type="xml">
+        <xpath expr="//filter[@name='inactive']" position="after">
+          <filter domain="[('active', '=', False),('state', '=', 'new')]" name="new_contact" string="Nuevo"/>
+        </xpath>
+      </field>      
+    </record>
+
+  </data>
+</odoo>

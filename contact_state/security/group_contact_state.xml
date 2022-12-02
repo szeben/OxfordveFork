@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.module.category" id="module_category_contact">
+            <field name="name">Contacto</field>
+            <field name="description">Restricciones para el módulo de contactos</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="group_contact_state" model="res.groups">
+            <field name="name">Cambio de estado en contactos</field>
+            <field name="category_id" ref="module_category_contact"/>
+            <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden cambiar el estado de un contacto.</field>
+        </record>
+    </data>
+</odoo>
