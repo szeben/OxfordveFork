@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_management_supplier,access.management.supplier,model_res_partner,restrict_supplier_customer.group_management_supplier,1,1,1,1
+access_show_supplier,access.show.supplier,model_res_partner,restrict_supplier_customer.group_show_supplier,1,0,0,0
+access_show_not_national_supplier,access.show.not.national.supplier,model_res_partner,restrict_supplier_customer.group_show_not_national_supplier,1,0,0,0
+access_show_customer,access.show.customer,model_res_partner,restrict_supplier_customer.group_show_customer,1,0,0,0

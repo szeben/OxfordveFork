@@ -9,7 +9,7 @@
         <record id="group_contact_state" model="res.groups">
             <field name="name">Cambio de estado en contactos</field>
             <field name="category_id" ref="module_category_contact"/>
-            <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden cambiar el estado de un contacto.</field>
+            <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden cambiar el estado de un contacto. Creado por: Techne.</field>
         </record>
     </data>
 </odoo>

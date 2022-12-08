@@ -11,7 +11,8 @@ class ContactState(models.Model):
             ('validated', 'Validado')
         ],
         string='State',
-        default='new'
+        tracking=True,
+        default='new'        
     )
 
     def action_validated(self):
