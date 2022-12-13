@@ -10,10 +10,10 @@
         Agrega el campo "Es nacional", para indicar si un proveedor es nacional o no.
         Agrega el filtro para el campo "Es nacional".
         Agrega 4 grupos de usuario nuevos, los cuales se listan a continuación:
-        - Grupo para gestionar proveedores (crear, eliminar, editar y listar).
-        - Grupo para visualizar proveedores.
-        - Grupo para visualizar proveedores, exeptuando los proveedores nacionales.
-        - Grupo para visualizar clientes.
+        - Grupo para restringir la gestión de proveedores (No puede crear, eliminar y editar).
+        - Grupo para para restringir la visualización de proveedores.
+        - Grupo para para restringir la visualización de proveedores nacionales.
+        - Grupo para para restringir la visualización de clientes.
     """,
 
     'author': "Techne Studio IT & Consulting",
