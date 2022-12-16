@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Grupos para visualizar menús -->     
+        <record id="group_show_customer_menu" model="res.groups">
+            <field name="name">Mostrar menú clientes</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el menú "Clientes". Creado por: Techne.</field>
+        </record>       
+        <record id="group_show_supplier_menu" model="res.groups">
+            <field name="name">Mostrar menú proveedores</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el menú "Proveedores". Creado por: Techne.</field>
+        </record>
+        <record id="group_show_accounting_menu" model="res.groups">
+            <field name="name">Mostrar menú contabilidad</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el menú "Contabilidad". Creado por: Techne.</field>
+        </record>
+         <record id="group_show_payments_customer_menu" model="res.groups">
+            <field name="name">Mostrar menú clientes pagos</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el sub menú "Pagos" del menú "Clientes". Creado por: Techne.</field>
+        </record>
+        <record id="group_show_ledger_menu" model="res.groups">
+            <field name="name">Mostrar menú libro mayor</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el sub menú "Libro Mayor" del menú "Contabilidad" e "Informe". Creado por: Techne.</field>
+        </record>
+        <record id="group_show_accounts_receivable_menu" model="res.groups">
+            <field name="name">Mostrar menú vencido por cobrar</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el sub menú "Vencidos por cobrar" del menú "Informes". Creado por: Techne.</field>
+        </record>
+        <record id="group_show_accounts_pay_menu" model="res.groups">
+            <field name="name">Mostrar menú vencido por pagar</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el sub menú "Vencidos por pagar" del menú "Informes". Creado por: Techne.</field>
+        </record>
+
+              
+        <!-- *********Elementos de menú************* -->
+        <!-- Menú -->
+        <!-- Clientes -->
+        <record id="account.menu_finance_receivables" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[ref('group_show_customer_menu')])]"/>
+        </record>    
+        <!-- Proveedores     -->
+        <record id="account.menu_finance_payables" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[ref('group_show_supplier_menu')])]"/>
+        </record> 
+        <!-- Contabilidad     -->
+        <record id="account.menu_finance_entries" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[ref('group_show_accounting_menu')])]"/>
+        </record>
+
+        <!-- Sub Menú -->
+        <!-- Pagos de clientes -->
+        <record id="account.menu_action_account_payments_receivable" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[ref('group_show_payments_customer_menu')])]"/>
+        </record>
+        <!-- Libro mayor-->
+        <record id="account_reports.menu_action_account_report_general_ledger" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[ref('group_show_ledger_menu')])]"/>
+        </record>        
+        <record id="account.menu_action_account_moves_ledger_general" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[ref('group_show_ledger_menu')])]"/>
+        </record>
+        <!-- Vencidos por cobrar -->
+        <record id="account_reports.menu_action_account_report_aged_receivable" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[ref('group_show_accounts_receivable_menu')])]"/>
+        </record>
+        <!-- Vencidos por pagar -->
+        <record id="account_reports.menu_action_account_report_aged_payable" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[ref('group_show_accounts_pay_menu')])]"/>
+        </record>             
+    </data>
+</odoo>
