@@ -17,7 +17,13 @@
             <field name="category_id" ref="base.module_category_accounting"/>
             <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el menú "Contabilidad". Creado por: Techne.</field>
         </record>
-         <record id="group_show_payments_customer_menu" model="res.groups">
+        <record id="group_show_reports_menu" model="res.groups">
+            <field name="name">Mostrar menú informes</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el menú "Informes ". Creado por: Techne.</field>
+        </record>
+        <!-- Grupos para visualizar sub menús -->
+        <record id="group_show_payments_customer_menu" model="res.groups">
             <field name="name">Mostrar menú clientes pagos</field>
             <field name="category_id" ref="base.module_category_accounting"/>
             <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el sub menú "Pagos" del menú "Clientes". Creado por: Techne.</field>
@@ -37,7 +43,7 @@
             <field name="category_id" ref="base.module_category_accounting"/>
             <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el sub menú "Vencidos por pagar" del menú "Informes". Creado por: Techne.</field>
         </record>
-
+      
               
         <!-- *********Elementos de menú************* -->
         <!-- Menú -->
@@ -53,6 +59,11 @@
         <record id="account.menu_finance_entries" model="ir.ui.menu">
             <field name="groups_id" eval="[(6,0,[ref('group_show_accounting_menu')])]"/>
         </record>
+        <!-- Informes -->
+        <record id="account.account_report_folder" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[ref('group_show_reports_menu')])]"/>
+        </record>
+
 
         <!-- Sub Menú -->
         <!-- Pagos de clientes -->
@@ -73,6 +84,20 @@
         <!-- Vencidos por pagar -->
         <record id="account_reports.menu_action_account_report_aged_payable" model="ir.ui.menu">
             <field name="groups_id" eval="[(6,0,[ref('group_show_accounts_pay_menu')])]"/>
-        </record>             
+        </record>
+
+        <!-- Menús adicionales -->
+        <!-- Menú adicional "Contabilidad Oxford" -->
+        <menuitem id="account.account_oxford" name="Contabilidad Oxford" parent="account_accountant.menu_accounting" sequence="3" groups="group_show_ledger_menu"/>
+        <!-- Sub-menú para el menú adicional "Contabilidad Oxford" -->  
+        <menuitem id="account.menu_action_account_moves_ledger_general" parent="account.account_oxford" sequence="1"/>
+
+        <!-- Menú adicional "Informes Oxford" -->
+        <menuitem id="account.account_report_oxford" name="Informes Oxford" parent="account_accountant.menu_accounting" sequence="4" groups="group_show_accounts_receivable_menu,group_show_accounts_pay_menu,group_show_ledger_menu"/>
+        <!-- Sub-menú para el menú adicional "Informes Oxford" -->        
+        <menuitem id="account_reports.menu_action_account_report_aged_receivable" parent="account.account_report_oxford" sequence="1"/>
+        <menuitem id="account_reports.menu_action_account_report_aged_payable" parent="account.account_report_oxford" sequence="2"/>
+        <menuitem id="account_reports.menu_action_account_report_general_ledger" parent="account.account_report_oxford" sequence="3"/>
+         
     </data>
 </odoo>
