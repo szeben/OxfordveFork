@@ -11,7 +11,7 @@
         2) Informes Oxford.
       
         El módulo crea 8 grupos de usuarios, que permite cada uno respectivamente:
-        1) Visualizar el menú "Clientes.
+        1) Visualizar el menú "Clientes".
         2) Visualizar el menú "Proveedores".
         3) Visualizar el menú "Contabilidad".
         4) visualizar el menú "Informes ".       

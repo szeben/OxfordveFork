@@ -24,22 +24,22 @@
         </record>
         <!-- Grupos para visualizar sub menús -->
         <record id="group_show_payments_customer_menu" model="res.groups">
-            <field name="name">Mostrar menú clientes pagos</field>
+            <field name="name">Mostrar sub menú clientes pagos</field>
             <field name="category_id" ref="base.module_category_accounting"/>
             <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el sub menú "Pagos" del menú "Clientes". Creado por: Techne.</field>
         </record>
         <record id="group_show_ledger_menu" model="res.groups">
-            <field name="name">Mostrar menú libro mayor</field>
+            <field name="name">Mostrar sub menú libro mayor</field>
             <field name="category_id" ref="base.module_category_accounting"/>
             <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el sub menú "Libro Mayor" del menú "Contabilidad" e "Informe". Creado por: Techne.</field>
         </record>
         <record id="group_show_accounts_receivable_menu" model="res.groups">
-            <field name="name">Mostrar menú vencido por cobrar</field>
+            <field name="name">Mostrar sub menú vencido por cobrar</field>
             <field name="category_id" ref="base.module_category_accounting"/>
             <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el sub menú "Vencidos por cobrar" del menú "Informes". Creado por: Techne.</field>
         </record>
         <record id="group_show_accounts_pay_menu" model="res.groups">
-            <field name="name">Mostrar menú vencido por pagar</field>
+            <field name="name">Mostrar sub menú vencido por pagar</field>
             <field name="category_id" ref="base.module_category_accounting"/>
             <field name="comment">Los usuarios pertenecientes a este grupo, son los únicos que pueden visualizar el sub menú "Vencidos por pagar" del menú "Informes". Creado por: Techne.</field>
         </record>
