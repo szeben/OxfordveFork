@@ -60,7 +60,7 @@
             <field name="groups_id" eval="[(6,0,[ref('group_show_accounting_menu')])]"/>
         </record>
         <!-- Informes -->
-        <record id="account.account_report_folder" model="ir.ui.menu">
+        <record id="account.menu_finance_reports" model="ir.ui.menu">
             <field name="groups_id" eval="[(6,0,[ref('group_show_reports_menu')])]"/>
         </record>
 
