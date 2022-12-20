@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_show_accounts_receivable_menu,access.show.accounts.receivable.menu,account_accountant.model_account_fiscal_year,show_account_menu.group_show_accounts_receivable_menu,1,0,0,0
+access_show_accounts_pay_menu,access.show.accounts.pay.menu,account_accountant.model_account_fiscal_year,show_account_menu.group_show_accounts_pay_menu,1,0,0,0
+
