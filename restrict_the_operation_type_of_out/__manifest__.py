@@ -25,7 +25,14 @@
     'depends': ['base', 'stock', 'account', 'branch'],
 
     # always loaded
-    'data': [        
-        'security/restringir_operaciones_envio.xml',       
-    ], 
+    'data': [
+        # 'security/ir.model.access.csv',
+        'security/restringir_operaciones_envio.xml',
+        # 'views/views.xml',
+        # 'views/templates.xml',
+    ],
+    # only loaded in demonstration mode
+    'demo': [
+        'demo/demo.xml',
+    ],
 }
