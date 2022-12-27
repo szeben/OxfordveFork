@@ -14,15 +14,3 @@ class JournalType(models.Model):
         string="¿Es de tipo inversión?",
         default = False
     )
-
-    is_sale_point_type = fields.Boolean(
-        string="¿Es de tipo punto de venta?",
-        default = False
-    )
-       
-    
-   
-
-
-    
-

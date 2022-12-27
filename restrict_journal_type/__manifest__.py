@@ -4,17 +4,16 @@
 
     'summary': """
         Restringe la gestión de los diarios de acuerdo a su clasificación 
-        como custodio, inversión o punto de venta.""",
+        como custodio ó inversión.""",
 
     'description': """
        Incluye una clasificación para los diarios, identificándolos como 
-       “Custodio”, “Inversión” o "Punto de venta", a fin de que sólo ciertos usuarios puedan 
+       “Custodio” ó “Inversión”, a fin de que sólo ciertos usuarios puedan 
        gestionar dichos diarios.
 
-       Agrega 3 grupo de usuario:
+       Agrega 2 grupo de usuario:
        1) Grupo para gestionar diarios de tipo Cutodio.
        2) Grupo para gestionar diarios de tipo Inversión.
-       3) Grupo para gestionar diarios de tipo Punto de venta.
 
     """,
 

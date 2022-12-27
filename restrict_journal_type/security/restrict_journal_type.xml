@@ -17,9 +17,9 @@
             <field name="groups" eval="[(4, ref('restrict_journal_type.group_investment_type_journal'))]"/>
             <field name="domain_force">[('is_investment_type','=',True)]</field>
             <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>            
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>            
         </record>
 
         <!-- Diario de tipo custodio -->
@@ -37,30 +37,22 @@
             <field name="groups" eval="[(4, ref('restrict_journal_type.group_custodian_type_journal'))]"/>
             <field name="domain_force">[('is_custodian_type','=',True)]</field>
             <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>            
-        </record>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>          
+        </record>   
 
-        <!-- Diario de tipo punto de venta -->
-        <!-- Grupo -->
-        <record id="group_sale_point_type_journal" model="res.groups">
-            <field name="name">Gestionar diarios de tipo punto de venta</field>
-            <field name="category_id" ref="base.module_category_accounting"/>
-            <field name="comment">Los usuarios pertenecientes a este grupo, sólo pueden gestionar diarios de tipo punto de venta. Creado por: Techne.</field>
-        </record>
-
+        <!-- Diario sin tipo asignado -->
         <!-- Regla de registro -->
-        <record id="rule_sale_point_type_journal" model="ir.rule">
-            <field name="name">Gestionar diarios de tipo punto de venta</field>
+        <record id="rule_untyped_journal" model="ir.rule">
+            <field name="name">Gestionar diarios sin tipo asigando.</field>
             <field name="model_id" ref="account.model_account_journal"/>
-            <field name="groups" eval="[(4, ref('restrict_journal_type.group_sale_point_type_journal'))]"/>
-            <field name="domain_force">[('is_sale_point_type','=',True)]</field>
+            <field name="groups" eval="[(4, ref('account.group_account_invoice')),(4, ref('account.group_account_readonly'))]"/>
+            <field name="domain_force">[('is_custodian_type','=',False),('is_investment_type','=',False)]</field>
             <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>            
-        </record>
-       
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>          
+        </record> 
     </data>
 </odoo>

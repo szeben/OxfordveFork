@@ -8,7 +8,6 @@
         <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='company_id']" position="after">
           <field name="is_custodian_type"/>
           <field name="is_investment_type"/>
-          <field name="is_sale_point_type"/>
         </xpath>
       </field>      
     </record>
