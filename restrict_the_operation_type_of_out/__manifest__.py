@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Restringir el tipo de operación de salida",
+    'name': "Restringir los tipos de operaciones de entrada y salida",
 
     'summary': """
-        Restricciones de Operaciones de tipo Envio""",
+        Restricciones de Operaciones de tipo Envio y Entrada. """,
 
     'description': """
-        Restringe la posibilidad de crear operaciones de inventario de tipo envio, con excepcion de un grupo de usuario especial.
+        Restringe la posibilidad de crear operaciones de inventario de tipo envio y salida.
     """,
 
     'author': "Techne Studio IT & Consulting",
@@ -16,7 +16,7 @@
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Inventory/Restringir el tipo de operación de salida ',
+    'category': 'Inventory/Restringir los tipos de operaciones entrada y salida.',
     'version': '1.0',
 
     'license': 'Other proprietary',
