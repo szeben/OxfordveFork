@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_investment_type_journal,access.investment.type.journal,model_account_journal,restrict_journal_type.group_investment_type_journal,1,0,0,0
+access_custodian_type_journal,access.custodian.type.journal,model_account_journal,restrict_journal_type.group_custodian_type_journal,1,0,0,0

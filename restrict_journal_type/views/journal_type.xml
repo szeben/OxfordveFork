@@ -1,0 +1,15 @@
+<odoo>
+  <data>
+    <record id="account_view_account_journal_form_inherited" model="ir.ui.view">
+      <field name="name">account.view.account.journal.form.inherited</field>
+      <field name="model">account.journal</field>
+      <field name="inherit_id" ref="account.view_account_journal_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='company_id']" position="after">
+          <field name="is_custodian_type"/>
+          <field name="is_investment_type"/>
+        </xpath>
+      </field>      
+    </record>
+  </data>
+</odoo>
