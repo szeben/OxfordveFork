@@ -197,6 +197,7 @@
             <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada'))]"/>
         </record>
 
+       
         <!-- 3) Operaciones de entrada y salida -->
 
         <!-- Grupos -->       
@@ -213,7 +214,7 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">['|','&amp;',('code', '=','incoming'),('sequence_code','=','IN'),'&amp;',('code','=','outgoing'),('sequence_code','=','OUT')]</field>
+            <field name="domain_force">[('code','!=','internal'),('sequence_code','!=','INT')]</field>
             <field name="model_id" ref="stock.model_stock_picking_type"/> 
             <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>       
         </record>
@@ -224,7 +225,7 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">['|','&amp;',('code', '!=', 'incoming'),('sequence_code', '!=', 'IN'),'&amp;',('code', '!=', 'outgoing'),('sequence_code', '!=', 'OUT')]</field>
+            <field name="domain_force">[('code','=','internal'),('sequence_code','=','INT')]</field>
             <field name="model_id" ref="stock.model_stock_picking_type"/>
             <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
         </record>
@@ -235,7 +236,7 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">['|','&amp;',('picking_id.picking_type_id.code', '!=', 'incoming'),('picking_id.picking_type_id.sequence_code', '!=', 'IN'),'&amp;',('picking_id.picking_type_id.code', '!=', 'outgoing'),('picking_id.picking_type_id.sequence_code', '!=', 'OUT')]</field>
+            <field name="domain_force">[('picking_id.picking_type_id.code','=','internal'),('picking_id.picking_type_id.sequence_code','=', 'INT')]</field>
             <field name="model_id" ref="stock.model_stock_move_line"/>
             <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
         </record>
@@ -246,7 +247,7 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">['|','&amp;',('picking_id.picking_type_id.code','=', 'incoming'),('picking_id.picking_type_id.sequence_code','=','IN'),'&amp;',('picking_id.picking_type_id.code','=','outgoing'),('picking_id.picking_type_id.sequence_code','=','OUT')]</field>
+            <field name="domain_force">[('picking_id.picking_type_id.code','!=', 'internal'),('picking_id.picking_type_id.sequence_code','!=','INT')]</field>
             <field name="model_id" ref="stock.model_stock_move_line"/>
             <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
         </record>
@@ -257,7 +258,7 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">['|','&amp;',('picking_id.picking_type_id.code', '!=', 'incoming'), ('picking_id.picking_type_id.sequence_code', '!=', 'IN'),'&amp;',('picking_id.picking_type_id.code','!=','outgoing'),('picking_id.picking_type_id.sequence_code','!=','OUT')]</field>
+            <field name="domain_force">[('picking_id.picking_type_id.code','=','internal'),('picking_id.picking_type_id.sequence_code','=','INT')]</field>
             <field name="model_id" ref="stock.model_stock_move"/>
             <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
         </record>
@@ -268,7 +269,7 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">['|','&amp;',('picking_id.picking_type_id.code','=', 'incoming'),('picking_id.picking_type_id.sequence_code','=', 'IN'),'&amp;',('picking_id.picking_type_id.code','=','outgoing'),('picking_id.picking_type_id.sequence_code','=','OUT')]</field>
+            <field name="domain_force">[('picking_id.picking_type_id.code','!=','internal'),('picking_id.picking_type_id.sequence_code','!=','INT')]</field>
             <field name="model_id" ref="stock.model_stock_move"/>
             <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
         </record>
@@ -279,7 +280,7 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">['|','&amp;',('picking_type_id.code','!=','incoming'),('picking_type_id.sequence_code','!=','IN'),'&amp;',('picking_id.picking_type_id.code','!=','outgoing'),('picking_id.picking_type_id.sequence_code','!=','OUT')]</field>
+            <field name="domain_force">[('picking_type_id.code','=','internal'),('picking_type_id.sequence_code','=','INT')]</field>
             <field name="model_id" ref="stock.model_stock_picking"/>
             <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
         </record>
@@ -290,7 +291,7 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="1"/>
-            <field name="domain_force">['|','&amp;',('picking_type_id.code','=','incoming'), ('picking_type_id.sequence_code','=','IN'),'&amp;',('picking_id.picking_type_id.code','=','outgoing'),('picking_id.picking_type_id.sequence_code','=','OUT')]</field>
+            <field name="domain_force">[('picking_type_id.code','!=','internal'),('picking_type_id.sequence_code','!=','INT')]</field>
             <field name="model_id" ref="stock.model_stock_picking"/>
             <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
         </record>

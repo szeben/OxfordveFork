@@ -6,7 +6,7 @@
         Restricciones de Operaciones de tipo Envio y Entrada. """,
 
     'description': """
-        Restringe la posibilidad de crear operaciones de inventario de tipo envio y salida.
+        Restringe la posibilidad de crear operaciones de inventario de tipo entrada y salida.
     """,
 
     'author': "Techne Studio IT & Consulting",
@@ -27,7 +27,7 @@
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'security/restringir_operaciones_envio.xml',
+        'security/restrict_the_operation_type_of_out_and_in.xml',
         # 'views/views.xml',
         # 'views/templates.xml',
     ],
