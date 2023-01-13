@@ -197,7 +197,107 @@
             <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada'))]"/>
         </record>
 
-        <!-- 3) Restricción del botón validación en el formulario de operación de transferencia interna -->
+       
+        <!-- 3) Operaciones de entrada y salida -->
+
+        <!-- Grupos -->       
+        <record id="group_restringir_operaciones_de_entrada_salida" model="res.groups">
+            <field name="name">Restringir operaciones de entrada y salida</field>
+            <field name="category_id" ref="base.module_category_inventory_inventory"/>
+            <field name="comment">Realizar ingreso o salida de mercancía a menos que sea por una orden de compra o venta respectivamente.</field>
+        </record>       
+
+        <!-- Reglas de registro -->    
+        <record id="restrict_stock_picking_type_in_out" model="ir.rule">
+            <field name="name">Regla para restringir tipo de operación de entrada y salida</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[('code','!=','internal'),('sequence_code','!=','INT')]</field>
+            <field name="model_id" ref="stock.model_stock_picking_type"/> 
+            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>       
+        </record>
+
+        <record id="only_create_stock_picking_type_internal" model="ir.rule">
+            <field name="name">Regla para crear tipo de operación sólo transferencia interna</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[('code','=','internal'),('sequence_code','=','INT')]</field>
+            <field name="model_id" ref="stock.model_stock_picking_type"/>
+            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
+        </record>
+
+        <record id="only_create_stock_move_line_internal" model="ir.rule">
+            <field name="name">Regla para crear movimiento de una linea de stock sólo de tipo interno</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[('picking_id.picking_type_id.code','=','internal'),('picking_id.picking_type_id.sequence_code','=', 'INT')]</field>
+            <field name="model_id" ref="stock.model_stock_move_line"/>
+            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
+        </record>
+
+        <record id="only_create_stock_move_line_incoming_outgoing" model="ir.rule">
+            <field name="name">Regla para restringir movimiento de una linea de stock de tipo entrada y salida</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[('picking_id.picking_type_id.code','!=', 'internal'),('picking_id.picking_type_id.sequence_code','!=','INT')]</field>
+            <field name="model_id" ref="stock.model_stock_move_line"/>
+            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
+        </record>
+
+        <record id="only_create_stock_move_internal" model="ir.rule">
+            <field name="name">Regla para crear movimientos de stock solo de tipo interno</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[('picking_id.picking_type_id.code','=','internal'),('picking_id.picking_type_id.sequence_code','=','INT')]</field>
+            <field name="model_id" ref="stock.model_stock_move"/>
+            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
+        </record>
+
+        <record id="only_create_stock_move_in_out" model="ir.rule">
+            <field name="name">Regla para restringir movimientos de stock de tipo entrada y salida</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[('picking_id.picking_type_id.code','!=','internal'),('picking_id.picking_type_id.sequence_code','!=','INT')]</field>
+            <field name="model_id" ref="stock.model_stock_move"/>
+            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
+        </record>
+
+        <record id="only_create_stock_picking_internal" model="ir.rule">
+            <field name="name">Regla para crear operaciones transferencias internas</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[('picking_type_id.code','=','internal'),('picking_type_id.sequence_code','=','INT')]</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
+        </record>
+
+        <record id="only_create_stock_picking_incoming_outgoing" model="ir.rule">
+            <field name="name">Regla para restringir operaciones de entrada y salida</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="domain_force">[('picking_type_id.code','!=','internal'),('picking_type_id.sequence_code','!=','INT')]</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="groups" eval="[Command.link(ref('group_restringir_operaciones_de_entrada_salida'))]"/>
+        </record>
+
+
+        <!-- 4) Restricción del botón validación en el formulario de operación de transferencia interna -->
 
         <!-- Grupos -->       
         <record id="group_restringir_validacion_transferencia_interna" model="res.groups">
