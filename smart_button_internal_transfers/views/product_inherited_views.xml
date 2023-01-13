@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        
+
+    <record model="ir.ui.view" id="view_product_form_inherited">
+        <field name="name">product.template.form.inherited</field>
+        <field name="model">product.template</field> 
+        <field name="inherit_id" ref="product.product_template_form_view"/>          
+        <field name="arch" type="xml">
+            <xpath expr="sheet/div[@name='button_box']/button[@name='open_pricelist_rules']" position="after">
+                <button type="object" name="action_view_transf_internas" 
+                        class="oe_stat_button" icon="fa-long-arrow-down" >
+                    
+                        <div class="o_field_widget o_stat_info mr4">
+                            <span class="o_stat_text">Interno:</span>
+                            <span class="o_stat_value">
+                                <field name="internal_moves" modifiers="{'readonly': true}"/>
+                            </span>
+                        </div>
+                </button>    
+            </xpath>
+        </field>            
+    </record>  
+        
+
+        
+        
+
+    </data>
+</odoo>
+
+
+
