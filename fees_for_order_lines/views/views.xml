@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!-- This record is for inherit sale.order to add pricelist_id inside sale.order.line (sale.order contains sale.order.line) -->
+    <record id="sale_view_order_form_inherited" model="ir.ui.view">
+      <field name="name">sale.order.form.inherited</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//sheet//notebook//page[1]//field[@widget='section_and_note_one2many']//tree[1]//field[@name='price_unit']" position="after">
+            <field name="pricelist_id" 
+              attrs="{'readonly': [('state', 'in', ('sale','done'))], 'tracking': True}" 
+              options="{'no_open':True,'no_create': True}" 
+            />
+        </xpath>
+      </field>
+    </record>
+
+    <record id="product_pricelist_view_form_inherited" model="ir.ui.view">
+      <field name="name">product.pricelist.form.inherited</field>
+      <field name="model">product.pricelist</field>
+      <field name="groups_id" eval="[(4, ref('__export__.res_groups_72_45e737e5'))]"/>
+      <field name="inherit_id" ref="product.product_pricelist_view"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='company_id']" position="after">
+            <field name="requires_approval"/>
+        </xpath>
+      </field>
+    </record>
+
+  </data>
+</odoo>
