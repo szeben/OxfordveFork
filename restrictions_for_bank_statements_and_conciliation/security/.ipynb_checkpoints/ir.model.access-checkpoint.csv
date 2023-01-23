@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+romper_conciliacion,Permitir romper conciliación,account.model_account_unreconcile,group_romper_conciliaciones_extractos_bancarios,1,1,1,1
+account.access_account_unreconcile,access.account.unreconcile,account.model_account_unreconcile,account.group_account_user,1,1,0,0
