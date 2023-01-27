@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_commission_manager,commission.manager,commissions.model_commission_for_sale,commissions.group_commission_manager,1,1,1,1
+access_commission_user,commission.user,commissions.model_commission_for_sale,commissions.group_commission_user,1,0,0,0
+access_product_template_commission_line_manager,product.template.commission.line.manager,commissions.model_agrupated_product,commissions.group_commission_manager,1,1,1,1
+access_product_template_commission_line_user,product.template.commission.line.user,commissions.model_agrupated_product,commissions.group_commission_user,1,0,0,0
