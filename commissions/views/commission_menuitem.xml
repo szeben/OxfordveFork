@@ -16,13 +16,14 @@
 
         <record id="commission_product_action" model="ir.actions.act_window">
             <field name="name">Comisiones por ventas</field>
-            <!-- <field name="type">ir.actions.act_window</field> -->
             <field name="res_model">sale.order.line</field>
             <field name="view_mode">pivot</field>
             <field name="views"> [[False, "pivot"]]</field>
             <field name="view_id" ref="commission_report_view_pivot"></field>
-            <!--  <field name="search_view_id" ref="commissions.commission_report_view_pivot"/> -->
         </record>
+
+
+        
 
         <menuitem id="menu_commission_root" name="Comisiones" sequence="1"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />

@@ -10,7 +10,7 @@
 
                     <field name="categ_id" type="row" />
                     <field name="date" interval="month" type="row" />
-                    <field name="team_id" type="col" />
+                    <field name="team_id" type="col"/>
                     <field name="total_vendidos" type="measure" />
                     <field name="total_amount_commissions" type="measure" />
                 </pivot>
