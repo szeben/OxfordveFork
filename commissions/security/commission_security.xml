@@ -17,8 +17,7 @@
             <field name="category_id" ref="commissions.module_category_commission" />
             <field name="implied_ids" eval="[(4, ref('commissions.group_commission_user'))]" />
             <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]" />
-            <field name="comment">El administrador puede gestionar las comisiones. Creado por:
-                Techne.</field>
+            <field name="comment">El administrador puede gestionar las comisiones. Creado por: Techne.</field>
         </record>
 
         <record id="base.default_user" model="res.users">

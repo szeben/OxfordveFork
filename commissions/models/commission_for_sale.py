@@ -63,31 +63,35 @@ class CommissionForSale(models.Model):
                  "bono_base_factor_divisor", "cant_min_base_factor_multiplicador", "bono_base_factor_extra")
     def _compute_cant_min_base_otra_com(self):
 
-        if self.commission_type == 'basada_en_otra_comision':
+        for line in self:
 
-            c = self.basado_en
-            if c.commission_type == 'fija':
-                self.cant_min_base_otra_com = ((c.cant_minima_base / self.cant_min_base_factor_divisor) *
-                                               self.cant_min_base_factor_multiplicador) + self.cant_min_base_factor_extra
-            else:
-                self.cant_min_base_otra_com = ((c.cant_min_base_otra_com / self.cant_min_base_factor_divisor) *
-                                               self.cant_min_base_factor_multiplicador) + self.cant_min_base_factor_extra
+            if line.commission_type == 'basada_en_otra_comision':
+
+                c = line.basado_en
+                if c.commission_type == 'fija':
+                    line.cant_min_base_otra_com = ((c.cant_minima_base / line.cant_min_base_factor_divisor) *
+                                                line.cant_min_base_factor_multiplicador) + line.cant_min_base_factor_extra
+                else:
+                    line.cant_min_base_otra_com = ((c.cant_min_base_otra_com / self.cant_min_base_factor_divisor) *
+                                                line.cant_min_base_factor_multiplicador) + line.cant_min_base_factor_extra
 
     @api.depends("product_id", "name", "commission_type", "bono_base", "cant_min_base_otra_com", "basado_en",
                  "cant_min_base_factor_divisor", "cant_min_base_factor_multiplicador", "cant_min_base_factor_extra",
                  "bono_base_factor_divisor", "bono_base_factor_multiplicador", "bono_base_factor_extra")
     def _compute_bono_base_otra_com(self):
 
-        if self.commission_type == 'basada_en_otra_comision':
+        for line in self:
 
-            c = self.basado_en
-            if c.commission_type == 'fija':
-                self.bono_base_otra_com = ((c.bono_base / self.bono_base_factor_divisor) *
-                                           self.bono_base_factor_multiplicador) + self.bono_base_factor_extra
+            if line.commission_type == 'basada_en_otra_comision':
 
-            else:
-                self.bono_base_otra_com = ((c.bono_base_otra_com / self.bono_base_factor_divisor) *
-                                           self.bono_base_factor_multiplicador) + self.bono_base_factor_extra
+                c = line.basado_en
+                if c.commission_type == 'fija':
+                    line.bono_base_otra_com = ((c.bono_base / line.bono_base_factor_divisor) *
+                                            line.bono_base_factor_multiplicador) + line.bono_base_factor_extra
+
+                else:
+                    line.bono_base_otra_com = ((c.bono_base_otra_com / line.bono_base_factor_divisor) *
+                                            line.bono_base_factor_multiplicador) + line.bono_base_factor_extra
 
 
 class AgrupatedProduct(models.Model):
@@ -163,13 +167,18 @@ class CrmTeamInherit(models.Model):
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     total_commission = fields.Float(string="Total comisión del vendedor")
 
+class AccountMoveLineInherit(models.Model):
+    _inherit = 'account.move.line'
+    commission_id = fields.Many2one('commission.for.sale', string="Comisión")
+    team_id = fields.Many2one(related='move_id.team_id', string="Equipo de ventas", readonly=True, store=True)
+    payment_state = fields.Selection(related='move_id.payment_state', string="Estado del pago", readonly=True, store=True)
 
 class SaleOrderLineInherit(models.Model):
     _inherit = 'sale.order.line'
 
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     categ_id = fields.Many2one(related='product_id.categ_id', string="Categoría del producto", readonly=True, store=True)
-    team_id = fields.Many2one(related='order_id.team_id', string="Equipo de ventas", readonly=True, store=True, domain="[('x_studio_many2one_field_a2jVA.iddddd', '=', False)]")
+    team_id = fields.Many2one(related='order_id.team_id', string="Equipo de ventas", readonly=True, store=True)
     quantity = fields.Float(string="cantidad facturada", store=True)
     date = fields.Date(string="Fecha de la factura", readonly=True)
     total_vendidos = fields.Float(compute="_compute_total_vendidos", string="Total vendidos", store=True)
@@ -186,9 +195,16 @@ class SaleOrderLineInherit(models.Model):
                 for f in v.invoice_ids:
                     if f.state == 'posted' and f.move_type == 'out_invoice':
                         for line_f in f.invoice_line_ids:
-                            if line_f.product_id.id == line.product_id.id:
+                            if line_f.product_id.id == line.product_id.id:                                
                                 line.date = f.invoice_date
-                                line.quantity = line_f.quantity
+                                if line_f.product_uom_id == line_f.product_id.uom_id:
+                                    cant_f = line_f.quantity                
+                                elif line_f.product_uom_id.uom_type == 'bigger':
+                                    cant_f = line_f.quantity * ( line_f.product_uom_id.factor_inv / line_f.product_id.uom_id.factor_inv )
+                                elif line_f.product_uom_id.uom_type == 'smaller' or line_f.product_uom_id.uom_type == 'reference':
+                                    cant_f = line_f.quantity * line_f.product_id.uom_id.factor
+
+                                line.quantity = cant_f
                                 line.total_vendidos = line.total_vendidos + line.quantity
 
     @api.depends("total_vendidos", "date", "invoice_lines", "invoice_status", "product_id", "commission_id", "product_id.commission_ids", "product_id.commission_id")
