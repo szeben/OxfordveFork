@@ -27,11 +27,9 @@
             <field name="res_model">account.move.line</field>
             <field name="view_mode">tree</field>
             <field name="views"> [[False, "tree"]]</field>
-            <field name="view_id" ref="account_move_line_payment_tree"></field>
+            <field name="view_id" ref="account.view_move_line_tree"></field>
         </record>
 
-
-        
 
         <menuitem id="menu_commission_root" name="Comisiones" sequence="1"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />

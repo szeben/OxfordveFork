@@ -102,46 +102,7 @@
                     </field>
                 </tree>
             </field>
-        </record>
-
-        <record id="account_move_line_payment_tree" model="ir.ui.view">
-            <field name="name">account.move.line.payment.tree</field>
-            <field name="model">account.move.line</field>
-            <field name="arch" type="xml">
-                <tree string="Cobranzas realizadas" create="0" edit="0" sample="1">
-                    <field name="date" optional="show"/>
-                    <field name="branch_id"/>
-                    <field name="team_id"/>
-                    <field name="company_id" groups="base.group_multi_company"/>
-                    <field name="journal_id" options="{&quot;no_open&quot;:True}"/>
-                    <field name="move_id" optional="show"/>
-                    <field name="account_id" options="{'no_open': True}" groups="account.group_account_readonly"/>
-                    <field name="partner_id" optional="show"/>
-                    <field name="statement_id" invisible="1"/>
-                    <field name="ref" optional="show"/>
-                    <field name="name" optional="show"/>
-                    <field name="analytic_account_id" groups="account.group_account_readonly" optional="show" attrs="{'readonly':[('parent_state','=','posted')]}"/>
-                    <field name="analytic_tag_ids" widget="many2many_tags" groups="analytic.group_analytic_tags" optional="hide"/>
-                    <field name="tax_ids" widget="many2many_tags" width="0.5" optional="show"/>
-                    <field name="debit" sum="Total Debit"/>
-                    <field name="credit" sum="Total Credit"/>
-                    <field name="amount_currency" groups="base.group_multi_currency" optional="hide"/>
-                    <field name="currency_id" readonly="1" groups="base.group_multi_currency" optional="hide" string="Original Currency"/>
-                    <field name="tax_tag_ids" widget="many2many_tags" width="0.5" optional="hide"/>
-                    <field name="matching_number" optional="show"/>
-                    <field name="reconcile_model_id" invisible="1"/>
-                    <field name="reconciled" invisible="1"/>
-                    <field name="date_maturity" optional="hide"/>
-                    <field name="company_currency_id" invisible="1"/>
-                    <field name="parent_state" widget="badge" decoration-success="parent_state == 'posted'" decoration-info="parent_state == 'draft'" optional="show"/>
-                    <field name="payment_id"/>
-                    <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')" decoration-success="payment_state in ('paid', 'reversed')" attrs="{'invisible': [('payment_state', 'in', ('invoicing_legacy'))]}" optional="show"/>
-                </tree>
-            </field>
-        </record>
-
-
-
+        </record>     
 
         <record id="commission_for_sale_view_form" model="ir.ui.view">
             <field name="name">commission.for.sale.view.form</field>
@@ -295,6 +256,35 @@
                 <xpath expr="//field[@name='uom_id']" position="after">
                     <field name="total_commissions" />
                 </xpath>
+            </field>
+        </record>
+
+        <record id="account_view_move_line_form" model="ir.ui.view">
+            <field name="name">account.view.move.line.form</field>
+            <field name="model">account.move.line</field>
+            <field name="mode">extension</field>
+            <field name="priority" eval="3" />
+            <field name="inherit_id" ref="account.view_move_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='statement_id']" position="after">
+                    <field name="payment_state"></field>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_view_move_line_tree_inherit" model="ir.ui.view">
+            <field name="name">account.view.move.line.tree.inherit</field>
+            <field name="model">account.move.line</field>
+            <field name="mode">extension</field>
+            <field name="priority" eval="101" />
+            <field name="inherit_id" ref="account.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_state']" position="after">
+                    <field name="payment_state"></field>
+                </xpath>
+                <!-- <xpath expr="//field[@name='branch_id']" position="attributes">
+                    <attribute name="domain">[('id', 'in', [b for b in user_id.branch_ids] )]</attribute>
+                </xpath> -->
             </field>
         </record>
 
