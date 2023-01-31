@@ -43,7 +43,7 @@
 
         <menuitem id="menu_commission_sale_report" name="Comisiones por venta"
             parent="commissions.menu_commission_report"
-            action="commissions.commission_list_action" sequence="3"
+            action="commissions.commission_product_action" sequence="3"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
         <menuitem id="menu_commission_report_cobranza_report" name="Comisiones por cobranza"

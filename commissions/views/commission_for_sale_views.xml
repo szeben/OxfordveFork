@@ -9,7 +9,7 @@
                 <pivot string="Comisiones por ventas" display_quantity="0" sample="1">
 
                     <field name="categ_id" type="row" />
-                    <field name="product_id"/>
+                    <field name="product_id" type="row"/>
                     <field name="date" interval="month" type="row" />
                     <field name="team_id" type="col"/>
                     <field name="total_vendidos" type="measure" />
@@ -139,6 +139,8 @@
                 </tree>
             </field>
         </record>
+
+
 
 
         <record id="commission_for_sale_view_form" model="ir.ui.view">
