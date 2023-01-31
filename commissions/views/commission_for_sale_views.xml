@@ -9,6 +9,7 @@
                 <pivot string="Comisiones por ventas" display_quantity="0" sample="1">
 
                     <field name="categ_id" type="row" />
+                    <field name="product_id"/>
                     <field name="date" interval="month" type="row" />
                     <field name="team_id" type="col"/>
                     <field name="total_vendidos" type="measure" />
@@ -35,9 +36,11 @@
                                 <field name="commission_type" />
                                 <field name="product_id" />
                                 <field name="categ_id" />
-                                <field name="basado_en" />
                                 <field name="cant_minima_base" />
                                 <field name="bono_base" />
+                                <field name="basado_en" />
+                                <field name="cant_min_base_otra_com" />
+                                <field name="bono_base_otra_com"/>
                                 <field name="forma_de_calculo" />
                             </tree>
                         </field>
@@ -45,6 +48,8 @@
                 </xpath>
             </field>
         </record>
+
+
 
         <record id="agrupated_product_view_form" model="ir.ui.view">
             <field name="name">agrupated.product.view.form</field>
@@ -95,6 +100,42 @@
                     </field>
                     <field name="forma_de_calculo">
                     </field>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_move_line_payment_tree" model="ir.ui.view">
+            <field name="name">account.move.line.payment.tree</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <tree string="Cobranzas realizadas" create="0" edit="0" sample="1">
+                    <field name="date" optional="show"/>
+                    <field name="branch_id"/>
+                    <field name="team_id"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="journal_id" options="{&quot;no_open&quot;:True}"/>
+                    <field name="move_id" optional="show"/>
+                    <field name="account_id" options="{'no_open': True}" groups="account.group_account_readonly"/>
+                    <field name="partner_id" optional="show"/>
+                    <field name="statement_id" invisible="1"/>
+                    <field name="ref" optional="show"/>
+                    <field name="name" optional="show"/>
+                    <field name="analytic_account_id" groups="account.group_account_readonly" optional="show" attrs="{'readonly':[('parent_state','=','posted')]}"/>
+                    <field name="analytic_tag_ids" widget="many2many_tags" groups="analytic.group_analytic_tags" optional="hide"/>
+                    <field name="tax_ids" widget="many2many_tags" width="0.5" optional="show"/>
+                    <field name="debit" sum="Total Debit"/>
+                    <field name="credit" sum="Total Credit"/>
+                    <field name="amount_currency" groups="base.group_multi_currency" optional="hide"/>
+                    <field name="currency_id" readonly="1" groups="base.group_multi_currency" optional="hide" string="Original Currency"/>
+                    <field name="tax_tag_ids" widget="many2many_tags" width="0.5" optional="hide"/>
+                    <field name="matching_number" optional="show"/>
+                    <field name="reconcile_model_id" invisible="1"/>
+                    <field name="reconciled" invisible="1"/>
+                    <field name="date_maturity" optional="hide"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="parent_state" widget="badge" decoration-success="parent_state == 'posted'" decoration-info="parent_state == 'draft'" optional="show"/>
+                    <field name="payment_id"/>
+                    <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')" decoration-success="payment_state in ('paid', 'reversed')" attrs="{'invisible': [('payment_state', 'in', ('invoicing_legacy'))]}" optional="show"/>
                 </tree>
             </field>
         </record>

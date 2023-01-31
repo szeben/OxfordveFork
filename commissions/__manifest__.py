@@ -18,9 +18,7 @@
     # for the full list
     'category': 'Sales/Comisiones',
     'version': '1.0',
-
     'license': 'Other proprietary',
-
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'sale_management', 'stock', 'account', 'branch'],
@@ -35,7 +33,6 @@
         'security/ir.model.access.csv',
         'views/commission_for_sale_views.xml',
         'views/commission_menuitem.xml',
-
     ],
 
 

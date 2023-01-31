@@ -4,7 +4,7 @@
     <data>
 
         <record model="ir.actions.act_window" id="commission_list_action">
-            <field name="name">Comisiones por ventas</field>
+            <field name="name">Comisiones</field>
             <field name="res_model">commission.for.sale</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
@@ -22,6 +22,14 @@
             <field name="view_id" ref="commission_report_view_pivot"></field>
         </record>
 
+        <record id="commission_by_payment" model="ir.actions.act_window">
+            <field name="name">Comisiones por cobranza</field>
+            <field name="res_model">account.move.line</field>
+            <field name="view_mode">tree</field>
+            <field name="views"> [[False, "tree"]]</field>
+            <field name="view_id" ref="account_move_line_payment_tree"></field>
+        </record>
+
 
         
 
@@ -35,12 +43,12 @@
 
         <menuitem id="menu_commission_sale_report" name="Comisiones por venta"
             parent="commissions.menu_commission_report"
-            action="commissions.commission_product_action" sequence="3"
+            action="commissions.commission_list_action" sequence="3"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
         <menuitem id="menu_commission_report_cobranza_report" name="Comisiones por cobranza"
             parent="commissions.menu_commission_report"
-            action="commissions.commission_list_action" sequence="4"
+            action="commissions.commission_by_payment" sequence="4"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
         <menuitem id="menu_commission_assigned_report" name="Comisiones asignadas"

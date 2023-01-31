@@ -167,6 +167,11 @@ class CrmTeamInherit(models.Model):
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     total_commission = fields.Float(string="Total comisión del vendedor")
 
+class AccountMoveLineInherit(models.Model):
+    _inherit = 'account.move.line'
+    commission_id = fields.Many2one('commission.for.sale', string="Comisión")
+    team_id = fields.Many2one(related='move_id.team_id', string="Equipo de ventas", readonly=True, store=True)
+    payment_state = fields.Selection(related='move_id.payment_state', string="Estado del pago", readonly=True, store=True)
 
 class SaleOrderLineInherit(models.Model):
     _inherit = 'sale.order.line'
