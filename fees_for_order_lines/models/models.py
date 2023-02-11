@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from odoo.tools import float_compare
 
 
 class SaleOrderLine(models.Model):
@@ -16,8 +17,6 @@ class SaleOrderLine(models.Model):
         required=True, readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]},
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]",
     )
-    order_partner_id = fields.Many2one(
-        related='order_id.partner_id', store=True, string='Customer')
 
 
     def get_price_inline(self):

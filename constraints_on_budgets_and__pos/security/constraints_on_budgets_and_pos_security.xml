@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record model="res.groups" id="group_purchase_manage_pos">
+            <field name="name">Gestionar órdenes de compra</field>
+            <field name="comment">Permite crear, editar y eliminar órdenes de compra. Creado por: Techne</field>
+            <field name="category_id" ref="base.module_category_inventory_purchase"/>
+        </record>
+
+        <record model="res.groups" id="group_purchase_confirm_pos">
+            <field name="name">Confirmar órdenes de compra</field>
+            <field name="comment">Permite realizar la confirmación de órdenes de compra. Creado por: Techne</field>
+            <field name="category_id" ref="base.module_category_inventory_purchase"/>
+        </record>
+
+        <record model="res.groups" id="group_purchase_manage_pos_bills">
+            <field name="name">Gestionar facturas de compras</field>
+            <field name="comment">Permite crear, editar y eliminar facturas de compra. Creado por: Techne</field>
+            <field name="category_id" ref="base.module_category_inventory_purchase"/>
+        </record>
+
+        <record model="res.groups" id="group_purchase_confirm_pos_bills">
+            <field name="name">Confirmar facturas de compra</field>
+            <field name="comment">Permite realizar la confirmación de facturas de compras. Creado por: Techne</field>
+            <field name="category_id" ref="base.module_category_inventory_purchase"/>
+        </record>
+
+        <!--RULES-->
+
+        <record id="account_move_only_vendors" model="ir.rule">
+            <field name="name">Accounting: only Vendors</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="domain_force">[('move_type', '=', 'in_invoice')]</field>
+            <field name="groups" eval="[(4, ref('group_purchase_manage_pos_bills')), (4, ref('group_purchase_confirm_pos_bills'))]"/>
+        </record>
+
+    </data>
+</odoo>
