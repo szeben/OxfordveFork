@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 from odoo import tools
 from odoo import models, fields, api, exceptions
 from datetime import datetime, date
@@ -70,10 +71,10 @@ class CommissionForSale(models.Model):
                 c = line.basado_en
                 if c.commission_type == 'fija':
                     line.cant_min_base_otra_com = ((c.cant_minima_base / line.cant_min_base_factor_divisor) *
-                                                line.cant_min_base_factor_multiplicador) + line.cant_min_base_factor_extra
+                                                   line.cant_min_base_factor_multiplicador) + line.cant_min_base_factor_extra
                 else:
                     line.cant_min_base_otra_com = ((c.cant_min_base_otra_com / self.cant_min_base_factor_divisor) *
-                                                line.cant_min_base_factor_multiplicador) + line.cant_min_base_factor_extra
+                                                   line.cant_min_base_factor_multiplicador) + line.cant_min_base_factor_extra
 
     @api.depends("product_id", "name", "commission_type", "bono_base", "cant_min_base_otra_com", "basado_en",
                  "cant_min_base_factor_divisor", "cant_min_base_factor_multiplicador", "cant_min_base_factor_extra",
@@ -87,11 +88,11 @@ class CommissionForSale(models.Model):
                 c = line.basado_en
                 if c.commission_type == 'fija':
                     line.bono_base_otra_com = ((c.bono_base / line.bono_base_factor_divisor) *
-                                            line.bono_base_factor_multiplicador) + line.bono_base_factor_extra
+                                               line.bono_base_factor_multiplicador) + line.bono_base_factor_extra
 
                 else:
                     line.bono_base_otra_com = ((c.bono_base_otra_com / line.bono_base_factor_divisor) *
-                                            line.bono_base_factor_multiplicador) + line.bono_base_factor_extra
+                                               line.bono_base_factor_multiplicador) + line.bono_base_factor_extra
 
 
 class AgrupatedProduct(models.Model):
@@ -167,18 +168,41 @@ class CrmTeamInherit(models.Model):
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     total_commission = fields.Float(string="Total comisión del vendedor")
 
+
 class AccountMoveLineInherit(models.Model):
     _inherit = 'account.move.line'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     team_id = fields.Many2one(related='move_id.team_id', string="Equipo de ventas", readonly=True, store=True)
     payment_state = fields.Selection(related='move_id.payment_state', string="Estado del pago", readonly=True, store=True)
+    #cobranza_id = fields.Many2one('configuration.cobranza', string="Configuración de cobranza")
+    
+    #cobranza_account_id = fields.Many2one(realated='cobranza_id.account_id', string="Cuenta de cobranza")
+
+    #account_id_domain = fields.Char(
+        #compute="_compute_account_id_domain",
+        #readonly=True,
+       # store=True,
+   # )
+
+   # @api.depends('account_id')
+   # def _compute_account_id_domain(self):
+       # print("ESTOYE N CALCULAR DOMINIO")
+        #for rec in self:
+           # list = self.env['configuration.cobranza'].search([])
+           # print("ESTA ES LA LISTAaaaaaaaaaaaaaaa", list)
+           # return {'domain': {'account_id': [('account_id', 'in', [c.account_id.id for c in list])]}}
+            #rec.account_id_domain = json.dumps([('account_id', 'in', [c.account_id.id for c in list])]
+            #)
+
 
 class SaleOrderLineInherit(models.Model):
     _inherit = 'sale.order.line'
 
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     categ_id = fields.Many2one(related='product_id.categ_id', string="Categoría del producto", readonly=True, store=True)
+
     team_id = fields.Many2one(related='order_id.team_id', string="Equipo de ventas", readonly=True, store=True)
+    # branch_id = fields.Many2one(related='order_id.branch_id', string="Ramaaaaa", readonly=True, store=True)
     quantity = fields.Float(string="cantidad facturada", store=True)
     date = fields.Date(string="Fecha de la factura", readonly=True)
     total_vendidos = fields.Float(compute="_compute_total_vendidos", string="Total vendidos", store=True)
@@ -195,12 +219,16 @@ class SaleOrderLineInherit(models.Model):
                 for f in v.invoice_ids:
                     if f.state == 'posted' and f.move_type == 'out_invoice':
                         for line_f in f.invoice_line_ids:
-                            if line_f.product_id.id == line.product_id.id:                                
+                            if line_f.product_id.id == line.product_id.id:
                                 line.date = f.invoice_date
+                                if line.order_id.team_id:
+                                    line_f.team_id = line.order_id.team_id
+                                line_f.branch_id = line.order_id.branch_id
+
                                 if line_f.product_uom_id == line_f.product_id.uom_id:
-                                    cant_f = line_f.quantity                
+                                    cant_f = line_f.quantity
                                 elif line_f.product_uom_id.uom_type == 'bigger':
-                                    cant_f = line_f.quantity * ( line_f.product_uom_id.factor_inv / line_f.product_id.uom_id.factor_inv )
+                                    cant_f = line_f.quantity * (line_f.product_uom_id.factor_inv / line_f.product_id.uom_id.factor_inv)
                                 elif line_f.product_uom_id.uom_type == 'smaller' or line_f.product_uom_id.uom_type == 'reference':
                                     cant_f = line_f.quantity * line_f.product_id.uom_id.factor
 
@@ -289,3 +317,31 @@ class SaleOrderLineInherit(models.Model):
 
                     else:
                         line.total_amount_commissions = 0
+
+
+class AccountAccountInherit(models.Model):
+    _inherit = 'account.account'
+    cobranza_id = fields.Many2one('configuration.cobranza', string="Cuenta")
+
+
+class ConfigurationCobranza(models.Model):
+    _name = "configuration.cobranza"
+    _description = "Configuración del porcentaje a pagar por las cobranzas realizadas"
+
+    name = fields.Char(string="Nombre", default=" ")
+    percentage = fields.Float(string="Porcentaje (%) de comisión", required=True)
+    account_ids = fields.Many2many('account.account', 'cobranza_id', string="Cuentas contables a considerar", required=True, domain="[('user_type_id.id', '=', 3)]")
+    
+    @api.model
+    def create(self, vals):
+        res = super(ConfigurationCobranza, self).create(vals)
+        u = self.env['configuration.cobranza'].search([])
+        if u:
+            total = len(u)
+            for i, record in enumerate(u):
+                if record:
+                    if i >= 0 and i < total-1:
+                        u[i].unlink()
+        else:
+            return
+        return res

@@ -26,10 +26,17 @@
             <field name="name">Comisiones por cobranza</field>
             <field name="res_model">account.move.line</field>
             <field name="view_mode">tree</field>
-            <field name="views"> [[False, "tree"]]</field>
-            <field name="view_id" ref="account.view_move_line_tree"></field>
+            <field name="views"> [[False, "tree", "form"]]</field>
+            <field name="view_id" ref="account_view_move_line_tree_inherit"></field>
         </record>
 
+        <record id="configuration_cobranza_action" model="ir.actions.act_window">
+            <field name="name">Configuración</field>
+            <field name="res_model">configuration.cobranza</field>
+            <field name="view_mode">form</field>
+            <field name="views"> [[False, "form"]]</field>
+            <field name="view_id" ref="res_config_settings_view_form_configuration_cobranza"></field>
+        </record>
 
         <menuitem id="menu_commission_root" name="Comisiones" sequence="1"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
@@ -46,7 +53,7 @@
 
         <menuitem id="menu_commission_report_cobranza_report" name="Comisiones por cobranza"
             parent="commissions.menu_commission_report"
-            action="commissions.commission_by_payment" sequence="4"
+            action="commissions.commission_list_action" sequence="4"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
         <menuitem id="menu_commission_assigned_report" name="Comisiones asignadas"
@@ -61,12 +68,12 @@
 
         <menuitem id="menu_commission_cobranzas_realizadas" name="Cobranzas realizadas"
             parent="commissions.menu_commission_cobranzas"
-            action="commissions.commission_list_action" sequence="7"
+            action="commissions.commission_by_payment" sequence="7"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
         <menuitem id="menu_commission_cobranzas_setting" name="Configuración"
             parent="commissions.menu_commission_cobranzas"
-            action="commissions.commission_list_action" sequence="8"
+            action="commissions.configuration_cobranza_action" sequence="8"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
     </data>

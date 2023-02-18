@@ -32,6 +32,48 @@
             <field name="groups" eval="[(4, ref('commissions.group_commission_manager'))]" />
         </record>
 
+        <record id="only_see_account_move_line_by_branch_allowed" model="ir.rule">
+            <field name="name">Permitir ver apuntes contables solo de las ramas permitidas por el usuario</field>
+            <field name="perm_read" eval="1" />
+            <field name="perm_write" eval="1" />
+            <field name="perm_create" eval="1" />
+            <field name="perm_unlink" eval="1" />
+            <field name="domain_force">['|', ('move_id.team_id.x_studio_many2one_field_a2jVA', '=', False), ('move_id.team_id.x_studio_many2one_field_a2jVA', 'in', [b.id for b in user.branch_ids])]</field>
+            <field name="model_id" ref="account.model_account_move_line" />            
+        </record>
+
+        <record id="only_see_sale_order_line_by_branch_allowed" model="ir.rule">
+            <field name="name">Permitir ver las líneas de ventas solo de las ramas permitidas por el usuario</field>
+            <field name="perm_read" eval="1" />
+            <field name="perm_write" eval="1" />
+            <field name="perm_create" eval="1" />
+            <field name="perm_unlink" eval="1" />           
+            <field name="domain_force">['|', ('order_id.team_id.x_studio_many2one_field_a2jVA', '=', False), ('order_id.team_id.x_studio_many2one_field_a2jVA', 'in', [b.id for b in user.branch_ids])]</field>
+            <field name="model_id" ref="sale.model_sale_order_line" />            
+        </record>
+
+        <!-- <record id="only_see_crm_team_by_branch_allowed" model="ir.rule">
+            <field name="name">Permitir ver equipos de ventas de las ramas permitidas por el usuario</field>
+            <field name="perm_read" eval="1" />
+            <field name="perm_write" eval="1" />
+            <field name="perm_create" eval="1" />
+            <field name="perm_unlink" eval="1" />
+            <field name="domain_force">['|', ('x_studio_many2one_field_a2jVA', '=', False), ('x_studio_many2one_field_a2jVA', 'in', [b.id for b in user.branch_ids])]</field>
+            <field name="model_id" ref="sales_team.model_crm_team" />            
+        </record> -->
+
+       <!--  <record id="only_see_account_move_line_by_branch_allowed" model="ir.rule">
+            <field name="name">Permitir ver las líneas de ventas solo de las ramas permitidas por el usuario</field>
+            <field name="perm_read" eval="1" />
+            <field name="perm_write" eval="1" />
+            <field name="perm_create" eval="1" />
+            <field name="perm_unlink" eval="1" />           
+            <field name="domain_force">['|', ('team_id.x_studio_many2one_field_a2jVA', '=', False), ('team_id.x_studio_many2one_field_a2jVA', 'in', [b.id for b in user.branch_ids])]</field>
+            <field name="model_id" ref="sale.model_sale_order_line" />            
+        </record> -->
+
+        
+
         <!-- <record id="res_product_template_commission_line_manager_rule" model="ir.rule">
             <field
         name="name">Regla para el Administrador de Comisiones de un producto</field>
