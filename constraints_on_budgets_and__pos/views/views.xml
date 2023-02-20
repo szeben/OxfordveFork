@@ -23,6 +23,27 @@
       ]"/>
     </record>
 
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'account'), ('name', '=', 'menu_finance_payables')]"/>
+        </function>
+        <value eval="{'noupdate': False}"/>
+    </function>
+
+    <record model="ir.ui.menu" id="account.menu_finance_payables">
+      <field name="groups_id" eval="[
+      (4, ref('constraints_on_budgets_and__pos.group_purchase_manage_pos_bills')),
+      (4, ref('constraints_on_budgets_and__pos.group_purchase_confirm_pos_bills'))
+      ]"/>
+    </record>
+
+     <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'account'), ('name', '=', 'menu_finance_payables')]"/>
+        </function>
+        <value eval="{'noupdate': True}"/>
+    </function>
+
     <record model="ir.ui.menu" id="account.menu_finance_receivables">
       <field name="groups_id" eval="[(6,0,[
       ref('account.group_account_readonly'),
@@ -40,6 +61,31 @@
         </xpath>
       </field>
     </record>
+
+    <record id="purchase_order_form_inherited" model="ir.ui.view">
+      <field name="name">purchase.order.form.inherited</field>
+      <field name="model">purchase.order</field>
+      <!-- <field name="groups_id" eval="[(4, ref('constraints_on_budgets_and__pos.group_purchase_manage_pos_bills'))]"/> -->
+      <field name="inherit_id" ref="purchase.purchase_order_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//header//button[@name='action_create_invoice'][2]" position="after">
+          <button name="action_create_invoice" string="Crear Factura" type="object" groups="constraints_on_budgets_and__pos.group_purchase_manage_pos_bills" class="oe_highlight" context="{'create_bill':True}" attrs="{'invisible': ['|', ('state', 'not in', ('purchase', 'done')), ('invoice_status', 'in', ('no', 'invoiced'))]}" data-hotkey="w"/>
+          <button name="action_create_invoice" string="Crear Factura" type="object" groups="constraints_on_budgets_and__pos.group_purchase_manage_pos_bills" context="{'create_bill':True}" attrs="{'invisible': ['|', '|', ('state', 'not in', ('purchase', 'done')), ('invoice_status', 'not in', ('no', 'invoiced')), ('order_line', '=', [])]}" data-hotkey="w"/>
+        </xpath>
+      </field>
+    </record>
+
+    <!-- <record id="purchase_order_form_inherited" model="ir.ui.view">
+      <field name="name">purchase.order.form.inherited</field>
+      <field name="model">purchase.order</field>
+      <field name="inherit_id" ref="purchase.purchase_order_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//header//button[@name='action_create_invoice'][2]" position="attributes">
+          <attribute name="groups">constraints_on_budgets_and__pos.group_purchase_manage_pos_bills,purchase.group_purchase_manager</attribute>
+        </xpath>
+      </field>
+    </record> -->
+
 
   </data>
 </odoo>

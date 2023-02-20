@@ -35,5 +35,49 @@
             <field name="groups" eval="[(4, ref('group_purchase_manage_pos_bills')), (4, ref('group_purchase_confirm_pos_bills'))]"/>
         </record>
 
+        <!-- Quitamos accesos de purchase/user y purchase/manager sobre purchase.order -->
+
+        <function name="write" model="ir.model.data">
+            <function name="search" model="ir.model.data">
+                <value eval="[('module', '=', 'purchase'), ('name', '=', 'access_purchase_order')]"/>
+            </function>
+            <value eval="{'noupdate': False}"/>
+        </function>
+
+        <record model="ir.model.access" id="purchase.access_purchase_order">
+            <field name="perm_read">1</field>
+            <field name="perm_write">0</field>
+            <field name="perm_create">0</field>
+            <field name="perm_unlink">0</field>
+        </record>
+
+        <function name="write" model="ir.model.data">
+            <function name="search" model="ir.model.data">
+                <value eval="[('module', '=', 'purchase'), ('name', '=', 'access_purchase_order')]"/>
+            </function>
+            <value eval="{'noupdate': True}"/>
+        </function>
+
+        <function name="write" model="ir.model.data">
+            <function name="search" model="ir.model.data">
+                <value eval="[('module', '=', 'purchase'), ('name', '=', 'access_purchase_order_manager')]"/>
+            </function>
+            <value eval="{'noupdate': False}"/>
+        </function>
+
+        <record model="ir.model.access" id="purchase.access_purchase_order_manager">
+            <field name="perm_read">1</field>
+            <field name="perm_write">0</field>
+            <field name="perm_create">0</field>
+            <field name="perm_unlink">0</field>
+        </record>
+
+        <function name="write" model="ir.model.data">
+            <function name="search" model="ir.model.data">
+                <value eval="[('module', '=', 'purchase'), ('name', '=', 'access_purchase_order_manager')]"/>
+            </function>
+            <value eval="{'noupdate': True}"/>
+        </function>
+
     </data>
 </odoo>
