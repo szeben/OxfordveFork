@@ -5,6 +5,7 @@ class SaleOrderExtendida(models.Model):
     _inherit = "sale.order"
 
     returns_count = fields.Integer(string='Cantidad de Devoluciones', compute='_compute_returns')
+    invoice_min = fields.Boolean(string="¿Existe al menos una devolución o un despacho?", compute='_get_move_type')
 
     @api.depends('picking_ids')
     def _compute_returns(self):
@@ -43,3 +44,8 @@ class SaleOrderExtendida(models.Model):
         sale_picks = self.picking_ids.filtered(lambda o: (o.picking_type_code == 'incoming' and o.location_id.usage == 'customer') or (o.picking_type_code == 'outgoing' and o.state == 'done'))
         
         return self._get_action_view_returns(sale_picks)
+
+    @api.depends('invoice_ids')
+    def _get_move_type(self):
+        min = [id for id in self.invoice_ids if id.move_type == 'out_invoice']
+        self.invoice_min = True if min else False
