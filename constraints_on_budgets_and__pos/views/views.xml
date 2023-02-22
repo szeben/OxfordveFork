@@ -1,5 +1,6 @@
 <odoo>
   <data>
+    <!-- Añadimos los siguientes grupos dentro del menú root de Compras -->
     <record model="ir.ui.menu" id="purchase.menu_purchase_root">
       <field name="groups_id" eval="[
       (4, ref('constraints_on_budgets_and__pos.group_purchase_manage_pos')),
@@ -9,6 +10,9 @@
       ]"/>
     </record>
 
+    <!-- Quitamos los grupos arriba agregados del submenú Productos dentro del módulo
+    de compras, para que no tengan acceso a los productos al menos que algún otro grupo
+    se lo permita -->
     <record model="ir.ui.menu" id="purchase.menu_purchase_products">
       <field name="groups_id" eval="[(6,0,[
       ref('purchase.group_purchase_manager'),
@@ -16,6 +20,8 @@
       ])]"/>
     </record>
 
+    <!-- Añadimso los grupos de gestionar/confirmar facturas de compras al menú root
+    de contabilidad -->
     <record model="ir.ui.menu" id="account_accountant.menu_accounting">
       <field name="groups_id" eval="[
       (4, ref('constraints_on_budgets_and__pos.group_purchase_manage_pos_bills')),
@@ -23,6 +29,7 @@
       ]"/>
     </record>
 
+    <!-- Añadimos los grupos de facturas al menú de proveedores -->
     <function name="write" model="ir.model.data">
         <function name="search" model="ir.model.data">
             <value eval="[('module', '=', 'account'), ('name', '=', 'menu_finance_payables')]"/>
@@ -44,6 +51,7 @@
         <value eval="{'noupdate': True}"/>
     </function>
 
+    <!-- Quitamos el acceso a los grupos de confirmar/gestionar facturas del submenú Clientes -->
     <record model="ir.ui.menu" id="account.menu_finance_receivables">
       <field name="groups_id" eval="[(6,0,[
       ref('account.group_account_readonly'),
@@ -51,6 +59,8 @@
       ])]"/>
     </record>
 
+    <!-- Le incluimso al botón de "Confirmar Factura" el grupo de "Confirmar facturas de compras" para
+    que los miembros puedan visualizarlo en la vista -->
     <record id="account_view_move_form_inherited" model="ir.ui.view">
       <field name="name">account.move.form.inherited</field>
       <field name="model">account.move</field>
@@ -62,10 +72,14 @@
       </field>
     </record>
 
+    <!-- Dado que no se pudo hacer lo anterior para darle permisos al botón de Crear Factura dentro
+    del módulo de compras, se crearon 2 botones con las mismas funcionalidades que la vista heredada que
+    sólo lo podran ver aquellos que pertenezcan al grupo acorde.
+    (Puede ser que al intentar modificar la permisología por grupos al botón, hubo un bloqueo por parte
+    del sistema...) -->
     <record id="purchase_order_form_inherited" model="ir.ui.view">
       <field name="name">purchase.order.form.inherited</field>
       <field name="model">purchase.order</field>
-      <!-- <field name="groups_id" eval="[(4, ref('constraints_on_budgets_and__pos.group_purchase_manage_pos_bills'))]"/> -->
       <field name="inherit_id" ref="purchase.purchase_order_form"/>
       <field name="arch" type="xml">
         <xpath expr="//header//button[@name='action_create_invoice'][2]" position="after">
@@ -74,17 +88,6 @@
         </xpath>
       </field>
     </record>
-
-    <!-- <record id="purchase_order_form_inherited" model="ir.ui.view">
-      <field name="name">purchase.order.form.inherited</field>
-      <field name="model">purchase.order</field>
-      <field name="inherit_id" ref="purchase.purchase_order_form"/>
-      <field name="arch" type="xml">
-        <xpath expr="//header//button[@name='action_create_invoice'][2]" position="attributes">
-          <attribute name="groups">constraints_on_budgets_and__pos.group_purchase_manage_pos_bills,purchase.group_purchase_manager</attribute>
-        </xpath>
-      </field>
-    </record> -->
 
 
   </data>

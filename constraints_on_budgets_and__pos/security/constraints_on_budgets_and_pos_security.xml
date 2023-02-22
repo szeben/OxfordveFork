@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-    
+
+        <!-- Creación de los grupos del módulo -->
         <record model="res.groups" id="group_purchase_manage_pos">
             <field name="name">Gestionar órdenes de compra</field>
             <field name="comment">Permite crear, editar y eliminar órdenes de compra. Creado por: Techne</field>
@@ -27,7 +28,8 @@
         </record>
 
         <!--RULES-->
-
+        <!-- Regla para los registros de "Gestionar facturas de compras" y "Confirmar facturas de compra"
+        para que solo puedan modificar/acceder/eliminar facturas únicamente de proveedores -->
         <record id="account_move_only_vendors" model="ir.rule">
             <field name="name">Accounting: only Vendors</field>
             <field name="model_id" ref="account.model_account_move"/>

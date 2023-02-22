@@ -11,7 +11,7 @@
     autorizados.
     """,
 
-    'author': "Techne Studio IT &amp; Consulting",
+    'author': "Techne Studio IT & Consulting",
     'website': "https://technestudioit.com/",
 
     # Categories can be used to filter modules in modules listing

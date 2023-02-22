@@ -18,7 +18,6 @@ class Users(models.Model):
             'Gestionar Proveedores',
             'Gestionar Clientes'
         ]
-        print('vals_list---->', vals_list)
         for val in set(map(lambda i: f"in_group_{i}", self.env['res.groups'].search([('name', 'in', list_groups)]).ids)).intersection(set(vals_list[0])):
             if vals_list[0].get(val) == True:
                 vals_list[0].update({
@@ -76,8 +75,6 @@ class Users(models.Model):
                     f"in_group_" + str(self.env['res.groups'].search([('name', '=', 'Creación de contactos')]).ids[0]): False
                 })
 
-        print('si esta pasando por aqui o no?')
-        print(self, values)
         res = super(Users, self).write(values)
         if 'company_id' in values:
             for user in self:
@@ -118,13 +115,11 @@ class Groups(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        print('aja', self, vals_list)
         if vals_list:
             if 'name' in vals_list[0] and vals_list[0].get('name') == 'Usuario Interno 2':
                 vals_list[0].update({
                     'users': [(4, usuario.id) for usuario in self.env['res.users'].search([])]
                 })
-                print('al fin puedo hacer algo con esto')
         return super(Groups, self).create(vals_list)
 
     def write(self, vals):
@@ -136,32 +131,21 @@ class Groups(models.Model):
             'Gestionar Clientes'
         ]
         if self.id in self.env['res.groups'].search([('name', 'in', list_groups)]).ids:
-            print('se esta modificando un grupo mio')
             if 'name' not in vals or 'comment' not in vals or 'category_id' not in vals:
-                print('y justamente no es porque se creó')
                 if self.users.ids is not None and vals.get('users') is not None:
                     if len(self.users.ids) < len(vals.get('users')[0][2]):
-                        print('es una añadicion')
-                        print('pendiente con una vaina menor')
                         usuario = vals.get('users')[0][2][-1]
                         values = {}
-                        print('usuario', usuario)
                         values.update({
                             f"in_group_" + str(self.env['res.groups'].search([('name', '=', 'Usuario Interno 2')]).ids[0]): False,
                             f"in_group_" + str(self.env['res.groups'].search([('name', '=', 'Creación de contactos')]).ids[0]): False
                         })
                         super(Users, self.env['res.users'].search([('id', '=', usuario)])).write(values)
-                    else:
-                        print('es una eleminiacion')
 
         if 'name' in vals and vals.get('name') == 'Usuario Interno 2':
-            print('se esta creando usuario interno 2')
             if vals.get('users'):
-                print('y si hay usuarios dentro de usuario interno 2')
                 for usuario2 in self.users.ids:
-                    print(usuario2, self.env['res.groups'].search([('name', 'in', list_groups)]).mapped('users').ids)
                     if usuario2 in self.env['res.groups'].search([('name', 'in', list_groups)]).mapped('users').ids:
-                        print('efectivamente si esta dentro de mis grupos. A sacarlo de usuario interno 2')
 
                         for valores in vals.get('users'):
                             if valores[-1] == usuario2:
@@ -184,8 +168,6 @@ class Groups(models.Model):
         # DLE P139
         if self.ids:
             self.env['ir.model.access'].call_cache_clearing_methods()
-            self.env['res.users'].has_group.clear_cache(self.env['res.users'])
-        print('self------>', self, 'vals------>', vals, 'self.users', self.users.ids, len(self.users.ids))
         
         return super(Groups, self).write(vals)
 

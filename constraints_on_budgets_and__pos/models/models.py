@@ -14,18 +14,30 @@ INTEGRITY_HASH_MOVE_FIELDS = ('date', 'journal_id', 'company_id')
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
+    """
+    Modelo heredado para aplicar ciertas restricciones cuando se está creando, editando
+    o eliminando una orden de compra. Tambien para aplicar restricciones en el botón
+    "Confirmar Orden" de compra, y para "Crear Factura" de compra
+    """
 
     def write(self, vals):
         vals, partner_vals = self._write_partner_values(vals)
         res = super().write(vals)
         if partner_vals:
             self.partner_id.sudo().write(partner_vals)  # Because the purchase user doesn't have write on `res.partner`
+        # Se verifica si el usuario tiene el grupo "Gestionar ordenes de compra"; si es True, se
+        # procede a seguir con la función de manera normal. En caso contrario, levantará un UserError
+        # indicando que no tiene permisos para editar la orden de compra. En caso tal de pertenecer al grupo
+        # "Confirmar ordenes de compra", se debe verificar ciertos campos ya que al confirmar la orden de compra
+        # también se está entrando a esta funcion para escribir datos.
         if self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_confirm_pos'):
             if vals.get('group_id'):
                 return res
             elif vals.get('state'):
                 pass
             else:
+                # En caso de que se pertenezca al grupo "Confirmar ordenes de compra" pero se esté intentando editar
+                # otro campo que no es debido, levantará el error.
                 raise UserError(_('No tiene permisos para editar la orden de compra. Por favor comuníquese con su supervisor'))
         elif not self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_manage_pos'):
             raise UserError(_('No tiene permisos para editar la orden de compra. Por favor comuníquese con su supervisor'))
@@ -33,12 +45,16 @@ class PurchaseOrder(models.Model):
             return res
 
     def button_confirm(self):
+        # Restriccion sencilla para el boton de confirmar orden de compra. Si no pertenece al grupo debido
+        # levantará el error.
         if not self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_confirm_pos'):
             raise UserError(_('No tiene permisos para confirmar la orden de compra. Por favor comuníquese con su supervisor'))
         else:
             return super(PurchaseOrder, self).button_confirm()
 
     def action_create_invoice(self):
+        # También se aplica una restricción para la creación de factura. No hay mucho que manipular acá,
+        # ya que poco se adentra en el módulo purchase porque ya lo hace directamente con account y account.move
         if not self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_manage_pos_bills'):
             raise UserError(_('No tiene permisos para crear la factura para el proveedor. Por favor comuníquese con su supervisor'))
         else:
@@ -47,6 +63,11 @@ class PurchaseOrder(models.Model):
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
+    """
+        Modelo heredado para aplicar una restricción dentro de las lineas de ordenes de compra
+        dentro de una orden de compra. Si no pertenece al grupo acorde, se levantará un error
+    """
+
 
     def write(self, values):
         if not self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_manage_pos'):
@@ -57,6 +78,12 @@ class PurchaseOrderLine(models.Model):
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
+    """
+        Modelo heredado para aplicar unas restricciones al final del código, que permitirá manejar
+        el control de los permisos que tiene los miembros de los grupos "Gestionar facturas de compra" y
+        "Confirmar facturas de compras"
+    """
+
 
     def write(self, vals):
         for move in self:
@@ -108,21 +135,27 @@ class AccountMove(models.Model):
             self._check_balanced()
 
         self._synchronize_business_models(set(vals.keys()))
-        if self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_confirm_pos_bills'):
-            if vals.get('sequence_prefix'):
-                pass
-            elif vals.get('sequence_number'):
-                pass
-            elif vals.get('state') and vals.get('posted_before'):
-                return res
-            else:
-                raise UserError(_('No tiene permisos para editar la factura. Por favor comuníquese con su supervisor'))
-        elif not self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_manage_pos_bills'):
+
+        # Se verifica si el usuario está dentro del grupo "Gestionar facturas de compra". En caso contrario,
+        # levantará un error. También los que confirman las facturas pasarán por esta funcion, ya que se estan
+        # escribiendo datos sobre las facturas; entonces, se debe verificar (para ambos casos) que la edición
+        # de la factura sea únicamente sobre 'in_invoice' (facturas de proveedor), para que no ocasione choques
+        # con las otras facturas
+        if self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_confirm_pos_bills') and self.move_type == 'in_invoice':
+            pass
+        elif not self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_manage_pos_bills') and self.move_type == 'in_invoice':
+            # Si cualquier otra persona quiere modificar la factura de compra y no tiene los permisos, levantará
+            # el siguiente error
             raise UserError(_('No tiene permisos para editar la factura. Por favor comuníquese con su supervisor'))
         else:
             return res
     
     def _post(self, soft=True):
+        """
+            Modelo heredado para añadir el permiso de confirmar factura al grupo
+            "Confirmar facturas de compras" para poder que pueda ejecutar el botón
+            sin pertenecer a cualquier grupo de Contabilidad
+        """
         """Post/Validate the documents.
 
         Posting the documents will give it a number, and check that the document is
@@ -147,6 +180,8 @@ class AccountMove(models.Model):
             to_post = self
 
         # `user_has_group` won't be bypassed by `sudo()` since it doesn't change the user anymore.
+        # La restricción solo aplicaba para aquellos que pertenecía a Contabilidad/Facturación. Se añadió
+        # "Confirmar facturas de compras" para poder que el miembro del grupo pueda ejecutar la acción
         if not self.env.su and not self.env.user.has_group('account.group_account_invoice') and not self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_confirm_pos_bills'):
             raise AccessError(_("No tienes acceso para publicar una factura. Por favor comuníquese con su supervisor"))
         for move in to_post:
@@ -250,7 +285,9 @@ class AccountMove(models.Model):
         return to_post
 
     def action_post(self):
-        if not self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_confirm_pos_bills'):
+        # Restricción sencilla que aplica si el miembro no es perteneciente al grupo "Confirmar facturas de compras"
+        # al ejecutar la acción "Confirmar Factura"
+        if not self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_confirm_pos_bills') and self.move_type == 'in_invoice':
             raise UserError(_('No tiene permisos para confirmar la factura. Por favor comuníquese con su supervisor'))
         else:
             return super(AccountMove, self).action_post()
