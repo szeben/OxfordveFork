@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record model="res.groups" id="group_inventory_check_sale_ok">
+            <field name="name">Marcar productos que pueden ser vendidos</field>
+            <field name="comment">Permite marcar y visualizar productos que pueden ser vendidos. Creado por: Techne</field>
+            <field name="category_id" ref="base.module_category_inventory_inventory"/>
+        </record>
+
+        <record model="res.groups" id="group_inventory_check_purchase_ok">
+            <field name="name">Marcar productos que pueden ser comprados</field>
+            <field name="comment">Permite marcar y visualizar productos que pueden ser comprados. Creado por: Techne</field>
+            <field name="category_id" ref="base.module_category_inventory_inventory"/>
+        </record>
+
+        <record model="res.groups" id="group_inventory_check_can_be_expensed">
+            <field name="name">Marcar productos que pueden ser gastos</field>
+            <field name="comment">Permite marcar y visualizar productos que pueden ser gastos. Creado por: Techne</field>
+            <field name="category_id" ref="base.module_category_inventory_inventory"/>
+        </record>
+
+        <!--RULES-->
+        <!-- Reglas para product_template -->
+        <record id="product_template_read_sale_ok" model="ir.rule">
+            <field name="name">Visualizar product_template: solo productos que pueden ser vendidos</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="domain_force">[('sale_ok', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('group_inventory_check_sale_ok'))]"/>
+        </record>
+
+        <record id="product_template_read_purchase_ok" model="ir.rule">
+            <field name="name">Visualizar product_template: solo productos que pueden ser comprados</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="domain_force">[('purchase_ok', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('group_inventory_check_purchase_ok'))]"/>
+        </record>
+
+        <record id="product_template_read_can_be_expensed" model="ir.rule">
+            <field name="name">Visualizar product_template: solo productos que pueden ser vendidos</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="domain_force">[('can_be_expensed', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('group_inventory_check_can_be_expensed'))]"/>
+        </record>
+
+        <!-- Reglas para product.product -->
+        <record id="product_product_read_sale_ok" model="ir.rule">
+            <field name="name">Visualizar product_product: solo productos que pueden ser vendidos</field>
+            <field name="model_id" ref="product.model_product_product"/>
+            <field name="domain_force">[('sale_ok', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('group_inventory_check_sale_ok'))]"/>
+        </record>
+
+        <record id="product_product_read_purchase_ok" model="ir.rule">
+            <field name="name">Visualizar product_product: solo productos que pueden ser comprados</field>
+            <field name="model_id" ref="product.model_product_product"/>
+            <field name="domain_force">[('purchase_ok', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('group_inventory_check_purchase_ok'))]"/>
+        </record>
+
+        <record id="product_product_read_can_be_expensed" model="ir.rule">
+            <field name="name">Visualizar product_product: solo productos que pueden ser vendidos</field>
+            <field name="model_id" ref="product.model_product_product"/>
+            <field name="domain_force">['|', '|', ('can_be_expensed', '=', True), ('sale_ok', '=', True), ('purchase_ok', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('group_inventory_check_can_be_expensed'))]"/>
+        </record>
+
+    </data>
+</odoo>

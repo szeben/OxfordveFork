@@ -1,0 +1,26 @@
+<odoo>
+  <data>
+
+    <record id="view_partner_form_national_field_inherited" model="ir.ui.view">
+      <field name="name">view.partner.form.national.field.inherited</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="purchase.view_partner_property_form"/>
+      <field name="arch" type="xml">        
+        <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='sales_purchases']/group[@name='container_row_2']/group[@name='purchase']/field[@name='property_purchase_currency_id']" position="after">
+          <field name="is_national" widget="boolean" string="Es nacional?"/>
+        </xpath>
+      </field>      
+    </record>
+    <record id="view_res_partner_filter_national_field_inherited" model="ir.ui.view">
+      <field name="name">view.res.partner.filter.national.field.inherited</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="account.res_partner_view_search"/>
+      <field name="arch" type="xml">
+        <xpath expr="//filter[@name='supplier']" position="after">
+          <filter domain="[('is_national', '=', True)]" name="national" string="Proveedores nacionales"/>
+        </xpath>
+      </field>      
+    </record>
+
+  </data>
+</odoo>

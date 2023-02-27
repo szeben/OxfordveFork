@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Diario de tipo inversión -->
+        <!-- Grupo -->      
+        <record id="group_investment_type_journal" model="res.groups">
+            <field name="name">Visualizar diarios de tipo inversión</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">Los usuarios pertenecientes a este grupo, sólo pueden visualizar diarios de tipo inversión. Creado por: Techne.</field>
+        </record>
+
+        <!-- Regla de registro -->
+        <record id="rule_investment_type_journal" model="ir.rule">
+            <field name="name">Visualizar diarios de tipo inversión</field>
+            <field name="model_id" ref="account.model_account_journal"/>
+            <field name="groups" eval="[(4, ref('restrict_journal_type.group_investment_type_journal'))]"/>
+            <field name="domain_force">[('is_investment_type','=',True)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>            
+        </record>
+
+        <!-- Diario de tipo custodio -->
+        <!-- Grupo -->
+        <record id="group_custodian_type_journal" model="res.groups">
+            <field name="name">Visualizar diarios de tipo custodio</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">Los usuarios pertenecientes a este grupo, sólo pueden visualizar diarios de tipo custodio. Creado por: Techne.</field>
+        </record>
+
+        <!-- Regla de registro -->
+        <record id="rule_custodian_type_journal" model="ir.rule">
+            <field name="name">Visualizar diarios de tipo custodio</field>
+            <field name="model_id" ref="account.model_account_journal"/>
+            <field name="groups" eval="[(4, ref('restrict_journal_type.group_custodian_type_journal'))]"/>
+            <field name="domain_force">[('is_custodian_type','=',True)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>          
+        </record>   
+
+        <!-- Diario sin tipo asignado -->
+        <!-- Regla de registro -->
+        <record id="rule_untyped_journal" model="ir.rule">
+            <field name="name">Visualizar diarios sin tipo asigando.</field>
+            <field name="model_id" ref="account.model_account_journal"/>
+            <field name="groups" eval="[(4, ref('account.group_account_invoice')),(4, ref('account.group_account_readonly'))]"/>
+            <field name="domain_force">['&amp;',('is_custodian_type','=',False),('is_investment_type','=',False)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>          
+        </record> 
+    </data>
+</odoo>
