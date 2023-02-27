@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from itertools import chain, groupby, islice
 from collections import OrderedDict
+from itertools import chain, groupby, islice
 
 from lxml import etree
 from odoo import _, api, fields, models, tools
@@ -57,11 +57,24 @@ class StockReplenishmentReport(models.Model):
             WITH product_with_branch AS (
                     SELECT
                         pp.id AS product_id,
-                        rb.id AS branch_id
+                        pt.categ_id AS categ_id,
+                        rb.id AS branch_id,
+                        pt.uom_id AS uom_id,
+                        pp.active AS active,
+                        CASE
+                            WHEN uu.uom_type = 'reference' THEN 1.0
+                            WHEN uu.uom_type = 'bigger' THEN CASE
+                                WHEN uu.factor != 0.0
+                                AND uu.factor IS NOT NULL THEN 1.0 / uu.factor
+                                ELSE 0.0
+                            END
+                            ELSE uu.factor
+                        END AS uom_ratio
                     FROM
                         product_product pp
                         CROSS JOIN res_branch rb
                         INNER JOIN product_template pt ON (pt.id = pp.product_tmpl_id)
+                        INNER JOIN uom_uom uu ON (uu.id = pt.uom_id)
                     WHERE
                         pt.sale_ok = TRUE
                 ),
@@ -71,9 +84,20 @@ class StockReplenishmentReport(models.Model):
                         aml.quantity,
                         am.invoice_date,
                         aj.input_type,
-                        aj.branch_id
+                        aj.branch_id,
+                        aml.product_uom_id AS uom_id,
+                        CASE
+                            WHEN uu.uom_type = 'reference' THEN 1.0
+                            WHEN uu.uom_type = 'bigger' THEN CASE
+                                WHEN uu.factor != 0.0
+                                AND uu.factor IS NOT NULL THEN 1.0 / uu.factor
+                                ELSE 0.0
+                            END
+                            ELSE uu.factor
+                        END AS uom_ratio
                     FROM
                         account_move_line aml
+                        INNER JOIN uom_uom uu ON (uu.id = aml.product_uom_id)
                         LEFT OUTER JOIN account_move am ON (aml.move_id = am.id)
                         LEFT OUTER JOIN account_journal aj ON (am.journal_id = aj.id)
                     WHERE
@@ -84,31 +108,48 @@ class StockReplenishmentReport(models.Model):
                 )
             SELECT
                 ROW_NUMBER() OVER () AS id,
+                pb.categ_id,
                 pb.product_id,
                 COALESCE(aml.branch_id, pb.branch_id) AS branch_id,
-                aml.invoice_date AS move_date,
+                COALESCE(aml.invoice_date, CURRENT_DATE) AS move_date,
                 SUM(
                     CASE
-                        WHEN aml.input_type = 'invoice' THEN aml.quantity
+                        WHEN aml.input_type = 'invoice' THEN CASE
+                            WHEN aml.uom_id != pb.uom_id THEN aml.quantity * aml.uom_id / pb.uom_id
+                            ELSE aml.quantity
+                        END
                         ELSE 0.0
                     END
                 ) AS qty_invoice,
                 SUM(
                     CASE
-                        WHEN aml.input_type = 'delivery_note' THEN aml.quantity
+                        WHEN aml.input_type = 'delivery_note' THEN CASE
+                            WHEN aml.uom_id != pb.uom_id THEN aml.quantity * aml.uom_ratio / pb.uom_ratio
+                            ELSE aml.quantity
+                        END
                         ELSE 0.0
                     END
                 ) AS qty_delivery_note,
-                COALESCE(SUM(aml.quantity), 0.0) AS quantity
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN aml.uom_id != pb.uom_id THEN aml.quantity * aml.uom_ratio / pb.uom_ratio
+                            ELSE aml.quantity
+                        END
+                    ),
+                    0.0
+                ) AS quantity
             FROM product_with_branch pb
                 LEFT JOIN account_move_line_with_branch aml ON (
                     pb.product_id = aml.product_id AND pb.branch_id = aml.branch_id
                 )
+                WHERE pb.active = TRUE
             GROUP BY
                 pb.product_id,
                 pb.branch_id,
                 aml.branch_id,
-                aml.invoice_date
+                aml.invoice_date,
+                pb.categ_id
             ORDER BY
                 pb.product_id,
                 pb.branch_id,
@@ -120,6 +161,11 @@ class StockReplenishmentReport(models.Model):
     product_id = fields.Many2one(
         'product.product',
         'Producto',
+        readonly=True
+    )
+    categ_id = fields.Many2one(
+        'product.category',
+        'Categoría',
         readonly=True
     )
     branch_id = fields.Many2one(
@@ -167,11 +213,11 @@ class StockReplenishmentReport(models.Model):
             'depends': (),
             'company_dependent': False,
             'manual': False,
-            'readonly': False,
+            'readonly': True,
             'required': False,
             'searchable': False,
-            'sortable': True,
-            'store': True,
+            'sortable': False,
+            'store': False,
         }
 
         for branch in self.env['res.branch'].search([]):
@@ -247,9 +293,7 @@ class StockReplenishmentReport(models.Model):
             doc = etree.fromstring(res['arch'])
 
             for name, field in self._dynamic_fields().items():
-                doc.append(
-                    etree.Element('field', name=name, optional="show")
-                )
+                doc.append(etree.Element('field', name=name, optional="show"))
                 res['fields'][name] = field
 
             res['arch'] = etree.tostring(doc, encoding='unicode')
@@ -258,25 +302,12 @@ class StockReplenishmentReport(models.Model):
 
     @api.model
     def search_count(self, args):
-        if args:
-            args = OR([args, [('move_date', '=', False)]])
         return len(self._read_group_raw(args, ['product_id'], ['product_id']))
 
     @api.model
     def _read_group_raw(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-        if not groupby:
-            return super()._read_group_raw(
-                domain, fields, groupby, offset, limit, orderby, lazy
-            )
-
-        if fields:
-            fields = list(set(fields).difference(
-                self._dynamic_fields().keys()
-            ))
-
-        return super()._read_group_raw(
-            domain, fields, groupby, offset, limit, orderby, lazy
-        )
+        fields = fields and list(set(fields).difference(self._dynamic_fields().keys()))
+        return super()._read_group_raw(domain, fields, groupby, offset, limit, orderby, lazy)
 
     def _search_read_report(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
         def keyfunc_product(record):
@@ -294,23 +325,12 @@ class StockReplenishmentReport(models.Model):
         if domain is None:
             groups = groupby(self, keyfunc_product)
         else:
-            domain = OR([domain, [('move_date', '=', False)]])
-            groups = groupby(
-                self.search(domain),
-                keyfunc_product
-            )
+            groups = groupby(super().search(domain), keyfunc_product)
 
-        if limit or offset:
-            if limit:
-                limit = offset + limit
-                groups = islice(groups, offset, limit)
-            else:
-                groups = islice(groups, offset, None)
+        if offset:
+            groups = islice(groups, offset, offset + limit) if limit else islice(groups, offset, None)
 
-        groups = tuple(
-            (product_id, tuple(rows))
-            for product_id, rows in groups
-        )
+        groups = tuple((product_id, tuple(rows)) for product_id, rows in groups)
         product_ids = [product.id for product, _ in groups]
 
         virtual_availables = {
@@ -326,7 +346,10 @@ class StockReplenishmentReport(models.Model):
         }
 
         for product_id, group_product in groups:
-            row = {"product_id": (product_id.id, product_id.display_name)}
+            row = {
+                "product_id": (product_id.id, product_id.display_name),
+                "categ_id": (product_id.categ_id.id, product_id.categ_id.name),
+            }
 
             stock = 0.0  # ojnhibguvf
             stock_main = 0.0
@@ -347,7 +370,7 @@ class StockReplenishmentReport(models.Model):
                     ))
                 )
 
-                stock = virtual_available/(quantity or 1.0)
+                stock = virtual_available / (quantity or 1.0)
 
                 row[f"invoice_{branch_name}"] = qty_invoice
                 row[f"refund_{branch_name}"] = qty_delivery_note
@@ -361,8 +384,7 @@ class StockReplenishmentReport(models.Model):
                 if branch_id.is_main:
                     stock_main += stock
 
-            row["stock_mainland"] = stock_mainland / \
-                (total_quantity_mainland or 1.0)
+            row["stock_mainland"] = stock_mainland / (total_quantity_mainland or 1.0)
 
             for branch_id in branches:
                 branch_name = get_name(branch_id)
@@ -370,12 +392,7 @@ class StockReplenishmentReport(models.Model):
                 replenishment_field = f"replenishment_{branch_name}"
 
                 if not branch_id.is_main:
-                    if stock_field in row:
-                        row[replenishment_field] = (
-                            row[stock_field] < min_by_branch and stock_main > min_global
-                        )
-                    else:
-                        row[replenishment_field] = False
+                    row[replenishment_field] = stock_field in row and row[stock_field] < min_by_branch and stock_main > min_global
 
                 for field in ("inv", "invoice", "refund", "quantity", "stock"):
                     if f"{field}_{branch_name}" not in row:
