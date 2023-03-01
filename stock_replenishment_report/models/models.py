@@ -104,7 +104,7 @@ class StockReplenishmentReport(models.Model):
                         aml.product_id IS NOT NULL
                         AND am.state = 'posted'
                         AND am.move_type = 'out_invoice'
-                        AND aj.input_type IS NOT NULL
+                        AND aj.input_type IN ('invoice', 'delivery_note')
                 )
             SELECT
                 ROW_NUMBER() OVER () AS id,
