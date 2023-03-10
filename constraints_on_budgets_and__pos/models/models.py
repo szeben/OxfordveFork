@@ -35,6 +35,8 @@ class PurchaseOrder(models.Model):
                 return res
             elif vals.get('state'):
                 pass
+            elif self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_manage_pos'):
+                pass
             else:
                 # En caso de que se pertenezca al grupo "Confirmar ordenes de compra" pero se esté intentando editar
                 # otro campo que no es debido, levantará el error.
@@ -153,7 +155,7 @@ class AccountMove(models.Model):
     def _post(self, soft=True):
         """
             Modelo heredado para añadir el permiso de confirmar factura al grupo
-            "Confirmar facturas de compras" para poder que pueda ejecutar el botón
+            "Confirmar facturas de compras" para que pueda ejecutar el botón
             sin pertenecer a cualquier grupo de Contabilidad
         """
         """Post/Validate the documents.
