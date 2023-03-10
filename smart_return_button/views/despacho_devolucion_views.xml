@@ -12,17 +12,17 @@
             <xpath expr="//button[@name='action_view_delivery'][1]" position="attributes">
                 <attribute name="groups">smart_return_button.group_despacho_directo</attribute>
                 <attribute name="attrs">
-                    {'invisible': ['|', ('invoice_status','!=','invoiced'),('delivery_count','=',0)]}
+                    {'invisible': ['|', ('invoice_min','!=',True),('delivery_count','=',0)]}
                 </attribute>
             </xpath>
 
             <xpath expr="//button[@name='action_view_delivery'][1]" position="before">
-  
+                <field name="invoice_min" invisible='1'/>
                 <button type="object"
                     name="action_view_return"
                     class="oe_stat_button"
                     icon="fa-truck"
-                    attrs="{'invisible': ['|', ('invoice_status','!=','invoiced'),('returns_count','=',0)]}" 
+                    attrs="{'invisible': ['|', ('invoice_min','!=',True),('returns_count','=',0)]}" 
                     groups="smart_return_button.group_devolucion_directa">
                         <field name="returns_count" widget="statinfo" string="Devolución"/>
                 </button>

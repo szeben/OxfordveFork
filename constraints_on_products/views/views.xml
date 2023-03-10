@@ -1,0 +1,27 @@
+<odoo>
+  <data>
+
+    <function name="write" model="ir.model.data">
+      <function name="search" model="ir.model.data">
+        <value eval="[('module', '=', 'stock'), ('name', '=', 'menu_stock_root')]"/>
+      </function>
+      <value eval="{'noupdate': False}"/>
+    </function>
+
+    <record model="ir.ui.menu" id="stock.menu_stock_root">
+      <field name="groups_id" eval="[
+      (4, ref('constraints_on_products.group_inventory_check_sale_ok')),
+      (4, ref('constraints_on_products.group_inventory_check_purchase_ok')),
+      (4, ref('constraints_on_products.group_inventory_check_can_be_expensed')),
+      ]"/>
+    </record>
+
+    <function name="write" model="ir.model.data">
+      <function name="search" model="ir.model.data">
+        <value eval="[('module', '=', 'stock'), ('name', '=', 'menu_stock_root')]"/>
+      </function>
+      <value eval="{'noupdate': True}"/>
+    </function>
+
+  </data>
+</odoo>
