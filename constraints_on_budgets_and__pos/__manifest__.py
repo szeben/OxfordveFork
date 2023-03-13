@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "constraints_on_budgets_and_POs",
+    'name': "Restricciones sobre Órdenes de Compra",
 
     'summary': """
         Restringe la visualización y gestión de presupuestos y OC en el módulo de Compras.""",
