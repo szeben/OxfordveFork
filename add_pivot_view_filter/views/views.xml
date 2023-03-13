@@ -1,0 +1,22 @@
+<odoo>
+  <data>
+    <!--
+    <record model="ir.ui.view" id="view_account_invoice_report_search_inherited">
+      <field name="name">account.invoice.report.search.inherited</field>
+      <field name="model">account.invoice.report</field>
+      <field name="inherit_id" ref="account.view_account_invoice_report_search" />
+      <field name="priority" eval="1"/>
+      <field name="arch" type="xml">
+
+        <xpath expr="//group" position="after">
+          <separator orientation="vertical" />
+          <filter string="Marca" name="marca" context="{'group_by':'product_id'}"/>
+          <filter string="Codigo de barra" name="barcode" context="{'group_by':'product_id'}"/>
+          <filter string="Referencia interna" name="reference" context="{'group_by':'product_id'}"/>
+        </xpath>
+
+      </field>
+    </record>
+    -->
+  </data>
+</odoo>

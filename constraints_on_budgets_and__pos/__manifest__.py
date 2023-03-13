@@ -36,4 +36,6 @@
     ],
     "auto_install": False,
     "installable": True,
+
+    "uninstall_hook": 'constraints_on_budget_and_pos_uninstall_hook',
 }
