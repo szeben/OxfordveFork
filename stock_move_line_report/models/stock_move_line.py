@@ -7,6 +7,24 @@ from odoo.osv.expression import (AND, AND_OPERATOR, OR_OPERATOR, is_leaf,
                                  is_operator, normalize_domain, normalize_leaf)
 
 
+def delete_date_leaf(domain):
+    new_domain = []
+
+    for i, elm in enumerate(domain):
+        if is_leaf(elm) and i > 0:
+            field, operator, _ = normalize_leaf(elm)
+            if field == 'date' and operator in {'>', '>='}:
+                for j, olm in enumerate(new_domain[::-1]):
+                    if is_operator(olm):
+                        new_domain.pop(-j-1)
+                        if olm in {AND_OPERATOR, OR_OPERATOR}:
+                            break
+                continue
+        new_domain.append(elm)
+
+    return normalize_domain(new_domain)
+
+
 def compute_existence(previous, record):
     if (record.product_id.qty_available - record.qty_done) == 0:
         return record.qty_done
@@ -14,10 +32,13 @@ def compute_existence(previous, record):
         return record.qty_done + previous
     elif not record.picking_code and record.location_dest_id.scrap_location == False and record.location_dest_id.usage == 'inventory':
         return previous - record.qty_done
-    elif record.picking_code == "internal":
-        return previous
     elif record.picking_code == "outgoing":
         return previous - record.qty_done
+    elif record.picking_code == "internal":
+        if record.location_id.branch_id == record.location_dest_id.branch_id:
+            return previous
+        else:
+            return record.qty_done + previous
     else:
         return record.qty_done + previous
 
@@ -51,44 +72,28 @@ class StockMoveLine(models.Model):
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
-        self.extra_context.update(
-            {"domain": args, "offset": offset, "order": order})
+        self.extra_context.update({"domain": args, "offset": offset, "order": order})
         return super().search(args, offset=offset, limit=limit, order=order, count=count)
 
     @api.depends('qty_done', 'reference')
     def _compute_in_out(self):
         order = self.extra_context.get('order', 'date ASC')
+        order_field = order.split(",", maxsplit=1)[0].strip().split(maxsplit=1)[0].lower()
         show_existence = False
         anterior = 0.0
 
-        first_order, *_ = order.split(",")
-
-        if first_order.lower().strip() in {"date asc", "date"}:
+        if order_field == "date":
             show_existence = True
             offset = self.extra_context.get('offset', 0)
             extra_domain = self.extra_context.get('domain', [])
             domain = [('id', 'not in', self.ids)]
 
             if extra_domain:
-                new_domain = []
-
-                for i, elm in enumerate(extra_domain):
-                    if is_leaf(elm) and i > 0:
-                        field, operator, value = normalize_leaf(elm)
-                        if field == 'date' and operator in {'>', '>='}:
-                            for j, olm in enumerate(new_domain[::-1]):
-                                if is_operator(olm):
-                                    new_domain.pop(-j-1)
-                                    if olm in {AND_OPERATOR, OR_OPERATOR}:
-                                        break
-                            continue
-                    new_domain.append(elm)
-
-                domain = AND([domain, normalize_domain(new_domain)])
+                domain = AND([domain, delete_date_leaf(extra_domain)])
 
             anterior = reduce(
                 compute_existence,
-                self.sudo().search(domain, limit=(offset if offset > 0 else None), order=order),
+                super().sudo().search(domain, limit=(offset if offset > 0 else None), order=order),
                 anterior
             )
 
@@ -96,23 +101,30 @@ class StockMoveLine(models.Model):
             entrada = 0.0
             salida = 0.0
 
-            if (
-                record.location_id.usage == 'inventory' and
-                record.location_id.scrap_location == False
-            ) or record.picking_code in {'incoming', 'internal', 'mrp_operation'}:
-                entrada = record.qty_done
+            if record.picking_code == 'internal':
+                if record.location_id.branch_id == record.location_dest_id.branch_id:
+                    entrada = salida = record.qty_done
+                else:
+                    entrada = record.qty_done
 
-            if (
-                not record.picking_code and record.location_dest_id.usage == 'inventory' and
-                record.location_dest_id.scrap_location == False
-            ) or record.picking_code in {'outgoing', 'internal'}:
-                salida = record.qty_done
+            else:
+                if record.picking_code in {'incoming', 'mrp_operation'} or (
+                    record.location_id.usage == 'inventory'
+                    and record.location_id.scrap_location == False
+                ):
+                    entrada = record.qty_done
+
+                if record.picking_code == 'outgoing' or (
+                    not record.picking_code
+                    and record.location_dest_id.usage == 'inventory'
+                    and record.location_dest_id.scrap_location == False
+                ):
+                    salida = record.qty_done
 
             record.salida = salida
             record.entrada = entrada
 
             if show_existence:
-                record.saldo_existencia = anterior = compute_existence(
-                    anterior, record)
+                record.saldo_existencia = anterior = compute_existence(anterior, record)
             else:
                 record.saldo_existencia = False
