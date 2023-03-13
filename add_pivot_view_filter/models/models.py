@@ -86,7 +86,6 @@ class AccountInvoiceReport(models.Model):
                 move.partner_id,
                 move.invoice_user_id,
                 move.fiscal_position_id,
-                move.payment_state,
                 move.invoice_date,
                 move.invoice_date_due,
                 uom_template.id                                             AS product_uom_id,
