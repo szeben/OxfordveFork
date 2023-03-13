@@ -19,32 +19,23 @@ class CommissionForSale(models.Model):
                                        default='fija')
 
     product_id = fields.Many2one('product.product', string="Producto", readonly=True)
-    categ_id = fields.Many2one(related='product_id.categ_id', string="Categoría del producto", readonly=True)
-    product_ids = fields.One2many('product.product', 'commission_id', string="Agrupado con")
-    product_templ_id = fields.Many2one('product.template', string="Plantilla del producto", invisible='True')
-    agrupated_product_id = fields.Many2one('agrupated.product', string="Producto de agrupated_product_id")
-    agrupated_product_ids = fields.One2many('agrupated.product', 'commission_id', string="Agrupado con agrupated.product")
-    cant_minima_base = fields.Float(string='Cantidad mínima base', required=True)
-    bono_base = fields.Float(string='Bono base', required=True)
+    categ_id = fields.Many2one(related='product_id.categ_id', string="Categoría", readonly=True)
+    cant_minima_base = fields.Float(string='Can. Mín. Base', required=True)
+    bono_base = fields.Float(string='Bono Base', required=True)
     basado_en = fields.Many2one('commission.for.sale', string="Basado en", domain="[('id', '!=', id),('product_id', '=', product_id if product_id else False)]")
     commission_ids = fields.One2many('commission.for.sale', 'id', string="Agrupado con", domain="[('id', '=', id)]")
     cant_min_base_factor_divisor = fields.Float(string='Factor divisor', default=1.0)
     cant_min_base_factor_multiplicador = fields.Float(string='Factor multipicador', default=1.0)
     cant_min_base_factor_extra = fields.Float(string='Factor extra')
-    cant_min_base_otra_com = fields.Float(compute="_compute_cant_min_base_otra_com", string='Cantidad mínima base basada en otra comisión', readonly=True, store=True)
+    cant_min_base_otra_com = fields.Float(compute="_compute_cant_min_base_otra_com", string='Cant. Mín. Base - otra comisión', readonly=True, store=True)
     bono_base_factor_divisor = fields.Float(string='Factor divisor', default=1.0)
     bono_base_factor_multiplicador = fields.Float(string='Factor multipicador', default=1.0)
     bono_base_factor_extra = fields.Float(string='Factor extra')
-    bono_base_otra_com = fields.Float(compute="_compute_bono_base_otra_com", string='Bono base basado en otra comisión', readonly=True, store=True)
+    bono_base_otra_com = fields.Float(compute="_compute_bono_base_otra_com", string='Bono Base - otra comisión', readonly=True, store=True)
 
     forma_de_calculo = fields.Selection([
         ('fijo', 'Fijo'),
         ('regla_de_tres', 'Regla de tres')], default='fijo')
-
-    sale_order_id = fields.Many2one('sale.order', string="Venta", readonly=True)
-    sale_order_ids = fields.One2many('sale.order', 'commission_id', string='Ventas')
-    sale_order_line_id = fields.Many2one('sale.order.line', string="Linea de ventas", readonly=True)
-    sale_order_line_ids = fields.One2many('sale.order.line', 'commission_id', string='Líneas de ventas')
 
     @api.onchange('name')
     def _onchange_product_id(self):
@@ -95,27 +86,17 @@ class CommissionForSale(models.Model):
                                                line.bono_base_factor_multiplicador) + line.bono_base_factor_extra
 
 
-class AgrupatedProduct(models.Model):
-    _name = 'agrupated.product'
-    _description = 'Productos agrupados en una comisión'
-    product_id = fields.Many2one('product.product', string="Producto")
-    commission_id = fields.Many2one('commission.for.sale', string="Comisión")
-    commission_ids = fields.One2many('commission.for.sale', 'product_id', string="Comisión")
-
-
 class ProductTemplateInherit(models.Model):
     _inherit = 'product.template'
     commission_id = fields.Many2one('commission.for.sale', string="Plantilla del producto")
-    commission_ids = fields.One2many('commission.for.sale', 'product_templ_id', string="Plantilla del producto")
+    # commission_ids = fields.One2many('commission.for.sale', 'product_templ_id', string="Plantilla del producto")
     total_commissions = fields.Integer(string="Comisiones asociadas")
 
 
 class ProductProductInherit(models.Model):
     _inherit = 'product.product'
-    product_templ_line_id = fields.Many2one('product.template.commission.line', string="Linea de la plantilla del producto")
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     commission_ids = fields.One2many('commission.for.sale', 'product_id', string="Productos")
-    agrupated_product_id = fields.Many2one('agrupated.product', string="Producto agrupado")
     total_commissions = fields.Integer(compute="_compute_total_commissions", string="Comisiones asociadas", store=True)
 
     # Comision unica
@@ -130,7 +111,6 @@ class ProductProductInherit(models.Model):
                 if l.id in existe_id_comm:
                     raise exceptions.UserError(
                         'El producto tiene una o más comisiones repetidas. Por favor, verifique')
-
                 else:
                     nomb = l.name.lower()
                     nomb = l.name
@@ -166,74 +146,86 @@ class SaleOrderInherit(models.Model):
 class CrmTeamInherit(models.Model):
     _inherit = 'crm.team'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
-    total_commission = fields.Float(string="Total comisión del vendedor")
 
 
 class AccountMoveLineInherit(models.Model):
     _inherit = 'account.move.line'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     team_id = fields.Many2one(related='move_id.team_id', string="Equipo de ventas", readonly=True, store=True)
-    payment_state = fields.Selection(related='move_id.payment_state', string="Estado del pago", readonly=True, store=True)
-    #cobranza_id = fields.Many2one('configuration.cobranza', string="Configuración de cobranza")
-    
-    #cobranza_account_id = fields.Many2one(realated='cobranza_id.account_id', string="Cuenta de cobranza")
+    cobranza_id = fields.Many2one(related='account_id.cobranza_id', string="Cobranza", readonly=True, store=True)
+    commission_by_cobranza = fields.Float(compute="_compute_commission_by_cobranza", string="Comisión por cobranza", store=True)
 
-    #account_id_domain = fields.Char(
-        #compute="_compute_account_id_domain",
-        #readonly=True,
-       # store=True,
-   # )
+    @api.depends(
+        "parent_state",
+        "date",
+        "cobranza_id",
+        "debit",
+        "branch_id"
+    )
+    def _compute_commission_by_cobranza(self):
+        for line in self:
+            branch_ids = self.env.user.branch_ids.ids
 
-   # @api.depends('account_id')
-   # def _compute_account_id_domain(self):
-       # print("ESTOYE N CALCULAR DOMINIO")
-        #for rec in self:
-           # list = self.env['configuration.cobranza'].search([])
-           # print("ESTA ES LA LISTAaaaaaaaaaaaaaaa", list)
-           # return {'domain': {'account_id': [('account_id', 'in', [c.account_id.id for c in list])]}}
-            #rec.account_id_domain = json.dumps([('account_id', 'in', [c.account_id.id for c in list])]
-            #)
+            if (
+                line.parent_state == 'posted'
+                and line.date
+                and line.cobranza_id != False
+                and line.debit != 0
+                and (line.branch_id.id in branch_ids)
+                and (line.payment_id.branch_id.id in branch_ids)
+            ):
+
+                line.commission_by_cobranza = line.debit * line.cobranza_id.percentage
+
+            else:
+                line.commission_by_cobranza = 0
 
 
 class SaleOrderLineInherit(models.Model):
     _inherit = 'sale.order.line'
-
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     categ_id = fields.Many2one(related='product_id.categ_id', string="Categoría del producto", readonly=True, store=True)
-
-    team_id = fields.Many2one(related='order_id.team_id', string="Equipo de ventas", readonly=True, store=True)
-    # branch_id = fields.Many2one(related='order_id.branch_id', string="Ramaaaaa", readonly=True, store=True)
-    quantity = fields.Float(string="cantidad facturada", store=True)
+    team_id = fields.Many2one(related='order_id.team_id', string="Equipo de ventas", readonly=True, store=True, domain=[('order_id', '=', True)])
+    quantity = fields.Float(string="Cantidad facturada", store=True)
+    amount_sale = fields.Monetary(string="Monto de la venta", store=True)
     date = fields.Date(string="Fecha de la factura", readonly=True)
     total_vendidos = fields.Float(compute="_compute_total_vendidos", string="Total vendidos", store=True)
-    total_amount_commissions = fields.Float(compute="_compute_commissions", string="Total de comisión", store=True)
+    total_amount_sales = fields.Monetary(compute="_compute_total_vendidos", string="Monto de las ventas", store=True)
+    total_amount_commissions = fields.Monetary(compute="_compute_commissions", string="Total de comisión", store=True)
 
     @api.depends("product_id", "commission_id", "product_id.commission_ids", "order_id", "order_id.date_order",
                  "order_id.invoice_ids", "order_id.state", "invoice_lines", "state", "date", "invoice_status")
     def _compute_total_vendidos(self):
+
         for line in self.filtered(lambda line: line.invoice_lines):
-            v = line.order_id
-            line.total_vendidos = 0
+            if line.invoice_lines:
+                if line.order_id:
+                    v = line.order_id
+                line.total_vendidos = 0
+                line.total_amount_sales = 0
 
-            if v.invoice_ids:
-                for f in v.invoice_ids:
-                    if f.state == 'posted' and f.move_type == 'out_invoice':
-                        for line_f in f.invoice_line_ids:
-                            if line_f.product_id.id == line.product_id.id:
-                                line.date = f.invoice_date
-                                if line.order_id.team_id:
-                                    line_f.team_id = line.order_id.team_id
-                                line_f.branch_id = line.order_id.branch_id
+                if v.invoice_ids and line.order_id:
+                    for f in v.invoice_ids:
+                        if f.state == 'posted' and f.move_type == 'out_invoice':
+                            for line_f in f.invoice_line_ids:
+                                if line_f.product_id.id == line.product_id.id:
+                                    line.date = f.invoice_date
+                                    if line.order_id.team_id and not line_f.team_id:
+                                        line_f.team_id = line.order_id.team_id
+                                    if line.order_id.branch_id and not line_f.branch_id:
+                                        line_f.branch_id = line.order_id.branch_id
 
-                                if line_f.product_uom_id == line_f.product_id.uom_id:
-                                    cant_f = line_f.quantity
-                                elif line_f.product_uom_id.uom_type == 'bigger':
-                                    cant_f = line_f.quantity * (line_f.product_uom_id.factor_inv / line_f.product_id.uom_id.factor_inv)
-                                elif line_f.product_uom_id.uom_type == 'smaller' or line_f.product_uom_id.uom_type == 'reference':
-                                    cant_f = line_f.quantity * line_f.product_id.uom_id.factor
+                                    if line_f.product_uom_id == line_f.product_id.uom_id:
+                                        cant_f = line_f.quantity
+                                    elif line_f.product_uom_id.uom_type == 'bigger':
+                                        cant_f = line_f.quantity * (line_f.product_uom_id.factor_inv / line_f.product_id.uom_id.factor_inv)
+                                    elif line_f.product_uom_id.uom_type == 'smaller' or line_f.product_uom_id.uom_type == 'reference':
+                                        cant_f = line_f.quantity * line_f.product_id.uom_id.factor
 
-                                line.quantity = cant_f
-                                line.total_vendidos = line.total_vendidos + line.quantity
+                                    line.quantity = cant_f
+                                    line.total_vendidos = line.total_vendidos + line.quantity
+                                    line.amount_sale = line.order_id.amount_total
+                                    line.total_amount_sales = line.total_amount_sales + line.amount_sale
 
     @api.depends("total_vendidos", "date", "invoice_lines", "invoice_status", "product_id", "commission_id", "product_id.commission_ids", "product_id.commission_id")
     def _compute_commissions(self):
@@ -246,14 +238,14 @@ class SaleOrderLineInherit(models.Model):
             if line.product_id.commission_ids and line.total_vendidos != 0 and line.date:
                 f1 = date(line.date.year, line.date.month, 1)
                 f2 = date(line.date.year, line.date.month, monthrange(line.date.year, line.date.month)[1])
-
-                lines = self.env['sale.order.line'].search([
-                    '&', '&', '&',
-                    ('date', '>=', f1),
-                    ('date', '<=', f2),
-                    ('product_id', '=', line.product_id.id),
-                    ('team_id', '=', line.team_id.id)]
-                )
+                if f1 and f2 and line.product_id.id and line.team_id.id:
+                    lines = self.env['sale.order.line'].search([
+                        '&', '&', '&',
+                        ('date', '>=', f1),
+                        ('date', '<=', f2),
+                        ('product_id', '=', line.product_id.id),
+                        ('team_id', '=', line.team_id.id)]
+                    )
 
                 if lines:
                     total_vendidos_mes = sum(lines.mapped("total_vendidos"))
@@ -321,7 +313,7 @@ class SaleOrderLineInherit(models.Model):
 
 class AccountAccountInherit(models.Model):
     _inherit = 'account.account'
-    cobranza_id = fields.Many2one('configuration.cobranza', string="Cuenta")
+    cobranza_id = fields.Many2one('configuration.cobranza', string="Cobranza")
 
 
 class ConfigurationCobranza(models.Model):
@@ -329,9 +321,19 @@ class ConfigurationCobranza(models.Model):
     _description = "Configuración del porcentaje a pagar por las cobranzas realizadas"
 
     name = fields.Char(string="Nombre", default=" ")
-    percentage = fields.Float(string="Porcentaje (%) de comisión", required=True)
+    percentage = fields.Float(string="Porcentaje (%) de comisión", required=True, digits=(12, 4))
     account_ids = fields.Many2many('account.account', 'cobranza_id', string="Cuentas contables a considerar", required=True, domain="[('user_type_id.id', '=', 3)]")
-    
+
+    @api.model
+    def edit(self, vals):
+        res = super(ConfigurationCobranza, self).edit(vals)
+        u = self.env['configuration.cobranza'].search([])
+        if u:
+            for c in u.account_ids:
+                c.cobranza_id = u.id
+
+        return res
+
     @api.model
     def create(self, vals):
         res = super(ConfigurationCobranza, self).create(vals)
@@ -344,4 +346,147 @@ class ConfigurationCobranza(models.Model):
                         u[i].unlink()
         else:
             return
+
+        u = self.env['configuration.cobranza'].search([])
+
+        if u:
+            for c in u.account_ids:
+                c.cobranza_id = u.id
+
         return res
+
+    def write(self, values):
+        res = super(ConfigurationCobranza, self).write(values)
+        u = self.env['configuration.cobranza'].search([('id', '=', self.id)])
+        c = self.env['account.account'].search([('user_type_id.id', '=', 3)])
+        if c:
+            for record in c:
+                record.cobranza_id = False
+
+        if u:
+            for c in u.account_ids:
+                c.cobranza_id = u.id
+
+        return res
+
+    @api.constrains('percentage')
+    def _validacion_porcentaje(self):
+        for r in self:
+            if r.percentage < 0 or (r.percentage * 100 > 0 and r.percentage * 100 < 1):
+                if r.percentage < 0:
+                    raise exceptions.UserError(
+                        'El porcentaje no puede ser un número negativo. Por favor, verifique')
+
+                if r.percentage * 100 > 0 and r.percentage * 100 < 1:
+                    raise exceptions.UserError(
+                        'El porcentaje no puede un valor menor que uno (1). Por favor, verifique')
+
+
+class TeamSaleReport(models.Model):
+    _name = "team.sale.report"
+    _description = "Modelo de prueba"
+    _auto = False
+
+    @property
+    def _table_query(self):
+        select_ = """
+            WITH commission_by_sale AS (
+                SELECT
+                    date,
+                    team_id,
+                    SUM(total_vendidos) AS total_vendidos,
+                    SUM(total_amount_sales) AS total_amount_sales,
+                    SUM(total_amount_commissions) AS total_amount_commissions,
+                    0.0 AS commission_by_cobranza,
+                    0.0 AS debit
+                FROM sale_order_line
+                GROUP BY
+                    date,
+                    team_id
+                ORDER BY
+                    date
+            ),
+            commission_by_cobranza AS (
+                SELECT
+                    aml.date,
+                    aml.team_id,
+                    0.0 AS total_vendidos,
+                    0.0 AS total_amount_sales,
+                    0.0 AS total_amount_commissions,
+                    SUM(aml.commission_by_cobranza) AS commission_by_cobranza,
+                    SUM(aml.debit) AS debit
+                FROM
+                    account_move_line aml
+                    LEFT JOIN account_account aa ON (aml.account_id = aa.id)
+                WHERE
+                    aml.parent_state = 'posted'
+                    AND aa.cobranza_id IS NOT NULL
+                    AND aml.debit != 0
+                GROUP BY
+                    aml.date,
+                    aml.team_id
+                ORDER BY date
+            )
+        SELECT
+            ROW_NUMBER() OVER () AS id,
+            ucommisions.date,
+            ucommisions.team_id,
+            SUM(total_vendidos) AS total_vendidos,
+            SUM(total_amount_sales) AS total_amount_sales,
+            SUM(total_amount_commissions) AS total_amount_commissions,
+            SUM(commission_by_cobranza) AS commission_by_cobranza,
+            SUM(debit) AS debit,
+            SUM(COALESCE(total_amount_commissions, 0) + COALESCE(commission_by_cobranza, 0)) AS total_commissions
+        FROM (
+                SELECT *
+                FROM
+                    commission_by_sale
+                UNION ALL
+                SELECT *
+                FROM
+                    commission_by_cobranza
+            ) AS ucommisions
+        WHERE
+            ucommisions.date IS NOT NULL
+        GROUP BY
+            ucommisions.team_id,
+            ucommisions.date
+        ORDER BY
+            ucommisions.team_id,
+            ucommisions.date            
+        """
+        return select_
+
+    date = fields.Date(
+        string="Fecha",
+        readonly=True
+    )
+    team_id = fields.Many2one(
+        'crm.team',
+        string="Equipo de ventas", readonly=True
+    )
+
+    total_vendidos = fields.Float(
+        string="Cantidad de ventas",
+        readonly=True
+    )
+    total_amount_sales = fields.Float(
+        string="Monto de las ventas",
+        readonly=True
+    )
+    total_amount_commissions = fields.Float(
+        string="Comisión asignada por las ventas",
+        readonly=True
+    )
+    debit = fields.Float(
+        string="Monto de la cobranza",
+        readonly=True
+    )
+    commission_by_cobranza = fields.Float(
+        string="Comisión por cobranza",
+        readonly=True
+    )
+    total_commissions = fields.Float(
+        string="Total de comisiones asignadas",
+        readonly=True
+    )

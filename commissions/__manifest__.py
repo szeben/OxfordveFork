@@ -21,7 +21,7 @@
     'license': 'Other proprietary',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'sale_management', 'stock', 'account', 'branch'],
+    'depends': ['base', 'sale_management', 'stock', 'account_accountant', 'account', 'branch'],
 
     'installable': True,
     'application': True,
@@ -34,6 +34,5 @@
         'views/commission_for_sale_views.xml',
         'views/commission_menuitem.xml',
     ],
-
-
+    
 }
