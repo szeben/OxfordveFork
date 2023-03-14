@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Restricciones sobre productos",
+    'name': "Restricciones sobre Productos",
 
     'summary': """
         Restringe la visualización y gestión de productos en el módulo de Inventario.""",
