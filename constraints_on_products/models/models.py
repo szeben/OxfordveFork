@@ -19,17 +19,17 @@ class ProductTemplate(models.Model):
 
         # Se hace la verificación si alguno de los tres campos "sale_ok, purchase_ok y can_be_expensed" son seleccionados
         # para aplicar la restricción. Se hace acá y en def write del modelo en cuestión
-        if 'sale_ok' in vals_list[0] or 'purchase_ok' in vals_list[0] or 'can_be_expensed' in vals_list[0]:
-            if vals_list[0].get('sale_ok') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_sale_ok'):
-                raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser vendido" verificado.'
-                                'Por favor comuníquese con su supervisor.'))
-            if vals_list[0].get('purchase_ok') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_purchase_ok'):
-                raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser comprado" verificado.'
-                                'Por favor comuníquese con su supervisor.'))
-            if vals_list[0].get('can_be_expensed') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_can_be_expensed'):
-                raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser un gasto" verificado.'
-                                'Por favor comuníquese con su supervisor.'))
-            
+        if vals_list[0].get('detailed_type') == 'product':
+            if 'sale_ok' in vals_list[0] or 'purchase_ok' in vals_list[0] or 'can_be_expensed' in vals_list[0]:
+                if vals_list[0].get('sale_ok') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_sale_ok'):
+                    raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser vendido" verificado.'
+                                    'Por favor comuníquese con su supervisor.'))
+                if vals_list[0].get('purchase_ok') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_purchase_ok'):
+                    raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser comprado" verificado.'
+                                    'Por favor comuníquese con su supervisor.'))
+                if vals_list[0].get('can_be_expensed') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_can_be_expensed'):
+                    raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser un gasto" verificado.'
+                                    'Por favor comuníquese con su supervisor.'))
 
         templates = super(ProductTemplate, self).create(vals_list)
         if "create_product_product" not in self._context:
@@ -64,18 +64,17 @@ class ProductTemplate(models.Model):
             if uom_id and uom_po_id and uom_id.category_id != uom_po_id.category_id:
                 vals['uom_po_id'] = uom_id.id
 
-                
-        if 'sale_ok' in vals or 'purchase_ok' in vals or 'can_be_expensed' in vals:
-            if vals.get('sale_ok') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_sale_ok'):
-                raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser vendido" verificado.'
-                                'Por favor comuníquese con su supervisor.'))
-            if vals.get('purchase_ok') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_purchase_ok'):
-                raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser comprado" verificado.'
-                                'Por favor comuníquese con su supervisor.'))
-            if vals.get('can_be_expensed') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_can_be_expensed'):
-                raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser un gasto" verificado.'
-                                'Por favor comuníquese con su supervisor.'))
-
+        if vals.get('detailed_type') == 'product':
+            if 'sale_ok' in vals or 'purchase_ok' in vals or 'can_be_expensed' in vals:
+                if vals.get('sale_ok') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_sale_ok'):
+                    raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser vendido" verificado.'
+                                    'Por favor comuníquese con su supervisor.'))
+                if vals.get('purchase_ok') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_purchase_ok'):
+                    raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser comprado" verificado.'
+                                    'Por favor comuníquese con su supervisor.'))
+                if vals.get('can_be_expensed') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_can_be_expensed'):
+                    raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser un gasto" verificado.'
+                                    'Por favor comuníquese con su supervisor.'))
 
         res = super(ProductTemplate, self).write(vals)
         if 'attribute_line_ids' in vals or (vals.get('active') and len(self.product_variant_ids) == 0):
@@ -98,4 +97,3 @@ class ProductTemplate(models.Model):
             # Actually touch all variants to avoid using filtered on the image_variant_1920 field
             self.product_variant_ids.write({})
         return res
-
