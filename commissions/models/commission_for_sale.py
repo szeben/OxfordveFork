@@ -89,7 +89,6 @@ class CommissionForSale(models.Model):
 class ProductTemplateInherit(models.Model):
     _inherit = 'product.template'
     commission_id = fields.Many2one('commission.for.sale', string="Plantilla del producto")
-    # commission_ids = fields.One2many('commission.for.sale', 'product_templ_id', string="Plantilla del producto")
     total_commissions = fields.Integer(string="Comisiones asociadas")
 
 
@@ -152,6 +151,7 @@ class AccountMoveLineInherit(models.Model):
     _inherit = 'account.move.line'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     team_id = fields.Many2one(related='move_id.team_id', string="Equipo de ventas", readonly=True, store=True)
+    user_id = fields.Many2one('res.users', string="Vendedor", readonly=True, store=True)
     cobranza_id = fields.Many2one(related='account_id.cobranza_id', string="Cobranza", readonly=True, store=True)
     commission_by_cobranza = fields.Float(compute="_compute_commission_by_cobranza", string="Comisión por cobranza", store=True)
 
@@ -171,12 +171,28 @@ class AccountMoveLineInherit(models.Model):
                 and line.date
                 and line.cobranza_id != False
                 and line.debit != 0
+                and line.payment_id != False
+                and line.partner_id != False
                 and (line.branch_id.id in branch_ids)
                 and (line.payment_id.branch_id.id in branch_ids)
             ):
 
-                line.commission_by_cobranza = line.debit * line.cobranza_id.percentage
+                if line.payment_id.reconciled_invoice_ids:
+                    for fact in line.payment_id.reconciled_invoice_ids:
 
+                        sale_ids = self.env['sale.order'].search([
+                            '&',
+                            ('state', '=', 'done'),
+                            ('invoice_status', '=', 'invoiced')]
+                        )
+
+                        if sale_ids:
+                            for sale in sale_ids:
+                                if sale.invoice_ids:
+                                    if fact.id in sale.invoice_ids.ids:
+                                        line.commission_by_cobranza = line.debit * line.cobranza_id.percentage
+                                        if not line.user_id and sale.user_id:
+                                            line.user_id = sale.user_id
             else:
                 line.commission_by_cobranza = 0
 
@@ -186,6 +202,7 @@ class SaleOrderLineInherit(models.Model):
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     categ_id = fields.Many2one(related='product_id.categ_id', string="Categoría del producto", readonly=True, store=True)
     team_id = fields.Many2one(related='order_id.team_id', string="Equipo de ventas", readonly=True, store=True, domain=[('order_id', '=', True)])
+    user_id = fields.Many2one(related='order_id.user_id', string="Vendedor", readonly=True, store=True, domain=[('order_id', '=', True)])
     quantity = fields.Float(string="Cantidad facturada", store=True)
     amount_sale = fields.Monetary(string="Monto de la venta", store=True)
     date = fields.Date(string="Fecha de la factura", readonly=True)
@@ -210,6 +227,8 @@ class SaleOrderLineInherit(models.Model):
                             for line_f in f.invoice_line_ids:
                                 if line_f.product_id.id == line.product_id.id:
                                     line.date = f.invoice_date
+                                    if line.order_id.user_id and not line_f.user_id:
+                                        line_f.user_id = line.order_id.user_id
                                     if line.order_id.team_id and not line_f.team_id:
                                         line_f.team_id = line.order_id.team_id
                                     if line.order_id.branch_id and not line_f.branch_id:
@@ -394,6 +413,7 @@ class TeamSaleReport(models.Model):
                 SELECT
                     date,
                     team_id,
+                    user_id,                  
                     SUM(total_vendidos) AS total_vendidos,
                     SUM(total_amount_sales) AS total_amount_sales,
                     SUM(total_amount_commissions) AS total_amount_commissions,
@@ -402,7 +422,8 @@ class TeamSaleReport(models.Model):
                 FROM sale_order_line
                 GROUP BY
                     date,
-                    team_id
+                    team_id,
+                    user_id                  
                 ORDER BY
                     date
             ),
@@ -410,6 +431,7 @@ class TeamSaleReport(models.Model):
                 SELECT
                     aml.date,
                     aml.team_id,
+                    aml.user_id,                  
                     0.0 AS total_vendidos,
                     0.0 AS total_amount_sales,
                     0.0 AS total_amount_commissions,
@@ -421,16 +443,20 @@ class TeamSaleReport(models.Model):
                 WHERE
                     aml.parent_state = 'posted'
                     AND aa.cobranza_id IS NOT NULL
-                    AND aml.debit != 0
+                    AND aml.debit != 0                    
+                    AND aml.partner_id IS NOT NULL
+                    AND aml.payment_id IS NOT NULL                 
                 GROUP BY
                     aml.date,
-                    aml.team_id
+                    aml.team_id,
+                    aml.user_id                       
                 ORDER BY date
             )
         SELECT
             ROW_NUMBER() OVER () AS id,
             ucommisions.date,
             ucommisions.team_id,
+            ucommisions.user_id,          
             SUM(total_vendidos) AS total_vendidos,
             SUM(total_amount_sales) AS total_amount_sales,
             SUM(total_amount_commissions) AS total_amount_commissions,
@@ -450,10 +476,12 @@ class TeamSaleReport(models.Model):
             ucommisions.date IS NOT NULL
         GROUP BY
             ucommisions.team_id,
-            ucommisions.date
+            ucommisions.date,
+            ucommisions.user_id          
         ORDER BY
             ucommisions.team_id,
-            ucommisions.date            
+            ucommisions.date,
+            ucommisions.user_id          
         """
         return select_
 
@@ -461,9 +489,15 @@ class TeamSaleReport(models.Model):
         string="Fecha",
         readonly=True
     )
+
     team_id = fields.Many2one(
         'crm.team',
         string="Equipo de ventas", readonly=True
+    )
+
+    user_id = fields.Many2one(
+        'res.users',
+        string="Vendedor", readonly=True
     )
 
     total_vendidos = fields.Float(

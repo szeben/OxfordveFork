@@ -51,6 +51,7 @@
                 <pivot string="Comisiones asignadas" display_quantity="0" sample="1">
                     <field name="date" interval="month" type="row" />
                     <field name="team_id" type="row" />
+                    <field name="user_id" type="row" />
                     <field name="total_vendidos" type="measure" string="Cant. Ventas" />
                     <field name="total_amount_sales" type="measure" string="Ventas en $" />
                     <field name="total_amount_commissions" type="measure" string="Com. Ventas" />
