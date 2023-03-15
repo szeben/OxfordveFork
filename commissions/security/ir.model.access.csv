@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_commission_manager,commission.manager,commissions.model_commission_for_sale,commissions.group_commission_manager,1,1,1,1
+access_commission_user,commission.user,commissions.model_commission_for_sale,commissions.group_commission_user,1,0,0,0
+access_configuration_manager,commission.configuration.manager,commissions.model_configuration_cobranza,commissions.group_commission_manager,1,1,1,1
+access_configuration_user,commission.configuration.user,commissions.model_configuration_cobranza,commissions.group_commission_user,1,0,0,0
+access_team_sale_report_manager,commission.team.sale.report.manager,commissions.model_team_sale_report,commissions.group_commission_manager,1,1,1,1
+access_team_sale_report_user,commission.team.sale.report.user,commissions.model_team_sale_report,commissions.group_commission_user,1,0,0,0
