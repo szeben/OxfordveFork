@@ -18,6 +18,10 @@
             <field name="name">Comisiones por ventas</field>
             <field name="res_model">sale.order.line</field>
             <field name="view_mode">pivot</field>
+            <field name="domain">[
+                ('order_id', '!=', False),
+                ]
+            </field>
             <field name="views"> [[False, "pivot"]]</field>
             <field name="view_id" ref="commission_report_view_pivot"></field>
         </record>
@@ -26,14 +30,22 @@
             <field name="name">Cobranzas realizadas</field>
             <field name="res_model">account.move.line</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('parent_state','=','posted'), ('account_id.cobranza_id', '!=', False), ('debit', '!=', 0)]</field>
+            <field name="domain">[
+                ('parent_state','=','posted'), 
+                ('account_id.cobranza_id', '!=', False), 
+                ('debit', '!=', 0)]
+            </field>
         </record>
 
         <record id="commission_by_payment_pivot" model="ir.actions.act_window">
             <field name="name">Comisiones por cobranza</field>
             <field name="res_model">account.move.line</field>
             <field name="view_mode">pivot</field>
-            <field name="domain">[('parent_state','=','posted'), ('account_id.cobranza_id', '!=', False), ('debit', '!=', 0)]</field>
+            <field name="domain">[                
+                ('parent_state','=','posted'), 
+                ('account_id.cobranza_id', '!=', False), 
+                ('debit', '!=', 0)]
+            </field>
             <field name="views"> [[False, "pivot"]]</field>
             <field name="view_id" ref="commission_by_payment_report_view_pivot"></field>
         </record>
@@ -52,17 +64,22 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem id="menu_commission_root" name="Comisiones" sequence="1"
+        <menuitem id="menu_commission_root"
+            name="Comisiones" sequence="1"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
-        <menuitem id="menu_commission_report" name="Informes"
+        <menuitem id="menu_commission_report" 
+            name="Informes"
             parent="commissions.menu_commission_root"
-            action="commissions.commission_list_action" sequence="2"
+            action="commissions.commission_list_action" 
+            sequence="2"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
-        <menuitem id="menu_commission_sale_report" name="Comisiones por venta"
+        <menuitem id="menu_commission_sale_report" 
+            name="Comisiones por venta"
             parent="commissions.menu_commission_report"
-            action="commissions.commission_product_action" sequence="3"
+            action="commissions.commission_product_action" 
+            sequence="3"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
         <menuitem id="menu_commission_report_cobranza_report" name="Comisiones por cobranza"
@@ -70,25 +87,32 @@
             action="commissions.commission_by_payment_pivot" sequence="4"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
-        <menuitem id="menu_commission_assigned_report" name="Comisiones asignadas"
+        <menuitem id="menu_commission_assigned_report" 
+            name="Comisiones asignadas"
             parent="commissions.menu_commission_report"
-            action="commissions.assigned_commissions_pivot" sequence="5"
+            action="commissions.assigned_commissions_pivot" 
+            sequence="5"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
-        <menuitem id="menu_commission_cobranzas" name="Cobranzas"
+        <menuitem id="menu_commission_cobranzas" 
+            name="Cobranzas"
             parent="commissions.menu_commission_root"
-            action="commissions.commission_list_action" sequence="6"
+            action="commissions.commission_list_action" 
+            sequence="6"
             groups="commissions.group_commission_manager" />
 
-        <menuitem id="menu_commission_cobranzas_realizadas" name="Cobranzas realizadas"
+        <menuitem id="menu_commission_cobranzas_realizadas" 
+            name="Cobranzas realizadas"
             parent="commissions.menu_commission_cobranzas"
-            action="commissions.commission_by_payment" sequence="7"
+            action="commissions.commission_by_payment" 
+            sequence="7"
             groups="commissions.group_commission_manager" />
 
-        <menuitem id="menu_commission_cobranzas_setting" name="Configuración"
+        <menuitem id="menu_commission_cobranzas_setting" 
+            name="Configuración"
             parent="commissions.menu_commission_cobranzas"
-            action="commissions.configuration_cobranza_action" sequence="8"
+            action="commissions.configuration_cobranza_action" 
+            sequence="8"
             groups="commissions.group_commission_manager" />
-
     </data>
 </odoo>
