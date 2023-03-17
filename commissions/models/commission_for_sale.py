@@ -86,14 +86,13 @@ class CommissionForSale(models.Model):
                                                line.bono_base_factor_multiplicador) + line.bono_base_factor_extra
 
 
-class ProductTemplateInherit(models.Model):
+class ProductTemplate(models.Model):
     _inherit = 'product.template'
     commission_id = fields.Many2one('commission.for.sale', string="Plantilla del producto")
-    # commission_ids = fields.One2many('commission.for.sale', 'product_templ_id', string="Plantilla del producto")
     total_commissions = fields.Integer(string="Comisiones asociadas")
 
 
-class ProductProductInherit(models.Model):
+class ProductProduct(models.Model):
     _inherit = 'product.product'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     commission_ids = fields.One2many('commission.for.sale', 'product_id', string="Productos")
@@ -133,25 +132,26 @@ class ProductProductInherit(models.Model):
                         self['total_commissions'] = len(r.commission_ids)
 
 
-class ProductCategoryInherit(models.Model):
+class ProductCategory(models.Model):
     _inherit = 'product.category'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
 
 
-class SaleOrderInherit(models.Model):
+class SaleOrder(models.Model):
     _inherit = 'sale.order'
-    commission_id = fields.Many2one('commission.for.sale', string="Comisión")
+    commission_id = fields.Many2one('commission.for.sale', string="Comisión")    
 
 
-class CrmTeamInherit(models.Model):
+class CrmTeam(models.Model):
     _inherit = 'crm.team'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
 
 
-class AccountMoveLineInherit(models.Model):
+class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     team_id = fields.Many2one(related='move_id.team_id', string="Equipo de ventas", readonly=True, store=True)
+    user_id = fields.Many2one('res.users', string="Vendedor", readonly=True, store=True)
     cobranza_id = fields.Many2one(related='account_id.cobranza_id', string="Cobranza", readonly=True, store=True)
     commission_by_cobranza = fields.Float(compute="_compute_commission_by_cobranza", string="Comisión por cobranza", store=True)
 
@@ -171,51 +171,69 @@ class AccountMoveLineInherit(models.Model):
                 and line.date
                 and line.cobranza_id != False
                 and line.debit != 0
+                and line.payment_id != False
+                and line.partner_id != False
                 and (line.branch_id.id in branch_ids)
                 and (line.payment_id.branch_id.id in branch_ids)
             ):
 
-                line.commission_by_cobranza = line.debit * line.cobranza_id.percentage
+                if line.payment_id.reconciled_invoice_ids:
+                    for fact in line.payment_id.reconciled_invoice_ids:
 
+                        sale_ids = self.env['sale.order'].search([
+                            '&',
+                            ('state', '=', 'done'),
+                            ('invoice_status', '=', 'invoiced')]
+                        )
+
+                        if sale_ids:
+                            for sale in sale_ids:
+                                if sale.invoice_ids:
+                                    if fact.id in sale.invoice_ids.ids:
+                                        line.commission_by_cobranza = line.debit * line.cobranza_id.percentage
+                                        if not line.user_id and sale.user_id:
+                                            line.user_id = sale.user_id
+                                else:
+                                    line.commission_by_cobranza = 0
             else:
                 line.commission_by_cobranza = 0
 
 
-class SaleOrderLineInherit(models.Model):
+class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     categ_id = fields.Many2one(related='product_id.categ_id', string="Categoría del producto", readonly=True, store=True)
     team_id = fields.Many2one(related='order_id.team_id', string="Equipo de ventas", readonly=True, store=True, domain=[('order_id', '=', True)])
+    user_id = fields.Many2one(related='order_id.user_id', string="Vendedor", readonly=True, store=True, domain=[('order_id', '=', True)])
     quantity = fields.Float(string="Cantidad facturada", store=True)
     amount_sale = fields.Monetary(string="Monto de la venta", store=True)
-    date = fields.Date(string="Fecha de la factura", readonly=True)
+    date = fields.Datetime(related='order_id.date_order', string="Fecha", readonly=True, store=True, domain=[('order_id', '=', True)])
     total_vendidos = fields.Float(compute="_compute_total_vendidos", string="Total vendidos", store=True)
     total_amount_sales = fields.Monetary(compute="_compute_total_vendidos", string="Monto de las ventas", store=True)
-    total_amount_commissions = fields.Monetary(compute="_compute_commissions", string="Total de comisión", store=True)
+    total_amount_commissions = fields.Monetary(compute="_compute_commissions", string="Total de comisión", store=True)    
+
 
     @api.depends("product_id", "commission_id", "product_id.commission_ids", "order_id", "order_id.date_order",
                  "order_id.invoice_ids", "order_id.state", "invoice_lines", "state", "date", "invoice_status")
-    def _compute_total_vendidos(self):
-
+    def _compute_total_vendidos(self):        
         for line in self.filtered(lambda line: line.invoice_lines):
-            if line.invoice_lines:
-                if line.order_id:
-                    v = line.order_id
+            if line.invoice_lines:                
                 line.total_vendidos = 0
                 line.total_amount_sales = 0
 
-                if v.invoice_ids and line.order_id:
-                    for f in v.invoice_ids:
+                if line.order_id and line.order_id.invoice_ids:
+                    for f in line.order_id.invoice_ids:
                         if f.state == 'posted' and f.move_type == 'out_invoice':
                             for line_f in f.invoice_line_ids:
                                 if line_f.product_id.id == line.product_id.id:
-                                    line.date = f.invoice_date
+                                    if line.order_id.date_order and not line.date:
+                                        line.date = line.order_id.date_order                                    
                                     if line.order_id.team_id and not line_f.team_id:
                                         line_f.team_id = line.order_id.team_id
                                     if line.order_id.branch_id and not line_f.branch_id:
                                         line_f.branch_id = line.order_id.branch_id
 
-                                    if line_f.product_uom_id == line_f.product_id.uom_id:
+                                    if line_f.product_uom_id == line_f.product_id.uom_id and line_f.quantity:
                                         cant_f = line_f.quantity
                                     elif line_f.product_uom_id.uom_type == 'bigger':
                                         cant_f = line_f.quantity * (line_f.product_uom_id.factor_inv / line_f.product_id.uom_id.factor_inv)
@@ -226,92 +244,92 @@ class SaleOrderLineInherit(models.Model):
                                     line.total_vendidos = line.total_vendidos + line.quantity
                                     line.amount_sale = line.order_id.amount_total
                                     line.total_amount_sales = line.total_amount_sales + line.amount_sale
-
+                                
+            
     @api.depends("total_vendidos", "date", "invoice_lines", "invoice_status", "product_id", "commission_id", "product_id.commission_ids", "product_id.commission_id")
     def _compute_commissions(self):
         for line in self:
-            if not line.invoice_lines:
-                continue
+            if line.invoice_lines and line.order_partner_id:                
 
-            line.total_amount_commissions = 0
+                line.total_amount_commissions = 0
 
-            if line.product_id.commission_ids and line.total_vendidos != 0 and line.date:
-                f1 = date(line.date.year, line.date.month, 1)
-                f2 = date(line.date.year, line.date.month, monthrange(line.date.year, line.date.month)[1])
-                if f1 and f2 and line.product_id.id and line.team_id.id:
-                    lines = self.env['sale.order.line'].search([
-                        '&', '&', '&',
-                        ('date', '>=', f1),
-                        ('date', '<=', f2),
-                        ('product_id', '=', line.product_id.id),
-                        ('team_id', '=', line.team_id.id)]
-                    )
+                if line.product_id.commission_ids and line.total_vendidos != 0 and line.date:
+                    f1 = datetime(line.date.year, line.date.month, 1, line.date.hour, line.date.minute, line.date.second)
+                    f2 = datetime(line.date.year, line.date.month, monthrange(line.date.year, line.date.month)[1])
+                   
+                    if f1 and f2 and line.product_id.id and line.team_id.id:
+                        lines = self.env['sale.order.line'].search([
+                            '&', '&', '&',
+                            ('date', '>=', f1),
+                            ('date', '<=', f2),
+                            ('product_id', '=', line.product_id.id),
+                            ('team_id', '=', line.team_id.id)]
+                        )
 
-                if lines:
-                    total_vendidos_mes = sum(lines.mapped("total_vendidos"))
-                    line_id = line.id
+                    if lines:
+                        total_vendidos_mes = sum(lines.mapped("total_vendidos"))
+                        line_id = line.id
 
-                for lin in lines:
-                    cumplen_fija_ids = []
-                    cumplen_bas_ids = []
-                    max_fija_c = False
-                    max_bas_c = False
-                    comission_max = False
-                    line.total_amount_commissions = 0
-
-                    for c in line.product_id.commission_ids:
-                        if c.commission_type == 'fija':
-                            if total_vendidos_mes >= c.cant_minima_base:
-                                cumplen_fija_ids.append(c)
-                        else:
-                            if total_vendidos_mes >= c.cant_min_base_otra_com:
-                                cumplen_bas_ids.append(c)
-
-                    if cumplen_fija_ids:
-                        max_fija_c = max(cumplen_fija_ids, key=lambda x: x.cant_minima_base)
-
-                    if cumplen_bas_ids:
-                        max_bas_c = max(cumplen_bas_ids, key=lambda x: x.cant_min_base_otra_com)
-
-                    if cumplen_fija_ids and cumplen_bas_ids:
-                        if max_fija_c.cant_minima_base >= max_bas_c.cant_min_base_otra_com:
-                            comission_max = max_fija_c
-                        else:
-                            comission_max = max_bas_c
-
-                    elif cumplen_fija_ids:
-                        comission_max = max_fija_c
-
-                    elif cumplen_bas_ids:
-                        comission_max = max_bas_c
-
-                    line.total_amount_commissions = 0
-
-                    if comission_max and (line.id == line_id):
-                        len_lines = len(lines)
-                        if comission_max.commission_type == 'fija':
-                            if comission_max.forma_de_calculo == 'fijo':
-                                line.total_amount_commissions = comission_max.bono_base / len_lines
-
-                            else:
-                                line.total_amount_commissions = (
-                                    total_vendidos_mes * comission_max.bono_base / comission_max.cant_minima_base
-                                ) / len_lines
-
-                        elif comission_max.commission_type == 'basada_en_otra_comision':
-                            if comission_max.forma_de_calculo == 'fijo':
-                                line.total_amount_commissions = comission_max.bono_base_otra_com / len_lines
-
-                            else:
-                                line.total_amount_commissions = (
-                                    total_vendidos_mes * comission_max.bono_base_otra_com / comission_max.cant_min_base_otra_com
-                                ) / len_lines
-
-                    else:
+                    for lin in lines:
+                        cumplen_fija_ids = []
+                        cumplen_bas_ids = []
+                        max_fija_c = False
+                        max_bas_c = False
+                        comission_max = False
                         line.total_amount_commissions = 0
 
+                        for c in line.product_id.commission_ids:
+                            if c.commission_type == 'fija':
+                                if total_vendidos_mes >= c.cant_minima_base:
+                                    cumplen_fija_ids.append(c)
+                            else:
+                                if total_vendidos_mes >= c.cant_min_base_otra_com:
+                                    cumplen_bas_ids.append(c)
 
-class AccountAccountInherit(models.Model):
+                        if cumplen_fija_ids:
+                            max_fija_c = max(cumplen_fija_ids, key=lambda x: x.cant_minima_base)
+
+                        if cumplen_bas_ids:
+                            max_bas_c = max(cumplen_bas_ids, key=lambda x: x.cant_min_base_otra_com)
+
+                        if cumplen_fija_ids and cumplen_bas_ids:
+                            if max_fija_c.cant_minima_base >= max_bas_c.cant_min_base_otra_com:
+                                comission_max = max_fija_c
+                            else:
+                                comission_max = max_bas_c
+
+                        elif cumplen_fija_ids:
+                            comission_max = max_fija_c
+
+                        elif cumplen_bas_ids:
+                            comission_max = max_bas_c
+
+                        line.total_amount_commissions = 0
+
+                        if comission_max and (line.id == line_id):
+                            len_lines = len(lines)
+                            if comission_max.commission_type == 'fija':
+                                if comission_max.forma_de_calculo == 'fijo':
+                                    line.total_amount_commissions = comission_max.bono_base / len_lines
+
+                                else:
+                                    line.total_amount_commissions = (
+                                        total_vendidos_mes * comission_max.bono_base / comission_max.cant_minima_base
+                                    ) / len_lines
+
+                            elif comission_max.commission_type == 'basada_en_otra_comision':
+                                if comission_max.forma_de_calculo == 'fijo':
+                                    line.total_amount_commissions = comission_max.bono_base_otra_com / len_lines
+
+                                else:
+                                    line.total_amount_commissions = (
+                                        total_vendidos_mes * comission_max.bono_base_otra_com / comission_max.cant_min_base_otra_com
+                                    ) / len_lines
+            else:
+                line.total_amount_commissions = 0
+
+
+class AccountAccount(models.Model):
     _inherit = 'account.account'
     cobranza_id = fields.Many2one('configuration.cobranza', string="Cobranza")
 
@@ -394,6 +412,7 @@ class TeamSaleReport(models.Model):
                 SELECT
                     date,
                     team_id,
+                    user_id,                  
                     SUM(total_vendidos) AS total_vendidos,
                     SUM(total_amount_sales) AS total_amount_sales,
                     SUM(total_amount_commissions) AS total_amount_commissions,
@@ -402,7 +421,8 @@ class TeamSaleReport(models.Model):
                 FROM sale_order_line
                 GROUP BY
                     date,
-                    team_id
+                    team_id,
+                    user_id                  
                 ORDER BY
                     date
             ),
@@ -410,6 +430,7 @@ class TeamSaleReport(models.Model):
                 SELECT
                     aml.date,
                     aml.team_id,
+                    aml.user_id,                  
                     0.0 AS total_vendidos,
                     0.0 AS total_amount_sales,
                     0.0 AS total_amount_commissions,
@@ -421,16 +442,20 @@ class TeamSaleReport(models.Model):
                 WHERE
                     aml.parent_state = 'posted'
                     AND aa.cobranza_id IS NOT NULL
-                    AND aml.debit != 0
+                    AND aml.debit != 0                    
+                    AND aml.partner_id IS NOT NULL
+                    AND aml.payment_id IS NOT NULL                 
                 GROUP BY
                     aml.date,
-                    aml.team_id
+                    aml.team_id,
+                    aml.user_id                       
                 ORDER BY date
             )
         SELECT
             ROW_NUMBER() OVER () AS id,
             ucommisions.date,
             ucommisions.team_id,
+            ucommisions.user_id,          
             SUM(total_vendidos) AS total_vendidos,
             SUM(total_amount_sales) AS total_amount_sales,
             SUM(total_amount_commissions) AS total_amount_commissions,
@@ -450,20 +475,28 @@ class TeamSaleReport(models.Model):
             ucommisions.date IS NOT NULL
         GROUP BY
             ucommisions.team_id,
-            ucommisions.date
+            ucommisions.date,
+            ucommisions.user_id          
         ORDER BY
             ucommisions.team_id,
-            ucommisions.date            
+            ucommisions.date,
+            ucommisions.user_id          
         """
         return select_
 
-    date = fields.Date(
+    date = fields.Datetime(
         string="Fecha",
         readonly=True
     )
+
     team_id = fields.Many2one(
         'crm.team',
         string="Equipo de ventas", readonly=True
+    )
+
+    user_id = fields.Many2one(
+        'res.users',
+        string="Vendedor", readonly=True
     )
 
     total_vendidos = fields.Float(
