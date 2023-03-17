@@ -64,7 +64,7 @@ class ProductTemplate(models.Model):
             if uom_id and uom_po_id and uom_id.category_id != uom_po_id.category_id:
                 vals['uom_po_id'] = uom_id.id
 
-        if vals.get('detailed_type') == 'product':
+        if self.detailed_type == 'product':
             if 'sale_ok' in vals or 'purchase_ok' in vals or 'can_be_expensed' in vals:
                 if vals.get('sale_ok') == True and not self.env.user.has_group('constraints_on_products.group_inventory_check_sale_ok'):
                     raise UserError(_('No tiene permitido crear o modificar un producto con el campo "Puede ser vendido" verificado.'
