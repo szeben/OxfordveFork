@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Tarifas por Linea de Ventas",
+    'name': "Restricciones sobre Productos",
 
     'summary': """
-        Permite manejar distintas tarifas dentro de un mismo presupuesto de venta.""",
+        Restringe la visualización y gestión de productos en el módulo de Inventario.""",
 
     'description': """
-        Incluye una columna de tarifa por línea de pedido, seleccionable por el
-    usuario. Restringe la posibilidad de usar tarifas distintas a la predefinida, por usuarios no
-    autorizados.
+        Restringe la visualización y gestión de productos que se pueden comprar, 
+        vender o que son un gasto, desde el módulo de Inventario.
     """,
 
     'author': "Techne Studio IT & Consulting",
@@ -17,17 +16,17 @@
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Ventas',
+    'category': 'Inventario',
     'version': '0.1',
     'license': "Other proprietary",
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'sale', 'mail'],
+    'depends': ['base', 'product', 'stock'],
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
-        'security/fees_for_order_lines_security.xml',
+        'security/constraints_on_products_security.xml',
+        'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
     ],
@@ -35,7 +34,4 @@
     'demo': [
         'demo/demo.xml',
     ],
-    "auto_install": False,
-    "installable": True,
-
 }

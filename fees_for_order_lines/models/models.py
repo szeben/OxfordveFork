@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from odoo.tools import float_compare
 
 
 class SaleOrderLine(models.Model):
@@ -9,16 +10,13 @@ class SaleOrderLine(models.Model):
 
     pricelist_id = fields.Many2one(
         'product.pricelist',
-        string='Pricelist',
+        string='Tarifa',
         default=lambda self: self.order_id.pricelist_id,
         store=True,
         check_company=True,  # Unrequired company
         required=True, readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]},
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]",
     )
-    order_partner_id = fields.Many2one(
-        related='order_id.partner_id', store=True, string='Customer')
-
 
     def get_price_inline(self):
         self.ensure_one()
@@ -75,7 +73,7 @@ class SaleOrderLine(models.Model):
                 discount = 0
             line.update({'price_unit': price_unit, 'discount': discount})
             # self.order_id.message_post(body=_("Product prices have been recomputed according to pricelist <b>%s<b> ", line.pricelist_id.display_name))
-            # line.order_id.message_post(body="Hello, good morning all", subject="Today in this video")        
+            # line.order_id.message_post(body="Hello, good morning all", subject="Today in this video")
 
     def _get_display_price(self, product):
         # TO DO: move me in master/saas-16 on sale.order
@@ -235,12 +233,11 @@ class SaleOrder(models.Model):
                     order._create_analytic_account()
 
         return True
-    
+
     def write(self, values):
         if values.get('order_line') and self.state == 'sale':
             for order in self:
                 pre_order_line_qty = {order_line: order_line.product_uom_qty for order_line in order.mapped('order_line') if not order_line.is_expense}
-                
 
         if values.get('partner_shipping_id'):
             new_partner = self.env['res.partner'].browse(values.get('partner_shipping_id'))
@@ -256,13 +253,13 @@ class SaleOrder(models.Model):
             # protagate commitment_date as the deadline of the related stock move.
             # TODO: Log a note on each down document
             self.order_line.move_ids.date_deadline = fields.Datetime.to_datetime(values.get('commitment_date'))
-        
 
         if values.get('order_line'):
-            dc_id, tf_na, tf_ol, prod, mss = [], [], [] ,[], []
+            dc_id, tf_na, tf_ol, prod, mss = [], [], [], [], []
             for s in values.get('order_line'):
                 if s[-1] != False and s[-1].get('pricelist_id') and isinstance(s[1], int):
-                    tf_na.append(' '.join([str(elem) for elem in (((self.env['product.pricelist'].search([('id', '=', (s[-1].get('pricelist_id')))])).mapped('name')))]))
+                    tf_na.append(' '.join([str(elem)
+                                 for elem in (((self.env['product.pricelist'].search([('id', '=', (s[-1].get('pricelist_id')))])).mapped('name')))]))
                     dc_id.append(s[1])
 
             for order in self:
@@ -290,7 +287,7 @@ class SaleOrder(models.Model):
                         to_log[order_line] = (order_line.product_uom_qty, pre_order_line_qty.get(order_line, 0.0))
                 if to_log:
                     documents = self.env['stock.picking']._log_activity_get_documents(to_log, 'move_ids', 'UP')
-                    documents = {k:v for k, v in documents.items() if k[0].state != 'cancel'}
+                    documents = {k: v for k, v in documents.items() if k[0].state != 'cancel'}
                     order._log_decrease_ordered_quantity(documents)
 
         return res
