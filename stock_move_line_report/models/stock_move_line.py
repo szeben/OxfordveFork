@@ -25,7 +25,7 @@ def delete_date_leaf(domain):
     return normalize_domain(new_domain)
 
 
-def compute_existence(previous, record):
+def compute_existence(previous, record) -> float:
     if (record.product_id.qty_available - record.qty_done) == 0:
         return record.qty_done
     elif record.location_id.usage == 'inventory' and record.location_id.scrap_location == False:
