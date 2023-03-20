@@ -6,5 +6,12 @@
             <field name="comment">No podrán acceder al campo Tarifas en una venta. Creado por: Techne</field>
             <field name="category_id" ref="base.module_category_sales_sales"/>
         </record>
+
+        <record model="res.groups" id="group_fees_without_approval">
+            <field name="name">Ver solo tarifas sin aprobación</field>
+            <field name="comment">En la orden de venta, podrá ver solo las tarifas que no requieren aprobación (si el usuario no es solo lectura de tarifas). Creado por: Techne.</field>
+            <field name="category_id" ref="base.module_category_sales_sales"/>
+        </record>
+
     </data>
 </odoo>

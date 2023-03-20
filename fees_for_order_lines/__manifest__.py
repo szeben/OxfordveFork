@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "fees_for_order_lines",
+    'name': "Tarifas por Linea de Ventas",
 
     'summary': """
         Permite manejar distintas tarifas dentro de un mismo presupuesto de venta.""",

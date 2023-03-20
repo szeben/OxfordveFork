@@ -182,7 +182,7 @@ class StockReplenishmentReport(models.Model):
     )
     qty_invoice = fields.Float(
         'Cantidad por factura',
-        readonly=True
+            readonly=True
     )
     qty_delivery_note = fields.Float(
         'Cantidad por nota de entrega',

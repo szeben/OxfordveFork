@@ -65,22 +65,21 @@
     </record>
 
     <!-- Heredamos la vista account.form para añadir un parámetro adicional para ambos
-    botones (action_post) en el header de las facturas. Si la factura es tipo 'in_invoice' -> Proveedores
-    no se mostrarán los botones originales (sólo se mostrarán para cualquier tipo de factura excepto proveedores). 
-    Más abajo se hereda la misma vista para añadir los nuevos botones que se mostrarán solamente a aquellos
+    botones (action_post) en el header de las facturas. Si la factura es tipo 'in_invoice' ->
+    Proveedores
+    no se mostrarán los botones originales (sólo se mostrarán para cualquier tipo de factura excepto
+    proveedores). 
+    Más abajo se hereda la misma vista para añadir los nuevos botones que se mostrarán solamente a
+    aquellos
     que pertenecen al grupo 'Confirmar facturas de compras'-->
     <record id="account_view_move_form_inherited" model="ir.ui.view">
       <field name="name">account.move.form.inherited</field>
       <field name="model">account.move</field>
       <field name="inherit_id" ref="account.view_move_form" />
       <field name="arch" type="xml">
-        <xpath expr="//header//button[@name='action_post'][1]" position="attributes">
-          <attribute name="attrs">{'invisible': ['|', '|', '|', ('state', '!=', 'draft'), ('auto_post',
-            '=', True), ('move_type', '!=', 'entry'), ('move_type', '=', 'in_invoice')]}</attribute>
-        </xpath>
         <xpath expr="//header//button[@name='action_post'][2]" position="attributes">
           <attribute name="attrs">{'invisible': ['|', '|', '|', ('state', '!=', 'draft'),
-            ('auto_post', '=', True), ('move_type', 'in', ['in_invoice', 'entry']),
+            ('auto_post', '=', True), ('move_type', 'in', ['in_invoice', 'entry', 'in_refund']),
             ('display_inactive_currency_warning','=',True)]}</attribute>
         </xpath>
       </field>
@@ -92,14 +91,10 @@
       <field name="inherit_id" ref="account.view_move_form" />
       <field name="arch" type="xml">
         <xpath expr="//header//button[@name='action_post'][1]" position="after">
-          <button name="action_post" string="Publicar" class="oe_highlight"
-            type="object" groups="constraints_on_budgets_and__pos.group_purchase_confirm_pos_bills"
-            data-hotkey="v"
-            attrs="{'invisible': ['|', '|', ('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', '!=', 'entry')]}" />
           <button name="action_post" string="Confirmar" class="oe_highlight"
             type="object" groups="constraints_on_budgets_and__pos.group_purchase_confirm_pos_bills"
             data-hotkey="v"
-            attrs="{'invisible': ['|', '|', '|', ('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', '=', 'entry'), ('display_inactive_currency_warning','=',True)]}" />
+            attrs="{'invisible': ['|', '|', '|', ('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', 'in', ['entry', 'out_invoice', 'out_refund', 'out_receipt', 'in_receipt']), ('display_inactive_currency_warning','=',True)]}" />
         </xpath>
       </field>
     </record>
@@ -130,10 +125,13 @@
       </field>
     </record>
 
-    <!-- Se hereda la vista purchase.order para añadir atributo invisible a los botones originales de
-    crear factura dentro de la compra, para así los botones añadidos arriba (que son copia exacta de los originales)
+    <!-- Se hereda la vista purchase.order para añadir atributo invisible a los botones originales
+    de
+    crear factura dentro de la compra, para así los botones añadidos arriba (que son copia exacta de
+    los originales)
     aparezcan solo si el usuario pertenece al grupo 'Gestionar facturas de compras'. Además,
-    se le añade el grupo que sólo podra observar al botón Confirmar Orden de Compra, 'Confirmar órdenes de compra' -->
+    se le añade el grupo que sólo podra observar al botón Confirmar Orden de Compra, 'Confirmar órdenes
+    de compra' -->
     <record id="purchase_order_form_inherited_buttons" model="ir.ui.view">
       <field name="name">purchase.order.form.inherited.buttons</field>
       <field name="model">purchase.order</field>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "contact_type_restrictions",
+    'name': "Restricciones sobre Contactos",
 
     'summary': """
         Restringe la visualizacion y gestión de los contactos de acuerdo a su clasificación
