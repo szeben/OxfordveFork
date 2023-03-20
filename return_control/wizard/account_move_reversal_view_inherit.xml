@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="view_account_reversal_inherit">
+            <field name="name">account.move.reversal.inherit</field>
+            <field name="model">account.move.reversal</field> 
+            <field name="inherit_id" ref="account.view_account_move_reversal"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="group[2]/group[1]/field[@name='date_mode']" position="after">
+                    <field name="origen_invoice" invisible="1"/>
+                    <field name="dev_mercancia" attrs="{'invisible':[('move_type','not in',['out_refund', 'out_invoice'])]}"/>
+                    <field name="stock_pick" domain="[('group_id','=', origen_invoice),('es_devolucion','=',True),('state','=','done'), ('nota_cred','=',False)]" attrs="{'required':[('dev_mercancia','=',True)], 'invisible':['|',('dev_mercancia','=',False),('move_type','not in',['out_refund', 'out_invoice'])]}" options="{'no_create': True, 'no_create_edit':True, 'no_open':True}"/>
+                  </xpath>               
+                
+            </field>
+        </record>  
+    </data>
+</odoo>
