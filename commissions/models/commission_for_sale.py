@@ -250,7 +250,6 @@ class SaleOrderLine(models.Model):
     def _compute_commissions(self):
         for line in self:
             if line.invoice_lines:
-                print('si está pasando por compute commissions', line.total_amount_commissions)                
 
                 line.total_amount_commissions = 0
 
@@ -326,10 +325,8 @@ class SaleOrderLine(models.Model):
                                     line.total_amount_commissions = (
                                         total_vendidos_mes * comission_max.bono_base_otra_com / comission_max.cant_min_base_otra_com
                                     ) / len_lines
-                print('asdasdasdasdas', line.total_amount_commissions) 
 
             else:
-                print('no se esta calculando o el total de comisiones es 0', line.total_amount_commissions)
                 line.total_amount_commissions = 0
 
 
