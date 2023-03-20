@@ -18,12 +18,13 @@ class Users(models.Model):
             'Gestionar Proveedores',
             'Gestionar Clientes'
         ]
-        for val in set(map(lambda i: f"in_group_{i}", self.env['res.groups'].search([('name', 'in', list_groups)]).ids)).intersection(set(vals_list[0])):
-            if vals_list[0].get(val) == True:
-                vals_list[0].update({
-                    f"in_group_" + str(self.env['res.groups'].search([('name', '=', 'Usuario Interno 2')]).ids[0]): False,
-                    f"in_group_" + str(self.env['res.groups'].search([('name', '=', 'Creación de contactos')]).ids[0]): False
-                })
+        if vals_list:
+            for val in set(map(lambda i: f"in_group_{i}", self.env['res.groups'].search([('name', 'in', list_groups)]).ids)).intersection(set(vals_list[0])):
+                if vals_list[0].get(val) == True:
+                    vals_list[0].update({
+                        f"in_group_" + str(self.env['res.groups'].search([('name', '=', 'Usuario Interno 2')]).ids[0]): False,
+                        f"in_group_" + str(self.env['res.groups'].search([('name', '=', 'Creación de contactos')]).ids[0]): False
+                    })
 
         if vals_list:
             vals_list[0].update({
