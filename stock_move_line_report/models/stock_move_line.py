@@ -37,6 +37,8 @@ def compute_existence(previous, record):
     elif record.picking_code == "internal":
         if record.location_id.branch_id == record.location_dest_id.branch_id:
             return previous
+        elif record.branch_id != record.location_dest_id.branch_id:
+            return previous - record.qty_done
         else:
             return record.qty_done + previous
     else:
@@ -72,30 +74,35 @@ class StockMoveLine(models.Model):
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
-        self.extra_context.update({"domain": args, "offset": offset, "order": order})
+        self.extra_context.update({"domain": args, "order": order})
         return super().search(args, offset=offset, limit=limit, order=order, count=count)
 
-    @api.depends('qty_done', 'reference')
-    def _compute_in_out(self):
+    def _get_previous_value(self):
         order = self.extra_context.get('order', 'date ASC')
-        order_field = order.split(",", maxsplit=1)[0].strip().split(maxsplit=1)[0].lower()
-        show_existence = False
-        anterior = 0.0
+        order_field = order.split(",", maxsplit=1)[0].strip().lower()
 
-        if order_field == "date":
-            show_existence = True
-            offset = self.extra_context.get('offset', 0)
+        if order_field in {"date", "date asc"}:
+            min_record = min(self, key=lambda r: r.write_date)
+            domain = [
+                '&', '&',
+                ('id', 'not in', self.ids),
+                ('date', '<=', min_record.date),
+                ('write_date', '<', min_record.write_date)
+            ]
             extra_domain = self.extra_context.get('domain', [])
-            domain = [('id', 'not in', self.ids)]
-
             if extra_domain:
                 domain = AND([domain, delete_date_leaf(extra_domain)])
 
-            anterior = reduce(
+            return reduce(
                 compute_existence,
-                super().sudo().search(domain, limit=(offset if offset > 0 else None), order=order),
-                anterior
+                super().sudo().search(domain, order=order),
+                0.0
             )
+
+    @api.depends('qty_done', 'reference')
+    def _compute_in_out(self):
+        previous = self._get_previous_value()
+        anterior = 0.0 if previous is None else previous
 
         for record in self:
             entrada = 0.0
@@ -104,6 +111,8 @@ class StockMoveLine(models.Model):
             if record.picking_code == 'internal':
                 if record.location_id.branch_id == record.location_dest_id.branch_id:
                     entrada = salida = record.qty_done
+                elif record.branch_id != record.location_dest_id.branch_id:
+                    salida = record.qty_done
                 else:
                     entrada = record.qty_done
 
@@ -124,7 +133,7 @@ class StockMoveLine(models.Model):
             record.salida = salida
             record.entrada = entrada
 
-            if show_existence:
-                record.saldo_existencia = anterior = compute_existence(anterior, record)
-            else:
+            if previous is None:
                 record.saldo_existencia = False
+            else:
+                record.saldo_existencia = anterior = compute_existence(anterior, record)
