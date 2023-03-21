@@ -232,7 +232,7 @@ class SaleOrderLine(models.Model):
                                         line_f.team_id = line.order_id.team_id
                                     if line.order_id.branch_id and not line_f.branch_id:
                                         line_f.branch_id = line.order_id.branch_id
-
+                                    cant_f = 0
                                     if line_f.product_uom_id == line_f.product_id.uom_id and line_f.quantity:
                                         cant_f = line_f.quantity
                                     elif line_f.product_uom_id.uom_type == 'bigger':
@@ -249,7 +249,7 @@ class SaleOrderLine(models.Model):
     @api.depends("total_vendidos", "date", "invoice_lines", "invoice_status", "product_id", "commission_id", "product_id.commission_ids", "product_id.commission_id")
     def _compute_commissions(self):
         for line in self:
-            if line.invoice_lines and line.order_partner_id:                
+            if line.invoice_lines:
 
                 line.total_amount_commissions = 0
 
@@ -325,6 +325,7 @@ class SaleOrderLine(models.Model):
                                     line.total_amount_commissions = (
                                         total_vendidos_mes * comission_max.bono_base_otra_com / comission_max.cant_min_base_otra_com
                                     ) / len_lines
+
             else:
                 line.total_amount_commissions = 0
 
