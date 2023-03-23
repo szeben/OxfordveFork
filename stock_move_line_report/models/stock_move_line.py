@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from functools import reduce
+from functools import partial, reduce
 
 from odoo import _, api, fields, models
 from odoo.osv.expression import (AND, AND_OPERATOR, OR_OPERATOR, is_leaf,
@@ -25,7 +25,7 @@ def delete_date_leaf(domain):
     return normalize_domain(new_domain)
 
 
-def compute_existence(previous, record):
+def compute_existence(previous, record, branch_ids=[]) -> float:
     if (record.product_id.qty_available - record.qty_done) == 0:
         return record.qty_done
     elif record.location_id.usage == 'inventory' and record.location_id.scrap_location == False:
@@ -35,9 +35,9 @@ def compute_existence(previous, record):
     elif record.picking_code == "outgoing":
         return previous - record.qty_done
     elif record.picking_code == "internal":
-        if record.location_id.branch_id == record.location_dest_id.branch_id:
+        if record.location_id.branch_id.id == record.location_dest_id.branch_id.id:
             return previous
-        elif record.branch_id != record.location_dest_id.branch_id:
+        elif record.location_dest_id.branch_id.id not in branch_ids:
             return previous - record.qty_done
         else:
             return record.qty_done + previous
@@ -94,7 +94,7 @@ class StockMoveLine(models.Model):
                 domain = AND([domain, delete_date_leaf(extra_domain)])
 
             return reduce(
-                compute_existence,
+                partial(compute_existence, branch_ids=self.env.context.get("allowed_branch_ids", [])),
                 super().sudo().search(domain, order=order),
                 0.0
             )
@@ -103,15 +103,16 @@ class StockMoveLine(models.Model):
     def _compute_in_out(self):
         previous = self._get_previous_value()
         anterior = 0.0 if previous is None else previous
+        allowed_branch_ids = self.env.context.get("allowed_branch_ids", [])
 
         for record in self:
             entrada = 0.0
             salida = 0.0
 
             if record.picking_code == 'internal':
-                if record.location_id.branch_id == record.location_dest_id.branch_id:
+                if record.location_id.branch_id.id == record.location_dest_id.branch_id.id:
                     entrada = salida = record.qty_done
-                elif record.branch_id != record.location_dest_id.branch_id:
+                elif record.location_dest_id.branch_id.id not in allowed_branch_ids:
                     salida = record.qty_done
                 else:
                     entrada = record.qty_done
