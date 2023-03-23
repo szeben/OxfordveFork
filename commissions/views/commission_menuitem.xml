@@ -41,7 +41,7 @@
             <field name="name">Comisiones por cobranza</field>
             <field name="res_model">account.move.line</field>
             <field name="view_mode">pivot</field>
-            <field name="domain">[                
+            <field name="domain">[               
                 ('parent_state','=','posted'), 
                 ('account_id.cobranza_id', '!=', False), 
                 ('debit', '!=', 0)]

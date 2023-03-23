@@ -11,6 +11,8 @@ class Users(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # Verificar si los grupos que se están creando, son los que pertenecen a contact_type_restrictions
+        # Y si es así, quitar acceso al grupo (Creación de Contactos) para que las reglas funcionen
         list_groups = [
             'Visualizar Proveedores', 
             'Visualizar Proveedores Nacionales', 

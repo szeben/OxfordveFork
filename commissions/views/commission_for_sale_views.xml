@@ -17,6 +17,7 @@
             </field>
         </record>
 
+
         <record id="view_sales_order_line_filter_inherit" model="ir.ui.view">
             <field name="name">view.sales.order.line.filter.inherit</field>
             <field name="model">sale.order.line</field>
@@ -42,6 +43,26 @@
             </field>
         </record>
 
+        <record id="sale_view_order_line_tree_inherit" model="ir.ui.view">
+            <field name="name">sale.view.order.line.tree.inherit</field>
+            <field name="model">sale.order.line</field>
+            <field name="mode">extension</field>
+            <field name="priority" eval="17" />
+            <field name="inherit_id" ref="sale.view_order_line_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='price_subtotal']" position="after">
+                    <field name="total_amount_commissions" />
+                </xpath>
+                <xpath expr="//field[@name='order_id']" position="after">
+                    <field name="team_id" />
+                </xpath>
+                <xpath expr="//field[@name='route_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
         <record id="commission_by_payment_report_view_pivot" model="ir.ui.view">
             <field name="name">commission.by.payment.report.view.pivot</field>
             <field name="model">account.move.line</field>
@@ -63,7 +84,6 @@
                 <pivot string="Comisiones asignadas" display_quantity="0" sample="1">
                     <field name="date" interval="month" type="row" />
                     <field name="team_id" type="row" />
-                    <field name="user_id" type="row" />
                     <field name="total_vendidos" type="measure" string="Cant. Ventas" />
                     <field name="total_amount_sales" type="measure" string="Ventas en $" />
                     <field name="total_amount_commissions" type="measure" string="Com. Ventas" />
