@@ -143,14 +143,20 @@ class AccountMove(models.Model):
         # escribiendo datos sobre las facturas; entonces, se debe verificar (para ambos casos) que la edición
         # de la factura sea únicamente sobre 'in_invoice' (facturas de proveedor), para que no ocasione choques
         # con las otras facturas
-        if self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_confirm_pos_bills') and self.move_type == 'in_invoice':
-            pass
-        elif not self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_manage_pos_bills') and self.move_type == 'in_invoice':
-            # Si cualquier otra persona quiere modificar la factura de compra y no tiene los permisos, levantará
-            # el siguiente error
-            raise UserError(_('No tiene permisos para editar la factura. Por favor comuníquese con su supervisor'))
-        else:
-            return res
+        # Se modificó la función. Ahora iterará sobre cada factura que se esté editando, y verificará primero si 
+        # es una factura de tipo 'in_invoice', para aplicarle ciertas restricciones. Si no, no hara nada.
+        # Se debe iterar ya que en los modelos de conciliación de bancos, se pueden editar varias facturas a la vez
+        for move in self:
+            if move.move_type == 'in_invoice':
+                if self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_manage_pos_bills'):
+                    pass
+                elif not self.env.user.has_group('constraints_on_budgets_and__pos.group_purchase_confirm_pos_bills'):
+                    # Si cualquier otra persona quiere modificar la factura de compra y no tiene los permisos, levantará
+                    # el siguiente error
+                    raise UserError(_('No tiene permisos para editar la factura. Por favor comuníquese con su supervisor'))
+            else:
+                pass
+        return res
     
     def _post(self, soft=True):
         """
