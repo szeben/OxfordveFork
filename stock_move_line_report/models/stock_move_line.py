@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from functools import partial, reduce
+from functools import reduce
 
 from odoo import _, api, fields, models
 from odoo.osv.expression import (AND, AND_OPERATOR, OR_OPERATOR, is_leaf,
@@ -25,7 +25,7 @@ def delete_date_leaf(domain):
     return normalize_domain(new_domain)
 
 
-def compute_existence(previous, record, branch_ids=[]) -> float:
+def compute_existence(previous, record) -> float:
     if (record.product_id.qty_available - record.qty_done) == 0:
         return record.qty_done
     elif record.location_id.usage == 'inventory' and record.location_id.scrap_location == False:
@@ -37,7 +37,7 @@ def compute_existence(previous, record, branch_ids=[]) -> float:
     elif record.picking_code == "internal":
         if record.location_id.branch_id.id == record.location_dest_id.branch_id.id:
             return previous
-        elif record.location_dest_id.branch_id.id not in branch_ids:
+        elif record.location_dest_id.branch_id.id not in record._context.get("allowed_branch_ids", []):
             return previous - record.qty_done
         else:
             return record.qty_done + previous
@@ -94,7 +94,7 @@ class StockMoveLine(models.Model):
                 domain = AND([domain, delete_date_leaf(extra_domain)])
 
             return reduce(
-                partial(compute_existence, branch_ids=self.env.context.get("allowed_branch_ids", [])),
+                compute_existence,
                 super().sudo().search(domain, order=order),
                 0.0
             )

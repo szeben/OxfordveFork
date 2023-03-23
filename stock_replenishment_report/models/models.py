@@ -2,13 +2,31 @@
 
 from collections import OrderedDict
 from itertools import chain, groupby, islice
+from typing import Union
 
 from lxml import etree
 from odoo import _, api, fields, models, tools
-from odoo.osv.expression import OR
+from odoo.osv.expression import (DOMAIN_OPERATORS, is_leaf, is_operator,
+                                 normalize_domain, normalize_leaf, AND_OPERATOR, OR_OPERATOR)
 
 DEFAULT_MIN_BY_BRANCH = 2
 DEFAULT_MIN_GLOBAL = 6
+
+
+def remove_fields_from_domain(domain: list, fields: Union[list, tuple, set]) -> list:
+    new_domain = []
+
+    for i, elm in enumerate(domain):
+        if is_leaf(elm) and (i > 0) and (normalize_leaf(elm)[0] not in fields):
+            for j, olm in enumerate(new_domain[::-1]):
+                if is_operator(olm):
+                    new_domain.pop(-j-1)
+                    if olm in {AND_OPERATOR, OR_OPERATOR}:
+                        break
+            continue
+        new_domain.append(elm)
+
+    return new_domain
 
 
 def get_name(branch_id):
