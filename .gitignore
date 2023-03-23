@@ -3,3 +3,4 @@ odoo.conf
 *__pycache__*
 .vscode
 .env
+.sql
