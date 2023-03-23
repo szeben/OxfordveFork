@@ -1,4 +1,10 @@
 venv/
 odoo.conf
 *__pycache__*
+<<<<<<< HEAD
 .vscode
+=======
+.vscode
+.env
+.sql
+>>>>>>> 31bf9b67d722227d2004693ef62681cb8ba1f9ae
