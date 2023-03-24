@@ -124,16 +124,17 @@ class ProductProduct(models.Model):
     def _compute_total_commissions(self):
 
         for r in self:
-            if len(r.commission_ids) > 0:
-                if r.id == self.id:
-                    p_tmpl = self.product_tmpl_id
-                    if (p_tmpl.id):
-                        p_tmpl['total_commissions'] = len(r.commission_ids)
-                        self['total_commissions'] = len(r.commission_ids)
+            if r.commission_ids:
+                if len(r.commission_ids) > 0:
+                    if r.id == self.id:
+                        p_tmpl = self.product_tmpl_id
+                        if (p_tmpl.id):
+                            p_tmpl['total_commissions'] = len(r.commission_ids)
+                            self['total_commissions'] = len(r.commission_ids)
             else:
-                p_tmpl = self.product_tmpl_id
+                p_tmpl = r.product_tmpl_id
                 p_tmpl['total_commissions'] = 0
-                self['total_commissions'] = 0
+                r.total_commissions = 0
 
 
 class ProductCategory(models.Model):
@@ -155,49 +156,29 @@ class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     team_id = fields.Many2one(related='move_id.team_id', string="Equipo de ventas", readonly=True, store=True)
-    cobranza_id = fields.Many2one(related='account_id.cobranza_id', string="Cobranza", readonly=True, store=True)
-    commission_by_cobranza = fields.Float(compute="_compute_commission_by_cobranza", string="Comisión por cobranza", store=True)
+    collection_id = fields.Many2one(related='account_id.collection_id', string="Cobranza", readonly=True, store=True)
+    commission_by_collection = fields.Float(compute="_compute_commission_by_collection", string="Comisión por cobranza", store=True)
 
     @api.depends(
         "parent_state",
         "date",
-        "cobranza_id",
+        "collection_id",
         "debit",
-        "branch_id",
-        "payment_id"
+        "payment_id",
+        "move_id"
     )
-    def _compute_commission_by_cobranza(self):
+    def _compute_commission_by_collection(self):
         for line in self:
 
             if (
                 line.parent_state == 'posted'
                 and line.date
-                and line.cobranza_id != False
+                and line.collection_id != False
                 and line.debit != 0
                 and line.payment_id != False
-                and line.payment_id.reconciled_invoice_ids
             ):
 
-                for fact in line.payment_id.reconciled_invoice_ids:
-
-                    sale_ids = self.env['sale.order'].search([
-                        '&', '&',
-                        ('state', '=', 'done'),
-                        ('invoice_status', '=', 'invoiced'),
-                        ('invoice_ids', '!=', False)]
-                    )
-
-                    if sale_ids:
-                        for sale in sale_ids:
-                            if sale.invoice_ids:
-                                if fact.id in sale.invoice_ids.ids:
-
-                                    line.commission_by_cobranza = line.debit * line.cobranza_id.percentage
-                                    print("COBRANZAAAAA", line.commission_by_cobranza)
-                            else:
-                                line.commission_by_cobranza = 0
-        else:
-            line.commission_by_cobranza = 0
+                line.commission_by_collection = line.debit * line.collection_id.percentage
 
 
 class SaleOrderLine(models.Model):
@@ -332,31 +313,31 @@ class SaleOrderLine(models.Model):
 
 class AccountAccount(models.Model):
     _inherit = 'account.account'
-    cobranza_id = fields.Many2one('configuration.cobranza', string="Cobranza")
+    collection_id = fields.Many2one('configuration.collection', string="Cobranza")
 
 
-class ConfigurationCobranza(models.Model):
-    _name = "configuration.cobranza"
+class ConfigurationCollection(models.Model):
+    _name = "configuration.collection"
     _description = "Configuración del porcentaje a pagar por las cobranzas realizadas"
 
     name = fields.Char(string="Nombre", default=" ")
     percentage = fields.Float(string="Porcentaje (%) de comisión", required=True)
-    account_ids = fields.Many2many('account.account', 'cobranza_id', string="Cuentas contables a considerar", required=True, domain="[('user_type_id.id', '=', 3)]")
+    account_ids = fields.Many2many('account.account', 'collection_id', string="Cuentas contables a considerar", required=True, domain="[('user_type_id.id', '=', 3)]")
 
     @api.model
     def edit(self, vals):
-        res = super(ConfigurationCobranza, self).edit(vals)
-        u = self.env['configuration.cobranza'].search([])
+        res = super(ConfigurationCollection, self).edit(vals)
+        u = self.env['configuration.collection'].search([])
         if u:
             for c in u.account_ids:
-                c.cobranza_id = u.id
+                c.collection_id = u.id
 
         return res
 
     @api.model
     def create(self, vals):
-        res = super(ConfigurationCobranza, self).create(vals)
-        u = self.env['configuration.cobranza'].search([])
+        res = super(ConfigurationCollection, self).create(vals)
+        u = self.env['configuration.collection'].search([])
         if u:
             total = len(u)
             for i, record in enumerate(u):
@@ -366,29 +347,29 @@ class ConfigurationCobranza(models.Model):
         else:
             return
 
-        u = self.env['configuration.cobranza'].search([])
+        u = self.env['configuration.collection'].search([])
 
         if u:
             for c in u.account_ids:
-                c.cobranza_id = u.id
+                c.collection_id = u.id
 
         return res
 
     def write(self, values):
-        res = super(ConfigurationCobranza, self).write(values)
-        u = self.env['configuration.cobranza'].search([('id', '=', self.id)])
+        res = super(ConfigurationCollection, self).write(values)
+        u = self.env['configuration.collection'].search([('id', '=', self.id)])
         c = self.env['account.account'].search([
             '&',
             ('user_type_id.id', '=', 3),
-            ('cobranza_id', '=', self.id)]
+            ('collection_id', '=', self.id)]
         )
         if c:
             for record in c:
-                record.cobranza_id = False
+                record.collection_id = False
 
         if u:
             for cuenta in u.account_ids:
-                cuenta.cobranza_id = u.id
+                cuenta.collection_id = u.id
 
         return res
 
@@ -416,7 +397,7 @@ class TeamSaleReport(models.Model):
                     SUM(total_vendidos) AS total_vendidos,
                     SUM(total_amount_sales) AS total_amount_sales,
                     SUM(total_amount_commissions) AS total_amount_commissions,
-                    0.0 AS commission_by_cobranza,
+                    0.0 AS commission_by_collection,
                     0.0 AS debit
                 FROM sale_order_line
                 GROUP BY
@@ -425,21 +406,21 @@ class TeamSaleReport(models.Model):
                 ORDER BY
                     date
             ),
-            commission_by_cobranza AS (
+            commission_by_collection AS (
                 SELECT
                     aml.date,
                     aml.team_id,                          
                     0.0 AS total_vendidos,
                     0.0 AS total_amount_sales,
                     0.0 AS total_amount_commissions,
-                    SUM(aml.commission_by_cobranza) AS commission_by_cobranza,
+                    SUM(aml.commission_by_collection) AS commission_by_collection,
                     SUM(aml.debit) AS debit
                 FROM
                     account_move_line aml
                     LEFT JOIN account_account aa ON (aml.account_id = aa.id)
                 WHERE
                     aml.parent_state = 'posted'
-                    AND aa.cobranza_id IS NOT NULL
+                    AND aa.collection_id IS NOT NULL
                     AND aml.debit != 0                    
                     AND aml.payment_id IS NOT NULL                 
                 GROUP BY
@@ -454,9 +435,9 @@ class TeamSaleReport(models.Model):
             SUM(total_vendidos) AS total_vendidos,
             SUM(total_amount_sales) AS total_amount_sales,
             SUM(total_amount_commissions) AS total_amount_commissions,
-            SUM(commission_by_cobranza) AS commission_by_cobranza,
+            SUM(commission_by_collection) AS commission_by_collection,
             SUM(debit) AS debit,
-            SUM(COALESCE(total_amount_commissions, 0) + COALESCE(commission_by_cobranza, 0)) AS total_commissions
+            SUM(COALESCE(total_amount_commissions, 0) + COALESCE(commission_by_collection, 0)) AS total_commissions
         FROM (
                 SELECT *
                 FROM
@@ -464,7 +445,7 @@ class TeamSaleReport(models.Model):
                 UNION ALL
                 SELECT *
                 FROM
-                    commission_by_cobranza
+                    commission_by_collection
             ) AS ucommisions
         WHERE
             ucommisions.date IS NOT NULL
@@ -503,7 +484,7 @@ class TeamSaleReport(models.Model):
         string="Monto de la cobranza",
         readonly=True
     )
-    commission_by_cobranza = fields.Float(
+    commission_by_collection = fields.Float(
         string="Comisión por cobranza",
         readonly=True
     )

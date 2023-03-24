@@ -32,8 +32,10 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[
                 ('parent_state','=','posted'), 
-                ('account_id.cobranza_id', '!=', False), 
-                ('debit', '!=', 0)]
+                ('account_id.collection_id', '!=', False), 
+                ('debit', '!=', 0),
+                ('payment_id', '!=' ,'False')
+                ]
             </field>
         </record>
 
@@ -42,9 +44,11 @@
             <field name="res_model">account.move.line</field>
             <field name="view_mode">pivot</field>
             <field name="domain">[               
-                ('parent_state','=','posted'), 
-                ('account_id.cobranza_id', '!=', False), 
-                ('debit', '!=', 0)]
+                ('parent_state','=','posted'),
+                ('account_id.collection_id', '!=', False), 
+                ('debit', '!=', 0),
+                ('payment_id', '!=','False')
+                ]
             </field>
             <field name="views"> [[False, "pivot"]]</field>
             <field name="view_id" ref="commission_by_payment_report_view_pivot"></field>
@@ -58,9 +62,9 @@
             <field name="view_id" ref="assigned_commissions_report_view_pivot"></field>
         </record>
 
-        <record model="ir.actions.act_window" id="configuration_cobranza_action">
+        <record model="ir.actions.act_window" id="configuration_collection_action">
             <field name="name">Configuración</field>
-            <field name="res_model">configuration.cobranza</field>
+            <field name="res_model">configuration.collection</field>
             <field name="view_mode">tree,form</field>
         </record>
 
@@ -82,7 +86,7 @@
             sequence="3"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
-        <menuitem id="menu_commission_report_cobranza_report" name="Comisiones por cobranza"
+        <menuitem id="menu_commission_report_collection_report" name="Comisiones por cobranza"
             parent="commissions.menu_commission_report"
             action="commissions.commission_by_payment_pivot" sequence="4"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
@@ -94,24 +98,24 @@
             sequence="5"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
-        <menuitem id="menu_commission_cobranzas" 
-            name="Cobranzas"
+        <menuitem id="menu_commission_collections" 
+            name="collections"
             parent="commissions.menu_commission_root"
             action="commissions.commission_list_action" 
             sequence="6"
             groups="commissions.group_commission_manager" />
 
-        <menuitem id="menu_commission_cobranzas_realizadas" 
+        <menuitem id="menu_commission_collections_done" 
             name="Cobranzas realizadas"
-            parent="commissions.menu_commission_cobranzas"
+            parent="commissions.menu_commission_collections"
             action="commissions.commission_by_payment" 
             sequence="7"
             groups="commissions.group_commission_manager" />
 
-        <menuitem id="menu_commission_cobranzas_setting" 
+        <menuitem id="menu_commission_collections_setting" 
             name="Configuración"
-            parent="commissions.menu_commission_cobranzas"
-            action="commissions.configuration_cobranza_action" 
+            parent="commissions.menu_commission_collections"
+            action="commissions.configuration_collection_action" 
             sequence="8"
             groups="commissions.group_commission_manager" />
     </data>
