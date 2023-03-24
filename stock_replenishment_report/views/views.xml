@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+
+    <record id="view_account_journal_form_inherit" model="ir.ui.view">
+      <field name="name">account.journal.form.inherit</field>
+      <field name="model">account.journal</field>
+      <field name="inherit_id" ref="account.view_account_journal_form"/>
+      <field name="arch" type="xml">
+        <field name="currency_id" position="after">
+          <field name="input_type"/>
+        </field>
+      </field>
+    </record>
+
+    <record id="branch_res_branch_view_form_inherit" model="ir.ui.view">
+      <field name="name">branch.res.branch.view.form.inherit</field>
+      <field name="model">res.branch</field>
+      <field name="inherit_id" ref="branch.branch_res_branch_view_form"/>
+      <field name="arch" type="xml">
+        <field name="address" position="after">
+          <field name="is_main"/>
+          <field name="is_mainland"/>
+        </field>
+      </field>
+    </record>
+
+    <record id="stock_replenishment_report_search" model="ir.ui.view">
+      <field name="name">stock.replenishment.report.search</field>
+      <field name="model">stock.replenishment.report</field>
+      <field name="arch" type="xml">
+        <search>
+          <filter name="last_fortnight_move_date" string="Últimos 15 días" domain="[('move_date', '&gt;=', (context_today()-datetime.timedelta(days=15)).strftime('%Y-%m-%d'))]"/>
+        </search>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="stock_replenishment_report_list">
+      <field name="name">Reposición de inventario</field>
+      <field name="model">stock.replenishment.report</field>
+      <field name="arch" type="xml">
+        <tree create="false" edit="false" delete="false" export_xlsx="true">
+          <field name="categ_id" optional="show" />
+          <field name="product_id" />
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="stock_replenishment_report_action_window">
+      <field name="name">Reposición de inventario</field>
+      <field name="res_model">stock.replenishment.report</field>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="stock_replenishment_report_list"/>
+      <field name="type">ir.actions.act_window</field>
+      <field name="context">{'search_default_last_fortnight_move_date': 1}</field>
+    </record>
+
+    <menuitem name="Reposición de inventario" id="stock_replenishment_report_menu" parent="stock.menu_warehouse_report" action="stock_replenishment_report_action_window" sequence="99" />
+
+  </data>
+</odoo>
