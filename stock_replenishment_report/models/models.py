@@ -111,14 +111,11 @@ class StockReplenishmentReport(models.Model):
                 pb.categ_id,
                 pb.product_id,
                 COALESCE(aml.branch_id, pb.branch_id) AS branch_id,
-                COALESCE(
-                    aml.invoice_date,
-                    CURRENT_DATE
-                ) AS move_date,
+                COALESCE(aml.invoice_date, CURRENT_DATE) AS move_date,
                 SUM(
                     CASE
                         WHEN aml.input_type = 'invoice' THEN CASE
-                            WHEN aml.uom_id != pb.uom_id THEN aml.quantity * aml.uom_ratio / pb.uom_ratio
+                            WHEN aml.uom_id != pb.uom_id THEN aml.quantity * aml.uom_id / pb.uom_id
                             ELSE aml.quantity
                         END
                         ELSE 0.0
@@ -146,7 +143,7 @@ class StockReplenishmentReport(models.Model):
                 LEFT JOIN account_move_line_with_branch aml ON (
                     pb.product_id = aml.product_id AND pb.branch_id = aml.branch_id
                 )
-            WHERE pb.active = TRUE
+                WHERE pb.active = TRUE
             GROUP BY
                 pb.product_id,
                 pb.branch_id,
@@ -182,19 +179,20 @@ class StockReplenishmentReport(models.Model):
     )
     qty_invoice = fields.Float(
         'Cantidad por factura',
-        store=False,
         readonly=True
     )
     qty_delivery_note = fields.Float(
         'Cantidad por nota de entrega',
-        store=False,
         readonly=True
     )
     quantity = fields.Float(
         'Cantidad total',
-        store=False,
         readonly=True
     )
+
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
+        return self._search_read_report(domain, fields, offset, limit, order, **read_kwargs)
 
     @api.model
     def fields_get(self, allfields=None, attributes=None):
@@ -304,15 +302,14 @@ class StockReplenishmentReport(models.Model):
 
     @api.model
     def search_count(self, args):
-        return len(super()._read_group_raw(args, ['product_id'], ['product_id']))
+        return len(self._read_group_raw(args, ['product_id'], ['product_id']))
 
     @api.model
     def _read_group_raw(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
         fields = fields and list(set(fields).difference(self._dynamic_fields().keys()))
         return super()._read_group_raw(domain, fields, groupby, offset, limit, orderby, lazy)
 
-    @api.model
-    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
+    def _search_read_report(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
         def keyfunc_product(record):
             return record.product_id
 
@@ -331,19 +328,14 @@ class StockReplenishmentReport(models.Model):
             groups = groupby(super().search(domain), keyfunc_product)
 
         if offset:
-            if limit:
-                groups = islice(groups, offset, offset + limit)
-            else:
-                groups = islice(groups, offset, None)
-        elif limit:
-            groups = islice(groups, limit)
+            groups = islice(groups, offset, offset + limit) if limit else islice(groups, offset, None)
 
         groups = tuple((product_id, tuple(rows)) for product_id, rows in groups)
         product_ids = [product.id for product, _ in groups]
 
         virtual_availables = {
             branch_id.id: {
-                product_id: values['virtual_available']
+                product_id: values.get('virtual_available', 0)
                 for product_id, values in self.env['product.product'].with_context(
                     warehouse=branch_id.warehouse_ids.ids
                 ).search([
@@ -359,7 +351,7 @@ class StockReplenishmentReport(models.Model):
                 "categ_id": (product_id.categ_id.id, product_id.categ_id.name),
             }
 
-            stock = 0.0
+            stock = 0.0  # ojnhibguvf
             stock_main = 0.0
             stock_mainland = 0.0
             total_quantity_mainland = 0.0
