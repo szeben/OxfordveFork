@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Restricciones sobre Contactos",
+    'name': "Restricciones sobre Órdenes de Compra",
 
     'summary': """
-        Restringe la visualizacion y gestión de los contactos de acuerdo a su clasificación
-        como cliente o proveedor""",
+        Restringe la visualización y gestión de presupuestos y OC en el módulo de Compras.""",
 
     'description': """
-        Restringe la posibilidad de crear contactos de acuerdo a su clasificación como
-        cliente o proveedor. Restringe la visualización de contactos de tipo proveedor y proveedores
-        nacionales. Restringe la visualización de contactos de tipo cliente.
+        Restringe la visualización y gestión de presupuestos y órdenes de compra en
+        el módulo de Compras.
     """,
 
     'author': "Techne Studio IT & Consulting",
@@ -18,16 +16,16 @@
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Ventas',
+    'category': 'Compras',
     'version': '0.1',
     'license': "Other proprietary",
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'purchase', 'sale', 'account'],
+    'depends': ['base', 'purchase', 'account'],
 
     # always loaded
     'data': [
-        'security/contact_type_restrictions_security.xml',
+        'security/constraints_on_budgets_and_pos_security.xml',
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
@@ -39,5 +37,5 @@
     "auto_install": False,
     "installable": True,
 
-    "uninstall_hook": 'contact_type_restrictions_uninstall_hook',
+    "uninstall_hook": 'constraints_on_budget_and_pos_uninstall_hook',
 }

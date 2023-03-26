@@ -1,0 +1,25 @@
+<odoo>
+    <data>
+
+        <record id="stock.stock_move_line_action" model="ir.actions.act_window">
+            <field name="domain">["|", ("location_dest_id.branch_id", "in", context.get("allowed_branch_ids")), ("location_id.branch_id", "in", context.get("allowed_branch_ids"))]</field>
+        </record>
+
+        <record id="view_move_line_tree_inherit" model="ir.ui.view">
+            <field name="name">stock.move.line.tree.inherit</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <field name="qty_done" position="after">
+                    <field name="create_uid" string="Código"/>
+                    <field name="number"/>
+                    <field name="customer_id"/>
+                    <field name="entrada"/>
+                    <field name="salida"/>
+                    <field name="saldo_existencia"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

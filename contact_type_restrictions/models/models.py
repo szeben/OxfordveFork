@@ -11,6 +11,8 @@ class Users(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # Verificar si los grupos que se están creando, son los que pertenecen a contact_type_restrictions
+        # Y si es así, quitar acceso al grupo (Creación de Contactos) para que las reglas funcionen
         list_groups = [
             'Visualizar Proveedores', 
             'Visualizar Proveedores Nacionales', 
@@ -18,12 +20,13 @@ class Users(models.Model):
             'Gestionar Proveedores',
             'Gestionar Clientes'
         ]
-        for val in set(map(lambda i: f"in_group_{i}", self.env['res.groups'].search([('name', 'in', list_groups)]).ids)).intersection(set(vals_list[0])):
-            if vals_list[0].get(val) == True:
-                vals_list[0].update({
-                    f"in_group_" + str(self.env['res.groups'].search([('name', '=', 'Usuario Interno 2')]).ids[0]): False,
-                    f"in_group_" + str(self.env['res.groups'].search([('name', '=', 'Creación de contactos')]).ids[0]): False
-                })
+        if vals_list:
+            for val in set(map(lambda i: f"in_group_{i}", self.env['res.groups'].search([('name', 'in', list_groups)]).ids)).intersection(set(vals_list[0])):
+                if vals_list[0].get(val) == True:
+                    vals_list[0].update({
+                        f"in_group_" + str(self.env['res.groups'].search([('name', '=', 'Usuario Interno 2')]).ids[0]): False,
+                        f"in_group_" + str(self.env['res.groups'].search([('name', '=', 'Creación de contactos')]).ids[0]): False
+                    })
 
         if vals_list:
             vals_list[0].update({
