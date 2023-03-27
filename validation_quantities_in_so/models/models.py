@@ -16,26 +16,23 @@ class SaleOrder(models.Model):
             que la cantidad pedida (campo product_uom_qty), 
             sea menor o igual a la cantidad disponible (campo free_qty_today)
         """ 
-        rec = super(SaleOrder, self).create(vals_list)      
-        order_id = rec.order_line    
-        for line in order_id:           
+        res = super(SaleOrder, self).create(vals_list)      
+        order_line_rec = res.order_line    
+        for line in order_line_rec:           
             if  line.product_uom_qty > line.free_qty_today:   
                 raise UserError(_('Existe una línea de pedido con una solicitud de mercancía superior a la disponible.'))
-        return rec
-
-
-    @api.onchange('product_uom_qty', 'free_qty_today')
-    def _onchange_check_lines(self):
+        return res
+    
+    @api.model
+    def write(self, vals):
         """
-            Agrega validación al cambiar una orden de venta (modelo sale.order). 
+            Agrega validación al Editar una orden de venta (modelo sale.order). 
             Se valida por cada línea de pedido (modelo sale.order.line), 
             que la cantidad pedida (campo product_uom_qty), 
             sea menor o igual a la cantidad disponible (campo free_qty_today)
-        """ 
-
-        for line in self.order_line:
-            if line.free_qty_today and line.product_uom_qty > line.free_qty_today:
+        """     
+        order_line_rec = self.order_line    
+        for line in order_line_rec:           
+            if  line.product_uom_qty > line.free_qty_today:   
                 raise UserError(_('Existe una línea de pedido con una solicitud de mercancía superior a la disponible.'))
-   
-    
-   
+        return super(SaleOrder, self).write(vals)
