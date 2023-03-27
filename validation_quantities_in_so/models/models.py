@@ -24,7 +24,7 @@ class SaleOrder(models.Model):
         return rec
 
 
-    @api.onchange('order_line')
+    @api.onchange('product_uom_qty', 'free_qty_today')
     def _onchange_check_lines(self):
         """
             Agrega validación al cambiar una orden de venta (modelo sale.order). 
