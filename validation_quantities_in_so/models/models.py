@@ -31,7 +31,7 @@ class SaleOrder(models.Model):
             que la cantidad pedida (campo product_uom_qty), 
             sea menor o igual a la cantidad disponible (campo free_qty_today)
         """   
-        res = super(SaleOrder, self).create(vals)   
+        res = super(SaleOrder, self).write(vals)   
         order_line_rec = self.order_line    
         for line in order_line_rec:           
             if  line.product_uom_qty > line.free_qty_today:   
