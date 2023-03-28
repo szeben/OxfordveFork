@@ -34,6 +34,6 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self).write(vals)
         order_line_rec = self.order_line 
         for line in order_line_rec:           
-            if  line.product_uom_qty > line.free_qty_today:   
+            if  line.free_qty_today and line.product_uom_qty > line.free_qty_today:   
                 raise UserError(_('Existe una línea de pedido con una solicitud de mercancía superior a la disponible.'))
         return res
