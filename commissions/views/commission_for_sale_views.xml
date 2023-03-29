@@ -28,9 +28,6 @@
                 <xpath expr="//field[@name='order_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='order_partner_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
                 <xpath expr="//field[@name='salesman_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -72,7 +69,7 @@
                     <field name="team_id" type="col" />
                     <field name="account_id" type="row" />
                     <field name="debit" type="measure" string="cobranza" />
-                    <field name="commission_by_cobranza" type="measure" />
+                    <field name="commission_by_collection" type="measure" />
                 </pivot>
             </field>
         </record>
@@ -88,7 +85,7 @@
                     <field name="total_amount_sales" type="measure" string="Ventas en $" />
                     <field name="total_amount_commissions" type="measure" string="Com. Ventas" />
                     <field name="debit" type="measure" string="Cobranza en $" />
-                    <field name="commission_by_cobranza" type="measure" string="Com. Cobranzas" />
+                    <field name="commission_by_collection" type="measure" string="Com. Cobranzas" />
                     <field name="total_commissions" type="measure"
                         string="Total Comisiones Asignadas" />
                 </pivot>
@@ -277,14 +274,13 @@
             </field>
         </record>
 
-        <record id="account_view_move_line_tree_inherit" model="ir.ui.view">
-            <field name="name">account.view.move.line.tree.inherit</field>
+        <record id="account_view_move_line_tree_grouped_inherit" model="ir.ui.view">
+            <field name="name">account.view.move.line.tree.grouped.inherit</field>
             <field name="model">account.move.line</field>
             <field name="mode">extension</field>
-            <field name="priority" eval="101" />
-            <field name="inherit_id" ref="account.view_move_line_tree" />
+            <field name="priority" eval="2" />
+            <field name="inherit_id" ref="account.view_move_line_tree_grouped" />
             <field name="arch" type="xml">
-
                 <xpath expr="//field[@name='journal_id']" position="after">
                     <field name="parent_state"></field>
                 </xpath>
@@ -324,9 +320,9 @@
             </field>
         </record>
 
-        <record id="configuration_cobranza_view_tree" model="ir.ui.view">
-            <field name="name">configuration.cobranza.view.tree</field>
-            <field name="model">configuration.cobranza</field>
+        <record id="configuration_collection_view_tree" model="ir.ui.view">
+            <field name="name">configuration.collection.view.tree</field>
+            <field name="model">configuration.collection</field>
             <field name="arch" type="xml">
                 <tree string="Configuración de cobranza" create="1" sample="1">
                     <field name="percentage" string="Porcentaje (%) de comisión" />
@@ -335,9 +331,9 @@
             </field>
         </record>
 
-        <record id="configuration_cobranza_view_form" model="ir.ui.view">
-            <field name="name">configuration.cobranza.view.form</field>
-            <field name="model">configuration.cobranza</field>
+        <record id="configuration_collection_view_form" model="ir.ui.view">
+            <field name="name">configuration.collection.view.form</field>
+            <field name="model">configuration.collection</field>
             <field name="arch" type="xml">
                 <form string="Configuración" create="0">
 

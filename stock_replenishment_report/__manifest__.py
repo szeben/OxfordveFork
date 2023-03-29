@@ -35,4 +35,10 @@
     'demo': [
         'demo/demo.xml',
     ],
+
+    'assets': {
+        'web.assets_backend': [
+            'stock_replenishment_report/static/src/js/stock_replenishment_view_list.js',
+        ],
+    },
 }
