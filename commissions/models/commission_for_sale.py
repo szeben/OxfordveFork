@@ -3,8 +3,9 @@
 import json
 from odoo import tools
 from odoo import models, fields, api, exceptions
-from datetime import datetime, date
+from datetime import datetime, date,timedelta
 from calendar import monthrange
+from dateutil.relativedelta import relativedelta
 
 
 class CommissionForSale(models.Model):
@@ -155,7 +156,7 @@ class CrmTeam(models.Model):
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
-    team_id = fields.Many2one(related='move_id.team_id', string="Equipo de ventas", readonly=True, store=True)
+    team_id = fields.Many2one(related='partner_id.team_id', string="Equipo de ventas", readonly=True, store=True)
     collection_id = fields.Many2one(related='account_id.collection_id', string="Cobranza", readonly=True, store=True)
     commission_by_collection = fields.Float(compute="_compute_commission_by_collection", string="Comisión por cobranza", store=True)
 
@@ -176,6 +177,7 @@ class AccountMoveLine(models.Model):
                 and line.collection_id != False
                 and line.debit != 0
                 and line.payment_id != False
+                and line.partner_id != False
             ):
 
                 line.commission_by_collection = line.debit * line.collection_id.percentage
@@ -185,7 +187,7 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
     commission_id = fields.Many2one('commission.for.sale', string="Comisión")
     categ_id = fields.Many2one(related='product_id.categ_id', string="Categoría del producto", readonly=True, store=True)
-    team_id = fields.Many2one(related='order_id.team_id', string="Equipo de ventas", readonly=True, store=True, domain=[('order_id', '=', True)])
+    team_id = fields.Many2one(related='order_id.partner_id.team_id', string="Equipo de ventas", readonly=True, store=True, domain=[('order_id', '!=', False)])
     quantity = fields.Float(string="Cantidad facturada", store=True)
     amount_sale = fields.Monetary(string="Monto de la venta", store=True)
     date = fields.Datetime(related='order_id.date_order', string="Fecha", readonly=True, store=True)
@@ -208,9 +210,7 @@ class SaleOrderLine(models.Model):
                             for line_f in f.invoice_line_ids:
                                 if line_f.product_id.id == line.product_id.id:
                                     if line.order_id.date_order and not line.date:
-                                        line.date = line.order_id.date_order
-                                    if line.order_id.team_id and not line_f.team_id:
-                                        line_f.team_id = line.order_id.team_id
+                                        line.date = line.order_id.date_order                                      
                                     if line.order_id.branch_id and not line_f.branch_id:
                                         line_f.branch_id = line.order_id.branch_id
                                     if line_f.product_uom_id == line_f.product_id.uom_id and line_f.quantity:
@@ -232,7 +232,7 @@ class SaleOrderLine(models.Model):
                 line.total_amount_commissions = 0
                 len_lines = 0
 
-                if line.product_id.commission_ids and line.total_vendidos != 0 and line.date:
+                if line.product_id.commission_ids and line.total_vendidos != 0 and line.date and line.team_id:
                     f1 = date(line.date.year, line.date.month, 1)
                     f2 = date(line.date.year, line.date.month, monthrange(line.date.year, line.date.month)[1])
 
@@ -399,7 +399,9 @@ class TeamSaleReport(models.Model):
                     SUM(total_amount_commissions) AS total_amount_commissions,
                     0.0 AS commission_by_collection,
                     0.0 AS debit
-                FROM sale_order_line
+                FROM sale_order_line sol
+                WHERE
+                    sol.order_id IS NOT NULL                                      
                 GROUP BY
                     date,
                     team_id                         
@@ -422,7 +424,8 @@ class TeamSaleReport(models.Model):
                     aml.parent_state = 'posted'
                     AND aa.collection_id IS NOT NULL
                     AND aml.debit != 0                    
-                    AND aml.payment_id IS NOT NULL                 
+                    AND aml.payment_id IS NOT NULL
+                    AND aml.partner_id IS NOT NULL               
                 GROUP BY
                     aml.date,
                     aml.team_id                              
