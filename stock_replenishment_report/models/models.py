@@ -1,14 +1,33 @@
 # -*- coding: utf-8 -*-
 
 from collections import OrderedDict
-from itertools import chain, groupby, islice
+from itertools import chain
+from typing import Union
 
 from lxml import etree
-from odoo import _, api, fields, models, tools
-from odoo.osv.expression import OR
+from odoo import _, api, fields, models
+from odoo.osv.expression import (AND, AND_OPERATOR, OR_OPERATOR, is_leaf,
+                                 is_operator, normalize_leaf)
+from odoo.tools.func import lazy
 
 DEFAULT_MIN_BY_BRANCH = 2
 DEFAULT_MIN_GLOBAL = 6
+
+
+def remove_fields_from_domain(domain: list, fields: Union[list, tuple, set]) -> list:
+    new_domain = []
+
+    for i, elm in enumerate(domain):
+        if is_leaf(elm) and (normalize_leaf(elm)[0] in fields):
+            for j, olm in enumerate(new_domain[::-1]):
+                if is_operator(olm):
+                    new_domain.pop(-j-1)
+                    if olm in {AND_OPERATOR, OR_OPERATOR}:
+                        break
+            continue
+        new_domain.append(elm)
+
+    return new_domain
 
 
 def get_name(branch_id):
@@ -53,110 +72,18 @@ class StockReplenishmentReport(models.Model):
 
     @property
     def _table_query(self):
-        select_ = """
-            WITH product_with_branch AS (
-                    SELECT
-                        pp.id AS product_id,
-                        pt.categ_id AS categ_id,
-                        rb.id AS branch_id,
-                        pt.uom_id AS uom_id,
-                        pp.active AS active,
-                        CASE
-                            WHEN uu.uom_type = 'reference' THEN 1.0
-                            WHEN uu.uom_type = 'bigger' THEN CASE
-                                WHEN uu.factor != 0.0
-                                AND uu.factor IS NOT NULL THEN 1.0 / uu.factor
-                                ELSE 0.0
-                            END
-                            ELSE uu.factor
-                        END AS uom_ratio
-                    FROM
-                        product_product pp
-                        CROSS JOIN res_branch rb
-                        INNER JOIN product_template pt ON (pt.id = pp.product_tmpl_id)
-                        INNER JOIN uom_uom uu ON (uu.id = pt.uom_id)
-                    WHERE
-                        pt.sale_ok = TRUE
-                ),
-                account_move_line_with_branch AS (
-                    SELECT
-                        aml.product_id,
-                        aml.quantity,
-                        am.invoice_date,
-                        aj.input_type,
-                        aj.branch_id,
-                        aml.product_uom_id AS uom_id,
-                        CASE
-                            WHEN uu.uom_type = 'reference' THEN 1.0
-                            WHEN uu.uom_type = 'bigger' THEN CASE
-                                WHEN uu.factor != 0.0
-                                AND uu.factor IS NOT NULL THEN 1.0 / uu.factor
-                                ELSE 0.0
-                            END
-                            ELSE uu.factor
-                        END AS uom_ratio
-                    FROM
-                        account_move_line aml
-                        INNER JOIN uom_uom uu ON (uu.id = aml.product_uom_id)
-                        LEFT OUTER JOIN account_move am ON (aml.move_id = am.id)
-                        LEFT OUTER JOIN account_journal aj ON (am.journal_id = aj.id)
-                    WHERE
-                        aml.product_id IS NOT NULL
-                        AND am.state = 'posted'
-                        AND am.move_type = 'out_invoice'
-                        AND aj.input_type IN ('invoice', 'delivery_note')
-                )
+        query = """
             SELECT
                 ROW_NUMBER() OVER () AS id,
-                pb.categ_id,
-                pb.product_id,
-                COALESCE(aml.branch_id, pb.branch_id) AS branch_id,
-                COALESCE(aml.invoice_date, CURRENT_DATE) AS move_date,
-                SUM(
-                    CASE
-                        WHEN aml.input_type = 'invoice' THEN CASE
-                            WHEN aml.uom_id != pb.uom_id THEN aml.quantity * aml.uom_id / pb.uom_id
-                            ELSE aml.quantity
-                        END
-                        ELSE 0.0
-                    END
-                ) AS qty_invoice,
-                SUM(
-                    CASE
-                        WHEN aml.input_type = 'delivery_note' THEN CASE
-                            WHEN aml.uom_id != pb.uom_id THEN aml.quantity * aml.uom_ratio / pb.uom_ratio
-                            ELSE aml.quantity
-                        END
-                        ELSE 0.0
-                    END
-                ) AS qty_delivery_note,
-                COALESCE(
-                    SUM(
-                        CASE
-                            WHEN aml.uom_id != pb.uom_id THEN aml.quantity * aml.uom_ratio / pb.uom_ratio
-                            ELSE aml.quantity
-                        END
-                    ),
-                    0.0
-                ) AS quantity
-            FROM product_with_branch pb
-                LEFT JOIN account_move_line_with_branch aml ON (
-                    pb.product_id = aml.product_id AND pb.branch_id = aml.branch_id
-                )
-                WHERE pb.active = TRUE
-            GROUP BY
-                pb.product_id,
-                pb.branch_id,
-                aml.branch_id,
-                aml.invoice_date,
-                pb.categ_id
-            ORDER BY
-                pb.product_id,
-                pb.branch_id,
-                aml.branch_id,
-                aml.invoice_date
+                pp.id AS product_id,
+                pt.categ_id AS categ_id,
+                CURRENT_DATE AS move_date
+            FROM product_product pp
+                INNER JOIN product_template pt ON (pt.id = pp.product_tmpl_id)
+            WHERE pp.active = TRUE AND pt.sale_ok = TRUE
+            ORDER BY pp.id
         """
-        return select_
+        return query
 
     product_id = fields.Many2one(
         'product.product',
@@ -168,41 +95,21 @@ class StockReplenishmentReport(models.Model):
         'Categoría',
         readonly=True
     )
-    branch_id = fields.Many2one(
-        'res.branch',
-        'Rama',
-        readonly=True
-    )
     move_date = fields.Date(
         'Fecha de movimiento',
         readonly=True
     )
-    qty_invoice = fields.Float(
-        'Cantidad por factura',
-        readonly=True
-    )
-    qty_delivery_note = fields.Float(
-        'Cantidad por nota de entrega',
-        readonly=True
-    )
-    quantity = fields.Float(
-        'Cantidad total',
-        readonly=True
-    )
+
+    data_domain = {}
 
     @api.model
-    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
-        return self._search_read_report(domain, fields, offset, limit, order, **read_kwargs)
+    def _where_calc(self, domain):
+        self.data_domain.update(domain=domain)
+        return super()._where_calc(
+            remove_fields_from_domain(domain, ['move_date'])
+        )
 
-    @api.model
-    def fields_get(self, allfields=None, attributes=None):
-        res = super().fields_get(allfields, attributes)
-        fields = {'product_id', 'branch_id', 'move_date'}
-        for field in filter(lambda name: name not in fields, res):
-            res[field]['searchable'] = False
-        return res
-
-    def _dynamic_fields(self):
+    def _generate_fields(self):
         main_deposit = OrderedDict()
         sales = OrderedDict()
         stock = OrderedDict()
@@ -229,13 +136,13 @@ class StockReplenishmentReport(models.Model):
                 "string": f"Inv. {branch.name}"
             }
 
-            sales[f"invoice_{name}"] = {
+            sales[f"qty_invoice_{name}"] = {
                 **default_values,
                 "type": 'float',
                 'group_operator': False,
                 "string": f"Fact. {branch.name}"
             }
-            sales[f"refund_{name}"] = {
+            sales[f"qty_delivery_note_{name}"] = {
                 **default_values,
                 "type": 'float',
                 'group_operator': False,
@@ -292,7 +199,7 @@ class StockReplenishmentReport(models.Model):
         if view_type == 'tree':
             doc = etree.fromstring(res['arch'])
 
-            for name, field in self._dynamic_fields().items():
+            for name, field in self._generate_fields().items():
                 doc.append(etree.Element('field', name=name, optional="show"))
                 res['fields'][name] = field
 
@@ -300,81 +207,122 @@ class StockReplenishmentReport(models.Model):
 
         return res
 
-    @api.model
-    def search_count(self, args):
-        return len(self._read_group_raw(args, ['product_id'], ['product_id']))
+    def _clean_fields(self, fields: list):
+        new_fields = []
+        generated_fields = set(self._generate_fields().keys())
+        for field in fields:
+            if not field in generated_fields:
+                new_fields.append(field)
+        return new_fields
 
     @api.model
     def _read_group_raw(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-        fields = fields and list(set(fields).difference(self._dynamic_fields().keys()))
+        fields = self._clean_fields(fields)
         return super()._read_group_raw(domain, fields, groupby, offset, limit, orderby, lazy)
 
-    def _search_read_report(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
-        def keyfunc_product(record):
-            return record.product_id
-
-        def keyfun_branch(record):
-            return record.branch_id
-
+    def _compute_columns(self, domain: list, product_ids: list):
         min_by_branch = self.min_by_branch
         min_global = self.min_global
+
         branches = self.env['res.branch'].search([])
+        query = super()._where_calc(AND([domain, [('product_id', 'in', product_ids)]]))
+        query._tables[self._table] = """
+            SELECT
+                pt.categ_id AS categ_id,
+                aml.product_id AS product_id,
+                am.invoice_date AS move_date,
+                aj.input_type AS input_type,
+                aj.branch_id AS branch_id,
+                CASE
+                    WHEN aml.product_uom_id != pt.uom_id THEN aml.quantity * (
+                        CASE
+                            WHEN uu.uom_type = 'reference' THEN 1.0
+                            WHEN uu.uom_type = 'bigger' THEN CASE
+                                WHEN uu.factor != 0.0
+                                AND uu.factor IS NOT NULL THEN 1.0 / uu.factor
+                                ELSE 0.0
+                            END
+                            ELSE uu.factor
+                        END
+                    ) / (
+                        CASE
+                            WHEN puu.uom_type = 'reference' THEN 1.0
+                            WHEN puu.uom_type = 'bigger' THEN CASE
+                                WHEN puu.factor != 0.0
+                                AND puu.factor IS NOT NULL THEN 1.0 / puu.factor
+                                ELSE 0.0
+                            END
+                            ELSE puu.factor
+                        END
+                    )
+                    ELSE aml.quantity
+                END AS quantity
+            FROM account_move_line aml
+                LEFT OUTER JOIN account_move am ON (aml.move_id = am.id)
+                LEFT OUTER JOIN account_journal aj ON (am.journal_id = aj.id)
+                INNER JOIN uom_uom uu ON (uu.id = aml.product_uom_id)
+                INNER JOIN product_product pp ON (pp.id = aml.product_id)
+                INNER JOIN product_template pt ON (pt.id = pp.product_tmpl_id)
+                INNER JOIN uom_uom puu ON (puu.id = pt.uom_id)
+            WHERE
+                aml.product_id IS NOT NULL
+                AND am.state = 'posted'
+                AND am.move_type = 'out_invoice'
+                AND aj.input_type IN ('invoice', 'delivery_note')
+        """
 
-        data = []
+        alias_str = []
+        alias_params = []
 
-        if domain is None:
-            groups = groupby(self, keyfunc_product)
-        else:
-            groups = groupby(super().search(domain), keyfunc_product)
+        for branch in branches:
+            name = get_name(branch)
+            alias_str.extend([
+                f'SUM(CASE WHEN input_type = \'invoice\' AND branch_id = %s THEN quantity ELSE 0.0 END) AS "qty_invoice_{name}"',
+                f'SUM(CASE WHEN input_type = \'delivery_note\' AND branch_id = %s THEN quantity ELSE 0.0 END) AS "qty_delivery_note_{name}"',
+                f'SUM(CASE WHEN branch_id = %s THEN quantity ELSE 0.0 END) AS "quantity_{name}"',
+            ])
+            alias_params.extend([branch.id, branch.id, branch.id])
 
-        if offset:
-            groups = islice(groups, offset, offset + limit) if limit else islice(groups, offset, None)
-
-        groups = tuple((product_id, tuple(rows)) for product_id, rows in groups)
-        product_ids = [product.id for product, _ in groups]
+        query_str, params = query.subselect("*")
+        query_str = f"""
+            SELECT product_id, {', '.join(alias_str)}
+            FROM ({query_str}) AS tmp
+            GROUP BY tmp.product_id ORDER BY tmp.product_id
+        """
+        params = alias_params + params
 
         virtual_availables = {
-            branch_id.id: {
-                product_id: values.get('virtual_available', 0)
+            get_name(branch): {
+                product_id: values['virtual_available']
                 for product_id, values in self.env['product.product'].with_context(
-                    warehouse=branch_id.warehouse_ids.ids
+                    warehouse=branch.warehouse_ids.ids
                 ).search([
                     ('id', 'in', product_ids)
                 ])._compute_quantities_dict(None, None, None).items()
                 if values.get('virtual_available')
-            } for branch_id in branches
+            } for branch in branches
         }
 
-        for product_id, group_product in groups:
-            row = {
-                "product_id": (product_id.id, product_id.display_name),
-                "categ_id": (product_id.categ_id.id, product_id.categ_id.name),
-            }
+        self.env.cr.execute(query_str, params)
+        rows = self.env.cr.dictfetchall()
+        product_data = {}
 
-            stock = 0.0  # ojnhibguvf
+        for row in rows:
+            stock = 0.0
             stock_main = 0.0
             stock_mainland = 0.0
             total_quantity_mainland = 0.0
+            product_id = row["product_id"]
 
-            for branch_id, group_branch in groupby(group_product, keyfun_branch):
+            for branch_id in branches:
                 branch_name = get_name(branch_id)
+
                 row[f"inv_{branch_name}"] = virtual_available = (
-                    virtual_availables[branch_id.id].get(product_id.id, 0.0)
+                    virtual_availables[branch_name].get(product_id) or 0.0
                 )
 
-                qty_invoice, qty_delivery_note, quantity = map(
-                    sum,
-                    zip(*(
-                        (record.qty_invoice, record.qty_delivery_note, record.quantity)
-                        for record in group_branch
-                    ))
-                )
-
+                quantity = row[f"quantity_{branch_name}"]
                 stock = virtual_available / (quantity or 1.0)
-
-                row[f"invoice_{branch_name}"] = qty_invoice
-                row[f"refund_{branch_name}"] = qty_delivery_note
-                row[f"quantity_{branch_name}"] = quantity
                 row[f"stock_{branch_name}"] = stock
 
                 if branch_id.is_mainland:
@@ -383,31 +331,47 @@ class StockReplenishmentReport(models.Model):
 
                 if branch_id.is_main:
                     stock_main += stock
+                else:
+                    row[f"replenishment_{branch_name}"] = stock < min_by_branch and stock_main > min_global
 
             row["stock_mainland"] = stock_mainland / (total_quantity_mainland or 1.0)
-
-            for branch_id in branches:
-                branch_name = get_name(branch_id)
-                stock_field = f"stock_{branch_name}"
-                replenishment_field = f"replenishment_{branch_name}"
-
-                if not branch_id.is_main:
-                    row[replenishment_field] = stock_field in row and row[stock_field] < min_by_branch and stock_main > min_global
-
-                for field in ("inv", "invoice", "refund", "quantity", "stock"):
-                    if f"{field}_{branch_name}" not in row:
-                        row[f"{field}_{branch_name}"] = 0.0
-
             row["order_is_required"] = stock < min_global
 
-            if fields:
-                row = {key: row[key] for key in fields if key in row}
-            data.append(row)
+            product_data[product_id] = row
 
-        if order and data and order in data[0]:
-            return sorted(data, key=lambda x: x[order])
+        return product_data
 
-        return data
+    def _generate_default_data(self):
+        values = {}
+
+        for name, descrip in self._generate_fields().items():
+            if descrip['type'] == 'boolean':
+                values[name] = False
+            else:
+                values[name] = 0.0
+
+        return values
+
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
+        res = super().search_read(domain, self._clean_fields(fields), offset, limit, order, **read_kwargs)
+
+        product_ids = self.mapped('product_id').ids or tuple(row["product_id"][0] for row in res)
+        product_data = self._compute_columns(domain, product_ids)
+        default_data = lazy(self._generate_default_data)
+
+        return [
+            {
+                **row,
+                **{
+                    k: v for k, v in (
+                        product_data.get(row["product_id"][0])
+                        or default_data
+                    ).items() if k in fields
+                },
+                "product_id": row["product_id"]
+            } for row in res
+        ]
 
     @property
     def min_by_branch(self):
@@ -438,30 +402,23 @@ class StockReplenishmentReport(models.Model):
         return value
 
     def _export_rows(self, fields, *, _is_toplevel_call=True):
-        lines = []
+        generated_fields = set(self._generate_fields()).union(['move_date'])
+        model_fields = []
+        selected_fields = []
 
-        for record in self._search_read_report():
-            current = [''] * len(fields)
-            lines.append(current)
+        for field in fields:
+            if all(name not in generated_fields for name in field):
+                model_fields.append(field)
+            else:
+                selected_fields.extend(field)
 
-            primary_done = []
+        res = super()._export_rows(model_fields, _is_toplevel_call=_is_toplevel_call)
+        product_ids = self.mapped("product_id").ids
+        product_data = self._compute_columns(self.data_domain.get('domain', []), product_ids)
+        default_data = lazy(self._generate_default_data)
 
-            for index, path in enumerate(fields):
-                if not path:
-                    continue
+        for product_id, row in zip(product_ids, res):
+            data = product_data.get(product_id) or default_data
+            row.extend([data.get(name) for name in selected_fields])
 
-                name, *path = path
-
-                if name in primary_done or path:
-                    continue
-
-                value = record.get(name)
-
-                if isinstance(value, tuple):
-                    value = value[-1]
-                elif isinstance(value, bool):
-                    value = "SI" if value else "NO"
-
-                current[index] = value
-
-        return lines
+        return res
