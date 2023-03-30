@@ -37,7 +37,8 @@
                 ('account_id.collection_id', '!=', False), 
                 ('debit', '!=', 0),
                 ('payment_id', '!=', False),
-                ('partner_id', '!=', False)
+                ('partner_id', '!=', False),
+                ('date', '&gt;=', (context_today()-datetime.timedelta(days=93)).strftime('%Y-%m-%d'))                
                 ]
             </field>
         </record>
@@ -51,7 +52,8 @@
                 ('account_id.collection_id', '!=', False), 
                 ('debit', '!=', 0),
                 ('payment_id', '!=', False),
-                ('partner_id', '!=', False)
+                ('partner_id', '!=', False),
+                ('date', '&gt;=', (context_today()-datetime.timedelta(days=93)).strftime('%Y-%m-%d'))
                 ]
             </field>
             <field name="views"> [[False, "pivot"]]</field>
@@ -63,6 +65,10 @@
             <field name="res_model">team.sale.report</field>
             <field name="view_mode">pivot</field>
             <field name="views"> [[False, "pivot"]]</field>
+            <field name="domain">[               
+                ('date', '&gt;=', (context_today()-datetime.timedelta(days=93)).strftime('%Y-%m-%d'))
+                ]
+            </field>
             <field name="view_id" ref="assigned_commissions_report_view_pivot"></field>
         </record>
 

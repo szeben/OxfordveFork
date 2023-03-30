@@ -322,17 +322,7 @@ class ConfigurationCollection(models.Model):
 
     name = fields.Char(string="Nombre", default=" ")
     percentage = fields.Float(string="Porcentaje (%) de comisión", required=True)
-    account_ids = fields.Many2many('account.account', 'collection_id', string="Cuentas contables a considerar", required=True, domain="[('user_type_id.id', '=', 3)]")
-
-    @api.model
-    def edit(self, vals):
-        res = super(ConfigurationCollection, self).edit(vals)
-        u = self.env['configuration.collection'].search([])
-        if u:
-            for c in u.account_ids:
-                c.collection_id = u.id
-
-        return res
+    account_ids = fields.Many2many('account.account', 'collection_id', string="Cuentas contables a considerar", required=True, domain="[('user_type_id.id', '=', 3)]")   
 
     @api.model
     def create(self, vals):
@@ -401,7 +391,8 @@ class TeamSaleReport(models.Model):
                     0.0 AS debit
                 FROM sale_order_line sol
                 WHERE
-                    sol.order_id IS NOT NULL                                      
+                    sol.order_id IS NOT NULL
+                    AND sol.order_partner_id IS NOT NULL                                      
                 GROUP BY
                     date,
                     team_id                         
