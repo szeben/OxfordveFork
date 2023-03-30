@@ -19,7 +19,9 @@
             <field name="res_model">sale.order.line</field>
             <field name="view_mode">pivot</field>
             <field name="domain">[
-                ('order_id', '!=', False),
+                ('order_id', '!=', False), 
+                ('date', '&gt;=', (context_today()-datetime.timedelta(days=93)).strftime('%Y-%m-%d')),
+                ('order_id.partner_id', '!=', False)
                 ]
             </field>
             <field name="views"> [[False, "pivot"]]</field>
@@ -34,7 +36,9 @@
                 ('parent_state','=','posted'), 
                 ('account_id.collection_id', '!=', False), 
                 ('debit', '!=', 0),
-                ('payment_id', '!=' ,'False')
+                ('payment_id', '!=', False),
+                ('partner_id', '!=', False),
+                ('date', '&gt;=', (context_today()-datetime.timedelta(days=93)).strftime('%Y-%m-%d'))                
                 ]
             </field>
         </record>
@@ -47,7 +51,9 @@
                 ('parent_state','=','posted'),
                 ('account_id.collection_id', '!=', False), 
                 ('debit', '!=', 0),
-                ('payment_id', '!=','False')
+                ('payment_id', '!=', False),
+                ('partner_id', '!=', False),
+                ('date', '&gt;=', (context_today()-datetime.timedelta(days=93)).strftime('%Y-%m-%d'))
                 ]
             </field>
             <field name="views"> [[False, "pivot"]]</field>
@@ -59,6 +65,10 @@
             <field name="res_model">team.sale.report</field>
             <field name="view_mode">pivot</field>
             <field name="views"> [[False, "pivot"]]</field>
+            <field name="domain">[               
+                ('date', '&gt;=', (context_today()-datetime.timedelta(days=93)).strftime('%Y-%m-%d'))
+                ]
+            </field>
             <field name="view_id" ref="assigned_commissions_report_view_pivot"></field>
         </record>
 
@@ -99,7 +109,7 @@
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
         <menuitem id="menu_commission_collections" 
-            name="collections"
+            name="Cobranzas"
             parent="commissions.menu_commission_root"
             action="commissions.commission_list_action" 
             sequence="6"
