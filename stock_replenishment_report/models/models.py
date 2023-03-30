@@ -51,6 +51,24 @@ class ResBranch(models.Model):
         string="Almacenes"
     )
 
+class StockQuant(models.Model):
+    _inherit = "stock.quant"
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super().fields_view_get(view_id, view_type, toolbar, submenu)
+        from pprint import pprint
+        # pprint(res)
+        return res
+    
+    @api.model
+    def _read_group_raw(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
+        print(domain, fields, groupby, offset, limit, orderby, lazy)
+        res = super()._read_group_raw(domain, ["location_id.branch_id", "product_id", "quantity"], ["product_id", "location_id.branch_id"], offset, limit, orderby, lazy)
+        print(res)
+        return super()._read_group_raw(domain, fields, groupby, offset, limit, orderby, lazy)
+
+
 
 class AccountJournal(models.Model):
     _inherit = "account.journal"
@@ -292,7 +310,7 @@ class StockReplenishmentReport(models.Model):
         params = alias_params + params
 
         virtual_availables = {
-            get_name(branch): {
+            branch.id: {
                 product_id: values['virtual_available']
                 for product_id, values in self.env['product.product'].with_context(
                     warehouse=branch.warehouse_ids.ids
@@ -318,11 +336,11 @@ class StockReplenishmentReport(models.Model):
                 branch_name = get_name(branch_id)
 
                 row[f"inv_{branch_name}"] = virtual_available = (
-                    virtual_availables[branch_name].get(product_id) or 0.0
+                    virtual_availables[branch_id.id].get(product_id) or 0.0
                 )
 
                 quantity = row[f"quantity_{branch_name}"]
-                stock = virtual_available / (quantity or 1.0)
+                stock = (virtual_available / quantity) if quantity else 0.0
                 row[f"stock_{branch_name}"] = stock
 
                 if branch_id.is_mainland:
