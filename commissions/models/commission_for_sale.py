@@ -176,7 +176,6 @@ class AccountMoveLine(models.Model):
                 and line.date
                 and line.collection_id != False
                 and line.debit != 0
-                and line.payment_id != False
                 and line.partner_id != False
             ):
 
@@ -210,9 +209,7 @@ class SaleOrderLine(models.Model):
                             for line_f in f.invoice_line_ids:
                                 if line_f.product_id.id == line.product_id.id:
                                     if line.order_id.date_order and not line.date:
-                                        line.date = line.order_id.date_order
-                                    if line.order_id.partner_id.team_id and not line_f.team_id:
-                                        line_f.team_id = line.order_id.partner_id.team_id                                 
+                                        line.date = line.order_id.date_order                                                                   
                                     if line.order_id.branch_id and not line_f.branch_id:
                                         line_f.branch_id = line.order_id.branch_id
                                     if line_f.product_uom_id == line_f.product_id.uom_id and line_f.quantity:
@@ -417,7 +414,6 @@ class TeamSaleReport(models.Model):
                     aml.parent_state = 'posted'
                     AND aa.collection_id IS NOT NULL
                     AND aml.debit != 0                    
-                    AND aml.payment_id IS NOT NULL
                     AND aml.partner_id IS NOT NULL               
                 GROUP BY
                     aml.date,

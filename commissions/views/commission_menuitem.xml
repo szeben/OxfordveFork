@@ -36,7 +36,6 @@
                 ('parent_state','=','posted'), 
                 ('account_id.collection_id', '!=', False), 
                 ('debit', '!=', 0),
-                ('payment_id', '!=', False),
                 ('partner_id', '!=', False),
                 ('date', '&gt;=', (context_today()-datetime.timedelta(days=93)).strftime('%Y-%m-%d'))                
                 ]
@@ -51,7 +50,6 @@
                 ('parent_state','=','posted'),
                 ('account_id.collection_id', '!=', False), 
                 ('debit', '!=', 0),
-                ('payment_id', '!=', False),
                 ('partner_id', '!=', False),
                 ('date', '&gt;=', (context_today()-datetime.timedelta(days=93)).strftime('%Y-%m-%d'))
                 ]
