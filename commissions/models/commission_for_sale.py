@@ -210,7 +210,9 @@ class SaleOrderLine(models.Model):
                             for line_f in f.invoice_line_ids:
                                 if line_f.product_id.id == line.product_id.id:
                                     if line.order_id.date_order and not line.date:
-                                        line.date = line.order_id.date_order                                      
+                                        line.date = line.order_id.date_order
+                                    if line.order_id.partner_id and not line_f.partner_id:
+                                        line_f.partner_id = line.order_id.partner                                     
                                     if line.order_id.branch_id and not line_f.branch_id:
                                         line_f.branch_id = line.order_id.branch_id
                                     if line_f.product_uom_id == line_f.product_id.uom_id and line_f.quantity:
