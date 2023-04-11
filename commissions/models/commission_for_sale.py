@@ -19,19 +19,18 @@ class CommissionForSale(models.Model):
                                            ('basada_en_otra_comision', 'Basada en otra Comisión')],
                                        default='fija')
 
-    product_id = fields.Many2one('product.product', string="Producto", readonly=True)
+    product_id = fields.Many2one('product.product', string="Producto", required=True)
     categ_id = fields.Many2one(related='product_id.categ_id', string="Categoría", readonly=True)
     cant_minima_base = fields.Float(string='Can. Mín. Base', required=True)
     bono_base = fields.Float(string='Bono Base', required=True)
     basado_en = fields.Many2one('commission.for.sale', string="Basado en", domain="[('id', '!=', id),('product_id', '=', product_id if product_id else False)]")
-    commission_ids = fields.One2many('commission.for.sale', 'id', string="Agrupado con", domain="[('id', '=', id)]")
-    cant_min_base_factor_divisor = fields.Float(string='Factor divisor', default=1.0)
-    cant_min_base_factor_multiplicador = fields.Float(string='Factor multipicador', default=1.0)
-    cant_min_base_factor_extra = fields.Float(string='Factor extra')
+    cant_min_base_factor_divisor = fields.Float(string='Factor divisor Cant. Mín.', default=1.0)
+    cant_min_base_factor_multiplicador = fields.Float(string='Factor multiplicador Cant. Mín.', default=1.0)
+    cant_min_base_factor_extra = fields.Float(string='Factor extra Cant. Mín.')
     cant_min_base_otra_com = fields.Float(compute="_compute_cant_min_base_otra_com", string='Cant. Mín. Base - otra comisión', readonly=True, store=True)
-    bono_base_factor_divisor = fields.Float(string='Factor divisor', default=1.0)
-    bono_base_factor_multiplicador = fields.Float(string='Factor multipicador', default=1.0)
-    bono_base_factor_extra = fields.Float(string='Factor extra')
+    bono_base_factor_divisor = fields.Float(string='Factor divisor Bono B.', default=1.0)
+    bono_base_factor_multiplicador = fields.Float(string='Factor multiplicador Bono B.', default=1.0)
+    bono_base_factor_extra = fields.Float(string='Factor extra Bono B.')
     bono_base_otra_com = fields.Float(compute="_compute_bono_base_otra_com", string='Bono Base - otra comisión', readonly=True, store=True)
 
     forma_de_calculo = fields.Selection([
@@ -40,16 +39,77 @@ class CommissionForSale(models.Model):
 
     @api.onchange('name')
     def _onchange_product_id(self):
-        if not self.name:
-            self.update({
-                'product_id': False,
-                'categ_id': False,
-            })
-            return
+        for record in self:
+            if not record.name:
+                record.update({
+                    'product_id': False,
+                    'categ_id': False,
+                })
+                return
+            
+            if record.name:
+                if record.product_id and record.product_id._origin:
+                    record['product_id'] = record.product_id._origin
+    
 
-        if self.name:
-            if self.product_id and self.product_id._origin:
-                self['product_id'] = self.product_id._origin
+    @api.constrains('product_id')
+    def _existe_commission_in_commission_ids(self):
+        for r in self:
+            existe_id_comm = []
+            existe_nomb_comm = []
+
+            for l in r.product_id.commission_ids:
+                
+                if l.id in existe_id_comm:
+                    raise exceptions.UserError(
+                        'El producto tiene una o más comisiones repetidas. Por favor, verifique')
+                else:
+                    nomb = l.name.lower()                
+                    if nomb in existe_nomb_comm:
+                        raise exceptions.UserError(
+                            'El producto tiene una o más comisiones con nombres repetidos. Por favor, verifique')
+
+                existe_id_comm.append(l.id)
+                existe_nomb_comm.append(nomb)
+    
+    @api.constrains('cant_min_base_factor_divisor')
+    def validation_division_by_zero_cant_min(self):
+        for r in self:     
+            if r.cant_min_base_factor_divisor == 0:            
+                    raise exceptions.UserError(
+                        'El factor divisor no puede ser cero. Por favor, verifique')
+
+    @api.constrains('bono_base_factor_divisor')
+    def validation_division_by_zero_bono_base(self):
+        for r in self:     
+            if r.bono_base_factor_divisor == 0:            
+                    raise exceptions.UserError(
+                        'El factor divisor no puede ser cero. Por favor, verifique')
+
+            
+
+    def write(self, values):
+        res = super(CommissionForSale, self).write(values)
+        for r in self:
+            existe_id_comm = []
+            existe_nomb_comm = []
+
+            for l in r.product_id.commission_ids:
+                
+                if l.id in existe_id_comm:
+                    raise exceptions.UserError(
+                        'El producto tiene una o más comisiones repetidas. Por favor, verifique')
+                else:
+                    nomb = l.name.lower()                
+                    if nomb in existe_nomb_comm:
+                        raise exceptions.UserError(
+                            'El producto tiene una o más comisiones con nombres repetidos. Por favor, verifique')
+
+                existe_id_comm.append(l.id)
+                existe_nomb_comm.append(nomb)
+
+        return res
+                
 
     @api.depends("product_id", "name", "commission_type", "bono_base", "cant_min_base_otra_com", "basado_en",
                  "cant_min_base_factor_divisor", "cant_min_base_factor_multiplicador", "cant_min_base_factor_extra",
@@ -58,7 +118,7 @@ class CommissionForSale(models.Model):
 
         for line in self:
 
-            if line.commission_type == 'basada_en_otra_comision':
+            if line.commission_type == 'basada_en_otra_comision' and line.cant_min_base_factor_divisor > 0:
 
                 c = line.basado_en
                 if c.commission_type == 'fija':
@@ -75,7 +135,7 @@ class CommissionForSale(models.Model):
 
         for line in self:
 
-            if line.commission_type == 'basada_en_otra_comision':
+            if line.commission_type == 'basada_en_otra_comision' and line.bono_base_factor_divisor > 0:
 
                 c = line.basado_en
                 if c.commission_type == 'fija':
@@ -127,11 +187,11 @@ class ProductProduct(models.Model):
         for r in self:
             if r.commission_ids:
                 if len(r.commission_ids) > 0:
-                    if r.id == self.id:
-                        p_tmpl = self.product_tmpl_id
+                    if r.id:
+                        p_tmpl = r.product_tmpl_id
                         if (p_tmpl.id):
                             p_tmpl['total_commissions'] = len(r.commission_ids)
-                            self['total_commissions'] = len(r.commission_ids)
+                            r['total_commissions'] = len(r.commission_ids)
             else:
                 p_tmpl = r.product_tmpl_id
                 p_tmpl['total_commissions'] = 0
