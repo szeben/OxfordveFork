@@ -50,6 +50,20 @@ class CommissionForSale(models.Model):
             if record.name:
                 if record.product_id and record.product_id._origin:
                     record['product_id'] = record.product_id._origin
+
+    @api.onchange('product_id')
+    def _onchange_initial_product_id(self):
+        for record in self:
+            if not record.name:
+                record.update({
+                    'product_id': False,
+                    'categ_id': False,
+                })
+                return
+            
+            if record.name:
+                if record.product_id and record.product_id._origin:
+                    record['product_id'] = record.product_id._origin
     
 
     @api.constrains('product_id')
@@ -85,9 +99,8 @@ class CommissionForSale(models.Model):
             if r.bono_base_factor_divisor == 0:            
                     raise exceptions.UserError(
                         'El factor divisor no puede ser cero. Por favor, verifique')
-
             
-
+            
     def write(self, values):
         res = super(CommissionForSale, self).write(values)
         for r in self:
@@ -173,13 +186,22 @@ class ProductProduct(models.Model):
                         'El producto tiene una o más comisiones repetidas. Por favor, verifique')
                 else:
                     nomb = l.name.lower()
-                    nomb = l.name
                     if nomb in existe_nomb_comm:
-                        raise exceptions.UserError(
-                            'El producto tiene una o más comisiones con nombres repetidos. Por favor, verifique')
-
+                        raise exceptions.UserError(                
+                            'El producto tiene una o más comisiones con nombres repetidos. Por favor, verifique')        
+            
                 existe_id_comm.append(l.id)
-                existe_nomb_comm.append(nomb)
+                existe_nomb_comm.append(nomb)    
+                       
+    
+    # def write(self, values):
+    #     res = super(ProductProduct, self).write(values)
+    #     for r in self:
+    #         for c in r.commission_ids:                              
+    #             if c.product_id and c.product_id._origin:
+    #                     c['product_id'] = c.product_id._origin
+
+    #     return res
 
     @api.depends("commission_id", "commission_ids")
     def _compute_total_commissions(self):
