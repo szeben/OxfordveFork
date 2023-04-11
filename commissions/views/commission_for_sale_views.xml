@@ -127,7 +127,7 @@
             <field name="name">commission.for.sale.view.tree</field>
             <field name="model">commission.for.sale</field>
             <field name="arch" type="xml">
-                <tree string="Comisiones" create="0">
+                <tree string="Comisiones" create="1">
                     <field name="name">
                     </field>
                     <field name="commission_type">
@@ -156,7 +156,7 @@
             <field name="name">commission.for.sale.view.form</field>
             <field name="model">commission.for.sale</field>
             <field name="arch" type="xml">
-                <form string="Comisión" create="0" edit="1">
+                <form string="Comisión" create="1" edit="1">
 
                     <div class="row">
                         <div class="col-md-6">
@@ -173,7 +173,8 @@
                         </div>
                         <div class="col-md-6">
                             <group>
-                                <field name="product_id" />
+                                <field name="product_id" 
+                                    options="{'no_create': True, 'no_open': True, 'no_create_edit':True, 'no_quick_create':True}"/>
                                 <field name="categ_id" />
                                 <field name="basado_en"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')], 'required': [('commission_type', '=', 'basada_en_otra_comision')]}" />
@@ -194,12 +195,15 @@
                         <div class="col-md-4" style="margin-left:40px; margin-top:1px;">
                             <group>
                                 <field name="cant_min_base_factor_divisor"
+                                    string="Factor divisor"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                                 <field name="cant_min_base_factor_multiplicador"
+                                    string="Factor multiplicador"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                                 <field name="cant_min_base_factor_extra"
+                                    string="Factor extra"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                <field name="cant_min_base_otra_com"
+                                <field name="cant_min_base_otra_com"                                    
                                     attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                             </group>
                         </div>
@@ -222,10 +226,13 @@
                         <div class="col-md-4" style="margin-left:20px;">
                             <group>
                                 <field name="bono_base_factor_divisor"
+                                    string="Factor divisor"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                                 <field name="bono_base_factor_multiplicador"
+                                    string="Factor multiplicador"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                                 <field name="bono_base_factor_extra"
+                                    string="Factor extra"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                                 <field name="bono_base_otra_com"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
