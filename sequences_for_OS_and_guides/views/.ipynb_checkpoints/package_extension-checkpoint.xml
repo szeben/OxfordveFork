@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+<data>
+    
+    <record model="ir.ui.view" id="view_stock_package_extension">
+        <field name="name">stock.quant.package.extension</field>
+        <field name="model">stock.quant.package</field> 
+        <field name="inherit_id" ref="stock.view_quant_package_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="sheet/group/group/field[@name='location_id']" position="after">
+                <field name="current_branch_id"/>
+            </xpath>
+            
+        </field>
+    </record>         
+
+</data>
+</odoo>
+
+
