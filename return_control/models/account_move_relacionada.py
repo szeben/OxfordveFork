@@ -10,8 +10,7 @@ class AccountMoveExtension(models.Model):
     dev_mercancia = fields.Boolean(string="Devolución de Mercancía")
     stock_pick = fields.Many2one(comodel_name="stock.picking", string="Albarán Asociado")
     confirm_move_type = fields.Boolean(compute='compute_confirmed_move_type')
-    qty_uom = fields.Float(
-        'Reserved', default=0.0, digits='Product Unit of Measure')
+    qty_uom = fields.Float('Reserved', default=0.0, digits='Product Unit of Measure')
     
     @api.onchange('dev_mercancia')
     def empty_sp(self):
@@ -26,7 +25,12 @@ class AccountMoveExtension(models.Model):
     
     def action_post(self):
         for __record in self:
-            if __record.move_type in ['out_refund']:
+            
+            res = super(AccountMoveExtension, self).action_post()
+            
+            if __record.dev_mercancia and not  __record.stock_pick.id:
+                raise UserError('Si es una devolución de mercancía, indique el albarán a relacionar.')
+            elif __record.move_type in ['out_refund'] and __record.dev_mercancia:
                 account_move_lines = {}
                 stock_move_lines = {}
                 stock_move_lines_ratio = {}
@@ -56,14 +60,16 @@ class AccountMoveExtension(models.Model):
     
 
                 if account_move_lines == stock_move_lines:
+                    
                     self.env['stock.picking'].browse(__record.stock_pick.id).write({
                             'nota_cred': __record.name
                     }) 
-                    return super(AccountMoveExtension, self).action_post()
+
+                    return res
                 else:
                     raise UserError('La nota de crédito no coincide en los productos y/o en las cantidades con la devolución de inventario. Por favor verifique e intente nuevamente.')
             else:
-                return super(AccountMoveExtension, self).action_post()
+                return res
             
         
     

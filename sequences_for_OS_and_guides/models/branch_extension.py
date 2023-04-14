@@ -83,13 +83,19 @@ class BranchExtension(models.Model):
             if temp_batch:
                 raise UserError(f'La abreviatura {branch_abbrv} coincide con una secuencia existente.')
             else:
+                
+                batch_next = 1
+                package_next = 1
+                sale_next = 1
                     
-                batch_next = self.env['ir.sequence'].search([('code','=',self.seq_stock_batch)]).number_next_actual or 1
-                package_next = self.env['ir.sequence'].search([('code','=',self.seq_stock_package)]).number_next_actual or 1
-                sale_next = self.env['ir.sequence'].search([('code','=',self.seq_sale)]).number_next_actual or 1
+                if self.abbrv:
+                    batch_next = self.env['ir.sequence'].search([('code','=',self.seq_stock_batch)]).number_next_actual
+                    package_next = self.env['ir.sequence'].search([('code','=',self.seq_stock_package)]).number_next_actual
+                    sale_next = self.env['ir.sequence'].search([('code','=',self.seq_sale)]).number_next_actual
+
             
                 vals['seq_stock_batch'] = self.env['ir.sequence'].create({
-                    'name': f'{branch_name} SECUENCIA PARA AGRUPACIÓN DE ALBARANÉS: {branch_abbrv}',
+                    'name': f'{branch_name} SECUENCIA PARA AGRUPACIÓN DE ALBARANES: {branch_abbrv}',
                     'implementation': 'standard',
                     'code': f'stock.batch.{branch_abbrv}',
                     'active': True,
@@ -143,10 +149,10 @@ class StockBatchExtension(models.Model):
             res_id = res['current_branch_id'].id
             branch = self.env['res.branch'].browse(res_id).seq_stock_batch
             new_seq_stock = self.env['ir.sequence'].next_by_code(branch)
-
             stock_name = res['name'] or vals.get('name','')
             
-            res['name'] = f'{stock_name}/{new_seq_stock}'
+            if branch:
+                res['name'] = f'{stock_name}/{new_seq_stock}'
 
         return res
     
@@ -170,10 +176,10 @@ class StockPackageExtension(models.Model):
             res_id = res['current_branch_id'].id
             branch = self.env['res.branch'].browse(res_id).seq_stock_package
             new_seq_stock = self.env['ir.sequence'].next_by_code(branch)
-
             stock_name = res['name'] or vals.get('name','')
             
-            res['name'] = f'{stock_name}/{new_seq_stock}'
+            if branch:
+                res['name'] = f'{stock_name}/{new_seq_stock}'
 
         return res
 
@@ -190,11 +196,11 @@ class SaleOrderExtension(models.Model):
         res = super().create(vals) 
         if self.env['res.branch'].browse(vals['branch_id']):
             branch = self.env['res.branch'].browse(vals['branch_id']).seq_sale
-            new_seq_stock = self.env['ir.sequence'].next_by_code(branch)
-
+            new_seq_sale = self.env['ir.sequence'].next_by_code(branch)
             sale_name = res['name'] or vals.get('name','')
             
-            res['name'] = f'{sale_name}/{new_seq_stock}'
+            if branch:
+                res['name'] = f'{sale_name}/{new_seq_sale}'
 
         return res
 
