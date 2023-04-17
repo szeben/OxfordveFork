@@ -16,8 +16,9 @@ class VerificationInvoiceAgainstPo(models.Model):
         if not moves:
             return
 
-        if self.move_type == 'in_invoice':
-            return True
+        for record in self:
+            if record.move_type == 'in_invoice':
+                return True
 
         # /!\ As this method is called in create / write, we can't make the assumption the computed stored fields
         # are already done. Then, this query MUST NOT depend of computed stored fields (e.g. balance).
@@ -45,20 +46,37 @@ class VerificationInvoiceAgainstPo(models.Model):
                 _("Cannot create unbalanced journal entry. Ids: %s\nDifferences debit - credit: %s") % (ids, sums))
 
     def validar_cantidades(self):
+
         for record in self:
+
             account_move_id = int(record.id)
 
             account_obj = self.env['account.move'].search(
                 [('id', '=', account_move_id)]).with_context(check_move_validity=False)
 
             for invoice_line_id in account_obj.invoice_line_ids:
+
                 if (invoice_line_id.quantity != invoice_line_id.purchase_line_id.qty_received):
 
                     body = ('Journal Item %s, Quantity: %s has been update to %s') % (invoice_line_id.id,
                                                                                       invoice_line_id.quantity, invoice_line_id.purchase_line_id.qty_received)
 
                     invoice_line_id.quantity = invoice_line_id.purchase_line_id.qty_received
+
                     self.message_post(body=body)
+
+        self.message_post(body="Validación de cantidades realizada")
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'info',
+                'sticky': False,
+                'message': "Validación de cantidades realizada, puede confirmar la factura",
+                'next': {'type': 'ir.actions.act_window_close'},
+            }
+        }
 
 
 class TrackingAndChatterAccountMoveLine(models.Model):
