@@ -1,0 +1,14 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="view_verification_invoice_againts_po">
+      <field name="name">view.verification.invoice.againts.po</field>
+      <field name="model">account.move</field>
+      <field name="inherit_id" ref="account.view_move_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//button[@name='action_post']" position="before">
+          <button name="validar_cantidades" string="Validar cantidades" class="oe_highlight" type="object" attrs="{'invisible': ['|','|',('move_type', '!=', 'in_invoice'), ('state', '!=', 'draft'), ('invoice_origin', '=', False)]}" groups="purchase.group_purchase_user, account.group_account_invoice"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>
