@@ -8,6 +8,19 @@ class VerificationInvoiceAgainstPo(models.Model):
 
     _inherit = "account.move"
 
+    def onchange(self, values, field_name, field_onchange):
+        # OVERRIDE
+        # As the dynamic lines in this model are quite complex, we need to ensure some computations are done exactly
+        # at the beginning / at the end of the onchange mechanism. So, the onchange recursivity is disabled.
+
+        for record in self:
+            if record.move_type:
+                if record.move_type == 'in_invoice':
+
+                    return super(VerificationInvoiceAgainstPo, self.with_context(recursive_onchanges=True)).onchange(values, field_name, field_onchange)
+
+        return super(VerificationInvoiceAgainstPo, self.with_context(recursive_onchanges=False)).onchange(values, field_name, field_onchange)
+
     def _check_balanced(self):
         ''' Assert the move is fully balanced debit = credit.
         An error is raised if it's not the case.
@@ -63,7 +76,11 @@ class VerificationInvoiceAgainstPo(models.Model):
 
                     invoice_line_id.quantity = invoice_line_id.purchase_line_id.qty_received
 
+                    invoice_line_id._onchange_price_subtotal()
+
                     self.message_post(body=body)
+
+            record._onchange_invoice_line_ids()
 
         self.message_post(body="Validación de cantidades realizada")
 
