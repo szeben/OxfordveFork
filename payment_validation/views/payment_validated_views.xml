@@ -29,7 +29,7 @@
       <field name="model">account.payment</field>
       <field name="inherit_id" ref="account.view_account_payment_search"/>
       <field name="arch" type="xml">
-        <xpath expr="//field[@name='state_posted']" position="after">          
+        <xpath expr="//filter[@name='state_posted']" position="after">          
           <filter name="validated" string="Validado" domain="[('is_payment_validated', '=', True)]"/>
           <filter name="not_validated" string="Sin validar" domain="[('is_payment_validated', '=', False)]"/>                    
         </xpath>
