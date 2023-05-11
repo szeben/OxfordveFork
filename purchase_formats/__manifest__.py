@@ -25,9 +25,7 @@
     'depends': ['base', 'purchase', 'contact_type_restrictions'],
 
     # always loaded
-    'data': [
-        # 'security/ir.model.access.csv',
-        # 'views/stock_move_line_tree.xml',
+    'data': [       
         'report/report_purchasequotation_with_approvals_template.xml',
         'report/report_purchasequotation_with_approvals_view.xml',
     ],
