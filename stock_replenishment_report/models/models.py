@@ -51,24 +51,6 @@ class ResBranch(models.Model):
         string="Almacenes"
     )
 
-class StockQuant(models.Model):
-    _inherit = "stock.quant"
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super().fields_view_get(view_id, view_type, toolbar, submenu)
-        from pprint import pprint
-        # pprint(res)
-        return res
-    
-    @api.model
-    def _read_group_raw(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-        print(domain, fields, groupby, offset, limit, orderby, lazy)
-        res = super()._read_group_raw(domain, ["location_id.branch_id", "product_id", "quantity"], ["product_id", "location_id.branch_id"], offset, limit, orderby, lazy)
-        print(res)
-        return super()._read_group_raw(domain, fields, groupby, offset, limit, orderby, lazy)
-
-
 
 class AccountJournal(models.Model):
     _inherit = "account.journal"
@@ -249,6 +231,7 @@ class StockReplenishmentReport(models.Model):
                 pt.categ_id AS categ_id,
                 aml.product_id AS product_id,
                 am.invoice_date AS move_date,
+                am.move_type AS move_type,
                 aj.input_type AS input_type,
                 aj.branch_id AS branch_id,
                 CASE
@@ -285,7 +268,7 @@ class StockReplenishmentReport(models.Model):
             WHERE
                 aml.product_id IS NOT NULL
                 AND am.state = 'posted'
-                AND am.move_type = 'out_invoice'
+                AND am.move_type IN ('out_invoice', 'out_refund')
                 AND aj.input_type IN ('invoice', 'delivery_note')
         """
 
@@ -295,9 +278,9 @@ class StockReplenishmentReport(models.Model):
         for branch in branches:
             name = get_name(branch)
             alias_str.extend([
-                f'SUM(CASE WHEN input_type = \'invoice\' AND branch_id = %s THEN quantity ELSE 0.0 END) AS "qty_invoice_{name}"',
-                f'SUM(CASE WHEN input_type = \'delivery_note\' AND branch_id = %s THEN quantity ELSE 0.0 END) AS "qty_delivery_note_{name}"',
-                f'SUM(CASE WHEN branch_id = %s THEN quantity ELSE 0.0 END) AS "quantity_{name}"',
+                f'SUM(CASE WHEN input_type = \'invoice\' AND branch_id = %s AND move_type = \'out_invoice\' THEN quantity ELSE 0.0 END) AS "qty_invoice_{name}"',
+                f'SUM(CASE WHEN input_type = \'delivery_note\' AND branch_id = %s AND move_type = \'out_invoice\' THEN quantity ELSE 0.0 END) AS "qty_delivery_note_{name}"',
+                f'SUM(CASE WHEN branch_id = %s THEN CASE WHEN move_type = \'out_refund\' THEN -quantity ELSE quantity END ELSE 0.0 END) AS "quantity_{name}"',
             ])
             alias_params.extend([branch.id, branch.id, branch.id])
 
@@ -439,4 +422,4 @@ class StockReplenishmentReport(models.Model):
             data = product_data.get(product_id) or default_data
             row.extend([data.get(name) for name in selected_fields])
 
-        return res
+        return sorted(res, key=lambda row: row[0])
