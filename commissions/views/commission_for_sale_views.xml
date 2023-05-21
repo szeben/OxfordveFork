@@ -17,7 +17,6 @@
             </field>
         </record>
 
-
         <record id="view_sales_order_line_filter_inherit" model="ir.ui.view">
             <field name="name">view.sales.order.line.filter.inherit</field>
             <field name="model">sale.order.line</field>
@@ -173,8 +172,8 @@
                         </div>
                         <div class="col-md-6">
                             <group>
-                                <field name="product_id" 
-                                    options="{'no_create': True, 'no_open': True, 'no_create_edit':True, 'no_quick_create':True}"/>
+                                <field name="product_id"
+                                    options="{'no_create': True, 'no_open': True, 'no_create_edit':True, 'no_quick_create':True}" />
                                 <field name="categ_id" />
                                 <field name="basado_en"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')], 'required': [('commission_type', '=', 'basada_en_otra_comision')]}" />
@@ -203,7 +202,7 @@
                                 <field name="cant_min_base_factor_extra"
                                     string="Factor extra"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                <field name="cant_min_base_otra_com"                                    
+                                <field name="cant_min_base_otra_com"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                             </group>
                         </div>
