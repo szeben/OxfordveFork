@@ -152,7 +152,6 @@ class SaleOrderLine(models.Model):
         "product_id",
         "commission_id",
         "product_id.commission_ids",
-        "product_id.commission_id",
         "product_id.commission_ids.commission_type",
         "product_id.commission_ids.cant_minima_base",
         "product_id.commission_ids.cant_min_base_otra_com",

@@ -38,10 +38,6 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    commission_id = fields.Many2one(
-        'commission.for.sale',
-        string="Comisión"
-    )
     commission_ids = fields.One2many(
         'commission.for.sale',
         'product_id',
