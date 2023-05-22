@@ -87,24 +87,32 @@ class CommissionForSale(models.Model):
     @api.constrains('product_id', 'name')
     def _check_unique_product_id_and_insensitive_commission_name(self):
         for record in self:
-            if record.product_id and record.name and self.search_count([
+            if self.search_count([
                 ('product_id', '=', record.product_id.id),
                 ('name', 'ilike', record.name),
                 ('id', '!=', record.id)
             ]) > 0:
                 raise exceptions.ValidationError(
-                    _('El producto tiene una o más comisiones con nombres repetidos. Por favor, verifique')
+                    'El producto tiene una o más comisiones con nombres repetidos. Por favor, verifique'
                 )
 
-    @api.onchange('name', 'product_id')
+    @api.onchange('product_id')
     def _onchange_product_id(self):
-        for record in self:
-            if record.name:
-                if record.product_id and record.product_id._origin:
-                    record['product_id'] = record.product_id._origin
-            else:
-                record.update({'product_id': False, 'categ_id': False})
-                break
+        for commission in self:
+            product_id = self.env.context.get('default_product_id')
+
+            if product_id:
+                commission.product_id = product_id
+            elif (
+                commission.product_id
+                and isinstance(commission.product_id, models.NewId)
+                and commission.product_id._origin
+            ):
+                product_id = commission.product_id._origin.id
+
+            if product_id:
+                commission.product_id = product_id
+                commission.update({'product_id': product_id})
 
     @api.depends(
         "commission_type",
@@ -169,8 +177,8 @@ class ConfigurationCollection(models.Model):
 
     _sql_constraints = [
         (
-            'percentage_not_negative',
-            'CHECK(percentage < 0)',
+            'percentage_not_zero',
+            'CHECK(percentage >= 0)',
             'El porcentaje no puede ser un número negativo. Por favor, verifique'
         ),
     ]

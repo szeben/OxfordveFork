@@ -1,13 +1,14 @@
 
 # -*- coding: utf-8 -*-
 
-from datetime import date, timedelta
+from calendar import monthrange
+from datetime import date
 
 from odoo import _, api, exceptions, fields, models
 
 
 def get_first_and_last_day_of_month(date: date):
-    return date.replace(day=1), date.replace(month=date.month + 1, day=1) - timedelta(days=1)
+    return date.replace(day=1), date.replace(day=monthrange(date.year, date.month)[1])
 
 
 class SaleOrder(models.Model):
@@ -176,8 +177,8 @@ class SaleOrderLine(models.Model):
                 ('product_id', '=', line.product_id.id),
                 ('team_id', '=', line.team_id.id),
                 ('total_vendidos', '>', 0),
-                ('product_id.commission_ids', '!=', False)]
-            )
+                ('product_id.commission_ids', '!=', False)
+            ])
 
             if not lines:
                 continue
@@ -185,6 +186,16 @@ class SaleOrderLine(models.Model):
             total_vendidos_mes = sum(lines.mapped("total_vendidos"))
             line_id = line.id
             len_lines = len(lines)
+
+            print("python", total_vendidos_mes, len_lines)
+            print("SQL", self.read_group(domain=[('date', '>=', first_day),
+                ('date', '<=', last_day),
+                ('product_id', '=', line.product_id.id),
+                ('team_id', '=', line.team_id.id),
+                ('total_vendidos', '>', 0),
+                ('product_id.commission_ids', '!=', False)], fields=["total_vendidos:sum"], groupby=[]))
+
+
 
             for lin in lines:
                 cumplen_fija_ids = []

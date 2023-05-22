@@ -55,7 +55,6 @@
                 <xpath expr="//field[@name='route_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-
             </field>
         </record>
 
@@ -102,12 +101,12 @@
                 <xpath expr="//page[@name='invoicing']" position="after">
                     <page name="commissions" string="Comisiones">
                         <field name="commission_ids" widget="one2many"
-                            context="{'show_attribute': False}"
+                            context="{'show_attribute': False, 'default_product_id': active_id}"
                             string=" Comisiones asociadas">
                             <tree string="Comisiones">
                                 <field name="name" />
                                 <field name="commission_type" />
-                                <field name="product_id" />
+                                <field name="product_id"  readonly="1" />
                                 <field name="categ_id" />
                                 <field name="cant_minima_base" />
                                 <field name="bono_base" />
@@ -119,6 +118,7 @@
                         </field>
                     </page>
                 </xpath>
+
             </field>
         </record>
 
@@ -127,26 +127,16 @@
             <field name="model">commission.for.sale</field>
             <field name="arch" type="xml">
                 <tree string="Comisiones" create="1">
-                    <field name="name">
-                    </field>
-                    <field name="commission_type">
-                    </field>
-                    <field name="categ_id">
-                    </field>
-                    <field name="product_id">
-                    </field>
-                    <field name="cant_minima_base">
-                    </field>
-                    <field name="bono_base">
-                    </field>
-                    <field name="basado_en">
-                    </field>
-                    <field name="cant_min_base_otra_com">
-                    </field>
-                    <field name="bono_base_otra_com">
-                    </field>
-                    <field name="forma_de_calculo">
-                    </field>
+                    <field name="name" />
+                    <field name="commission_type" />
+                    <field name="categ_id" />
+                    <field name="product_id" />
+                    <field name="cant_minima_base" />
+                    <field name="bono_base" />
+                    <field name="basado_en" />
+                    <field name="cant_min_base_otra_com" />
+                    <field name="bono_base_otra_com" />
+                    <field name="forma_de_calculo" />
                 </tree>
             </field>
         </record>

@@ -15,17 +15,24 @@ class ProductCategory(models.Model):
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    commission_id = fields.Many2one(
+    commission_ids = fields.Many2many(
         'commission.for.sale',
         string="Plantilla del producto",
-        # related='product_id.commission_id',
+        compute="_compute_commissions",
         store=True
     )
     total_commissions = fields.Integer(
         string="Comisiones asociadas",
-        # related='commission_id.total_commissions',
+        compute="_compute_commissions",
         store=True
     )
+
+    @api.depends("product_variant_ids", "product_variant_ids.commission_ids")
+    def _compute_commissions(self):
+        for product_template_id in self:
+            commission_ids = product_template_id.product_variant_ids.commission_ids
+            product_template_id.commission_ids = commission_ids
+            product_template_id.total_commissions = len(commission_ids.ids)
 
 
 class ProductProduct(models.Model):
