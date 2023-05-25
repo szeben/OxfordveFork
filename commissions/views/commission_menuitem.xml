@@ -84,6 +84,17 @@
             <field name="view_mode">tree,form</field>
         </record>
 
+        <record model="ir.actions.act_window" id="commission_group_list_action">
+            <field name="name">Grupos</field>
+            <field name="res_model">commission.group</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear su primer grupo de comisiones
+                </p>
+            </field>
+        </record>
+
         <menuitem id="menu_commission_root"
             name="Comisiones"
             sequence="1"
@@ -137,5 +148,13 @@
             action="commissions.configuration_collection_action"
             sequence="8"
             groups="commissions.group_commission_manager" />
+
+        <menuitem id="menu_commission_group"
+            name="Grupos"
+            parent="commissions.menu_commission_root"
+            action="commissions.commission_group_list_action"
+            sequence="10"
+            groups="commissions.group_commission_manager,commissions.group_commission_user" />
+
     </data>
 </odoo>

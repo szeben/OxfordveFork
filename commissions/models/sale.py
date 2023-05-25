@@ -11,12 +11,6 @@ def get_first_and_last_day_of_month(date: date):
     return date.replace(day=1), date.replace(day=monthrange(date.year, date.month)[1])
 
 
-class SaleOrder(models.Model):
-    _inherit = 'sale.order'
-
-    commission_id = fields.Many2one('commission.for.sale', string="Comisión")
-
-
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
@@ -187,14 +181,20 @@ class SaleOrderLine(models.Model):
             len_lines = len(lines)
 
             print("python", total_vendidos_mes, len_lines)
-            print("SQL", self.read_group(domain=[('date', '>=', first_day),
-                ('date', '<=', last_day),
-                ('product_id', '=', line.product_id.id),
-                ('team_id', '=', line.team_id.id),
-                ('total_vendidos', '>', 0),
-                ('product_id.commission_ids', '!=', False)], fields=["total_vendidos:sum"], groupby=[]))
-
-
+            print(
+                "SQL",
+                self.read_group(
+                    domain=[
+                        ('date', '>=', first_day),
+                        ('date', '<=', last_day),
+                        ('product_id', '=', line.product_id.id),
+                        ('team_id', '=', line.team_id.id),
+                        ('total_vendidos', '>', 0),
+                        ('product_id.commission_ids', '!=', False)
+                    ],
+                    fields=["total_vendidos:sum"], groupby=[]
+                )
+            )
 
             for lin in lines:
                 cumplen_fija_ids = []
