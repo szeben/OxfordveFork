@@ -97,6 +97,7 @@
 
         <menuitem id="menu_commission_root"
             name="Comisiones"
+            web_icon="commissions,static/description/logo.png"
             sequence="1"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 

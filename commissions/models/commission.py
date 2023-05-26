@@ -168,11 +168,12 @@ class ConfigurationCollection(models.Model):
     def write(self, values):
         res = super(ConfigurationCollection, self).write(values)
 
-        self.env['account.account'].search([
-            ('user_type_id', '=', self.env.ref("account.data_account_type_liquidity").id),
-            ('collection_id', '=', self.id)
-        ]).collection_id = False
+        if res:
+            self.env['account.account'].search([
+                ('user_type_id', '=', self.env.ref("account.data_account_type_liquidity").id),
+                ('collection_id', '=', self.id)
+            ]).collection_id = False
 
-        self.account_ids.collection_id = self.id
+            self.account_ids.collection_id = self.id
 
         return res
