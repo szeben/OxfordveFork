@@ -8,50 +8,48 @@ class TeamSaleReport(models.Model):
     _description = "Reporte de comisiones asignadas"
     _auto = False
 
-    @property
-    def _table_query(self):
-        select_ = """
-            WITH commission_by_sale AS (
-                SELECT
-                    date,
-                    team_id,                             
-                    SUM(total_vendidos) AS total_vendidos,
-                    SUM(total_amount_sales) AS total_amount_sales,
-                    SUM(total_amount_commissions) AS total_amount_commissions,
-                    0.0 AS commission_by_collection,
-                    0.0 AS debit
-                FROM sale_order_line sol
-                WHERE
-                    sol.order_id IS NOT NULL
-                    AND sol.order_partner_id IS NOT NULL                                      
-                GROUP BY
-                    date,
-                    team_id                         
-                ORDER BY
-                    date
-            ),
-            commission_by_collection AS (
-                SELECT
-                    aml.date,
-                    aml.team_id,                          
-                    0.0 AS total_vendidos,
-                    0.0 AS total_amount_sales,
-                    0.0 AS total_amount_commissions,
-                    SUM(aml.commission_by_collection) AS commission_by_collection,
-                    SUM(aml.debit) AS debit
-                FROM
-                    account_move_line aml
-                    LEFT JOIN account_account aa ON (aml.account_id = aa.id)
-                WHERE
-                    aml.parent_state = 'posted'
-                    AND aa.collection_id IS NOT NULL
-                    AND aml.debit != 0                    
-                    AND aml.partner_id IS NOT NULL               
-                GROUP BY
-                    aml.date,
-                    aml.team_id                              
-                ORDER BY date
-            )
+    _table_query = """
+        WITH commission_by_sale AS (
+            SELECT
+                date,
+                team_id,
+                SUM(total_vendidos) AS total_vendidos,
+                SUM(total_amount_sales) AS total_amount_sales,
+                SUM(total_amount_commissions) AS total_amount_commissions,
+                0.0 AS commission_by_collection,
+                0.0 AS debit
+            FROM sale_order_line sol
+            WHERE
+                sol.order_id IS NOT NULL
+                AND sol.order_partner_id IS NOT NULL
+            GROUP BY
+                date,
+                team_id
+            ORDER BY
+                date
+        ),
+        commission_by_collection AS (
+            SELECT
+                aml.date,
+                aml.team_id,
+                0.0 AS total_vendidos,
+                0.0 AS total_amount_sales,
+                0.0 AS total_amount_commissions,
+                SUM(aml.commission_by_collection) AS commission_by_collection,
+                SUM(aml.debit) AS debit
+            FROM
+                account_move_line aml
+                LEFT JOIN account_account aa ON (aml.account_id = aa.id)
+            WHERE
+                aml.parent_state = 'posted'
+                AND aa.collection_id IS NOT NULL
+                AND aml.debit != 0
+                AND aml.partner_id IS NOT NULL
+            GROUP BY
+                aml.date,
+                aml.team_id
+            ORDER BY date
+        )
         SELECT
             ROW_NUMBER() OVER () AS id,
             ucommisions.date,
@@ -75,12 +73,11 @@ class TeamSaleReport(models.Model):
             ucommisions.date IS NOT NULL
         GROUP BY
             ucommisions.team_id,
-            ucommisions.date               
+            ucommisions.date
         ORDER BY
             ucommisions.team_id,
-            ucommisions.date             
-        """
-        return select_
+            ucommisions.date
+    """
 
     date = fields.Datetime(
         string="Fecha",

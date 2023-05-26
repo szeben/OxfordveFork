@@ -35,7 +35,6 @@ class CommissionCommission(models.AbstractModel):
         compute="_compute_cant_min_base_otra_com",
         string='Cant. Mín. Base - otra comisión',
         recursive=True,
-        readonly=True,
         store=True
     )
     bono_base_factor_divisor = fields.Float(string='Factor divisor Bono B.', default=1.0)
@@ -48,7 +47,6 @@ class CommissionCommission(models.AbstractModel):
         compute="_compute_bono_base_otra_com",
         string='Bono Base - otra comisión',
         recursive=True,
-        readonly=True,
         store=True
     )
     forma_de_calculo = fields.Selection(
@@ -115,6 +113,23 @@ class CommissionCommission(models.AbstractModel):
                     (bono / commission.bono_base_factor_divisor) *
                     commission.bono_base_factor_multiplicador
                 ) + commission.bono_base_factor_extra
+
+    def compute_commission(self, total_sales_amount=0.0):
+        self.ensure_one()
+        amount = 0.0
+
+        if self.commission_type == 'fija':
+            if self.forma_de_calculo == 'fijo':
+                amount = self.bono_base
+            else:
+                amount = total_sales_amount * self.bono_base / self.cant_minima_base
+        elif self.commission_type == 'basada_en_otra_comision':
+            if self.forma_de_calculo == 'fijo':
+                amount = self.bono_base_otra_com
+            else:
+                amount = total_sales_amount * self.bono_base_otra_com / self.cant_min_base_otra_com
+
+        return amount
 
 
 class ConfigurationCollection(models.Model):
