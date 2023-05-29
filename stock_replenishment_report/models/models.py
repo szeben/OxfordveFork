@@ -278,11 +278,22 @@ class StockReplenishmentReport(models.Model):
         for branch in branches:
             name = get_name(branch)
             alias_str.extend([
-                f'SUM(CASE WHEN input_type = \'invoice\' AND branch_id = %s AND move_type = \'out_invoice\' THEN quantity ELSE 0.0 END) AS "qty_invoice_{name}"',
-                f'SUM(CASE WHEN input_type = \'delivery_note\' AND branch_id = %s AND move_type = \'out_invoice\' THEN quantity ELSE 0.0 END) AS "qty_delivery_note_{name}"',
-                f'SUM(CASE WHEN branch_id = %s THEN CASE WHEN move_type = \'out_refund\' THEN -quantity ELSE quantity END ELSE 0.0 END) AS "quantity_{name}"',
+                (
+                    'SUM(CASE WHEN input_type = \'invoice\' AND branch_id = %s AND move_type = \'out_invoice\' THEN quantity ELSE 0.0 END) '
+                    '- SUM(CASE WHEN input_type = \'invoice\' AND branch_id = %s AND move_type = \'out_refund\' THEN quantity ELSE 0.0 END) '
+                    f'AS "qty_invoice_{name}"'
+                ),
+                (
+                    'SUM(CASE WHEN input_type = \'delivery_note\' AND branch_id = %s AND move_type = \'out_invoice\' THEN quantity ELSE 0.0 END) '
+                    '- SUM(CASE WHEN input_type = \'delivery_note\' AND branch_id = %s AND move_type = \'out_refund\' THEN quantity ELSE 0.0 END) '
+                    f'AS "qty_delivery_note_{name}"'
+                ),
+                (
+                    'SUM(CASE WHEN branch_id = %s THEN CASE WHEN move_type = \'out_refund\' THEN -quantity ELSE quantity END ELSE 0.0 END) '
+                    f'AS "quantity_{name}"'
+                ),
             ])
-            alias_params.extend([branch.id, branch.id, branch.id])
+            alias_params.extend([branch.id, branch.id, branch.id, branch.id, branch.id])
 
         query_str, params = query.subselect("*")
         query_str = f"""
@@ -291,6 +302,9 @@ class StockReplenishmentReport(models.Model):
             GROUP BY tmp.product_id ORDER BY tmp.product_id
         """
         params = alias_params + params
+
+        print(query_str)
+        print(params)
 
         virtual_availables = {
             branch.id: {
