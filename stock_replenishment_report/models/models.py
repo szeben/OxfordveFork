@@ -303,9 +303,6 @@ class StockReplenishmentReport(models.Model):
         """
         params = alias_params + params
 
-        print(query_str)
-        print(params)
-
         virtual_availables = {
             branch.id: {
                 product_id: values['virtual_available']
