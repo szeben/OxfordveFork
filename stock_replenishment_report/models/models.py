@@ -308,9 +308,7 @@ class StockReplenishmentReport(models.Model):
                 product_id: values['virtual_available']
                 for product_id, values in self.env['product.product'].with_context(
                     warehouse=branch.warehouse_ids.ids
-                ).search([
-                    ('id', 'in', product_ids)
-                ])._compute_quantities_dict(None, None, None).items()
+                ).browse(product_ids)._compute_quantities_dict(None, None, None).items()
                 if values.get('virtual_available')
             } for branch in branches
         }
@@ -330,7 +328,7 @@ class StockReplenishmentReport(models.Model):
                 branch_name = get_name(branch_id)
 
                 row[f"inv_{branch_name}"] = virtual_available = (
-                    virtual_availables[branch_id.id].get(product_id) or 0.0
+                    virtual_availables[branch_id.id].pop(product_id, None) or 0.0
                 )
 
                 quantity = row[f"quantity_{branch_name}"]
@@ -350,6 +348,18 @@ class StockReplenishmentReport(models.Model):
             row["order_is_required"] = stock < min_global
 
             product_data[product_id] = row
+
+        if any(virtual_availables.values()):
+            for branch_id, values in virtual_availables.items():
+                branch_names = {b.id: f"inv_{get_name(b)}" for b in branches}
+                for product_id, virtual_available in values.items():
+                    if product_id not in product_data:
+                        product_data[product_id] = {
+                            **self._generate_default_data(),
+                            "product_id": product_id,
+                        }
+                    if virtual_available:
+                        product_data[product_id][branch_names[branch_id]] = virtual_available
 
         return product_data
 
