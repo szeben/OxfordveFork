@@ -37,6 +37,17 @@ class ProductProduct(models.Model):
     def _check_commissions(self):
         self.check_is_commission_or_group()
 
+    @api.constrains("commission_group_id")
+    def _check_commission_group_id(self):
+        for product_id in self:
+            product_ids = product_id.commission_group_id.product_ids
+            if product_ids.ids and len(
+                set(product_ids.mapped("categ_id").ids).union((product_id.categ_id.id,))
+            ) > 1:
+                raise exceptions.ValidationError(
+                    "El grupo de comisiones no puede tener productos de diferentes categorías"
+                )
+
     @api.depends("commission_ids", "commission_group_id", "commission_group_id.commission_ids")
     def _compute_total_commissions(self):
         for product_id in self:

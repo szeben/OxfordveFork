@@ -51,11 +51,6 @@ class SaleOrderLine(models.Model):
         string="Total vendidos",
         store=True
     )
-    total_amount_sales = fields.Monetary(
-        compute="_compute_total_vendidos",
-        string="Monto de las ventas",
-        store=True
-    )
     total_amount_commissions = fields.Monetary(
         compute="_compute_commissions",
         string="Total de comisión",
@@ -93,7 +88,6 @@ class SaleOrderLine(models.Model):
                 continue
 
             total_vendidos = 0
-            total_amount_sales = 0
 
             for invoice in line.order_id.invoice_ids:
                 if not (invoice.state == 'posted' and invoice.move_type == 'out_invoice'):
@@ -104,10 +98,8 @@ class SaleOrderLine(models.Model):
                         continue
 
                     total_vendidos += invoice_line.quantity_product_uom
-                    total_amount_sales += line.amount_sale
 
             line.total_vendidos = total_vendidos
-            line.total_amount_sales = total_amount_sales
 
     @api.depends(
         "total_vendidos",

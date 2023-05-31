@@ -14,6 +14,11 @@ class CommissionGroup(models.Model):
         string="Comisiones",
         required=True
     )
+    product_ids = fields.One2many(
+        'product.product',
+        'commission_group_id',
+        string="Productos",
+    )
     total_commissions = fields.Integer(
         compute="_compute_total_commissions",
         string="Comisión total",

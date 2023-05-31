@@ -101,7 +101,7 @@
                 <xpath expr="//page[@name='invoicing']" position="after">
                     <page name="commissions" string="Comisiones">
                         <group>
-                            <field name="commission_group_id" />
+                            <field name="commission_group_id" options="{'no_quick_create': True}" />
                         </group>
                         <field name="commission_ids" widget="one2many"
                             context="{'show_attribute': False, 'default_product_id': active_id}"
@@ -428,6 +428,17 @@
                                         <field name="cant_min_base_otra_com" />
                                         <field name="bono_base_otra_com" />
                                         <field name="forma_de_calculo" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Productos" name="products">
+                                <field name="product_ids"
+                                    context="{'show_attribute': False, 'default_group_id': active_id}"
+                                    options="{'no_create': True, 'no_open': True, 'no_create_edit':True, 'no_quick_create':True}">
+                                    <tree create="0">
+                                        <field name="name" />
+                                        <field name="categ_id" />
+                                        <field name="uom_id" />
                                     </tree>
                                 </field>
                             </page>

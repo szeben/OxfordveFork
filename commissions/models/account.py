@@ -68,7 +68,7 @@ class AccountMoveLine(models.Model):
             quantity = 0.0
 
             if line.product_uom_id != False and quantity:
-                if line.product_uom_id.id != line.product_id.uom_id.id:
+                if line.product_uom_id.id == line.product_id.uom_id.id:
                     quantity = line.quantity
                 elif line.product_uom_id.uom_type == 'bigger':
                     quantity *= (
