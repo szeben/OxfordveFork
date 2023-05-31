@@ -4,14 +4,15 @@
 
         <record id="commission_report_view_pivot" model="ir.ui.view">
             <field name="name">commission.report.view.pivot</field>
-            <field name="model">sale.order.line</field>
+            <field name="model">commissions.sales.report</field>
             <field name="arch" type="xml">
                 <pivot string="Comisiones por ventas" display_quantity="0" sample="1">
                     <field name="categ_id" type="row" />
+                    <field name="commission_group_id" type="row" />
                     <field name="product_id" type="row" />
                     <field name="date" interval="month" type="row" />
                     <field name="team_id" type="col" />
-                    <field name="total_vendidos" type="measure" />
+                    <field name="total_sold" type="measure" />
                     <field name="total_amount_commissions" type="measure" />
                 </pivot>
             </field>

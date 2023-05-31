@@ -9,3 +9,5 @@ access_commission_for_group_manager,commission.for.group.manager,commissions.mod
 access_commission_for_group_user,commission.for.group.user,commissions.model_commission_for_group,commissions.group_commission_user,1,0,0,0
 access_commission_group_manager,commission.group.manager,commissions.model_commission_group,commissions.group_commission_manager,1,1,1,1
 access_commission_group_user,commission.group.user,commissions.model_commission_group,commissions.group_commission_user,1,0,0,0
+access_commission_sales_report_manager,commission.sales.report.manager,commissions.model_commissions_sales_report,commissions.group_commission_manager,1,1,1,1
+access_commission_sales_report_user,commission.sales.report.user,commissions.model_commissions_sales_report,commissions.group_commission_user,1,0,0,0
