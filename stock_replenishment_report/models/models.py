@@ -231,6 +231,7 @@ class StockReplenishmentReport(models.Model):
                 pt.categ_id AS categ_id,
                 aml.product_id AS product_id,
                 am.invoice_date AS move_date,
+                am.move_type AS move_type,
                 aj.input_type AS input_type,
                 aj.branch_id AS branch_id,
                 CASE
@@ -267,7 +268,7 @@ class StockReplenishmentReport(models.Model):
             WHERE
                 aml.product_id IS NOT NULL
                 AND am.state = 'posted'
-                AND am.move_type = 'out_invoice'
+                AND am.move_type IN ('out_invoice', 'out_refund')
                 AND aj.input_type IN ('invoice', 'delivery_note')
         """
 
@@ -277,11 +278,22 @@ class StockReplenishmentReport(models.Model):
         for branch in branches:
             name = get_name(branch)
             alias_str.extend([
-                f'SUM(CASE WHEN input_type = \'invoice\' AND branch_id = %s THEN quantity ELSE 0.0 END) AS "qty_invoice_{name}"',
-                f'SUM(CASE WHEN input_type = \'delivery_note\' AND branch_id = %s THEN quantity ELSE 0.0 END) AS "qty_delivery_note_{name}"',
-                f'SUM(CASE WHEN branch_id = %s THEN quantity ELSE 0.0 END) AS "quantity_{name}"',
+                (
+                    'SUM(CASE WHEN input_type = \'invoice\' AND branch_id = %s AND move_type = \'out_invoice\' THEN quantity ELSE 0.0 END) '
+                    '- SUM(CASE WHEN input_type = \'invoice\' AND branch_id = %s AND move_type = \'out_refund\' THEN quantity ELSE 0.0 END) '
+                    f'AS "qty_invoice_{name}"'
+                ),
+                (
+                    'SUM(CASE WHEN input_type = \'delivery_note\' AND branch_id = %s AND move_type = \'out_invoice\' THEN quantity ELSE 0.0 END) '
+                    '- SUM(CASE WHEN input_type = \'delivery_note\' AND branch_id = %s AND move_type = \'out_refund\' THEN quantity ELSE 0.0 END) '
+                    f'AS "qty_delivery_note_{name}"'
+                ),
+                (
+                    'SUM(CASE WHEN branch_id = %s THEN CASE WHEN move_type = \'out_refund\' THEN -quantity ELSE quantity END ELSE 0.0 END) '
+                    f'AS "quantity_{name}"'
+                ),
             ])
-            alias_params.extend([branch.id, branch.id, branch.id])
+            alias_params.extend([branch.id, branch.id, branch.id, branch.id, branch.id])
 
         query_str, params = query.subselect("*")
         query_str = f"""
@@ -292,13 +304,11 @@ class StockReplenishmentReport(models.Model):
         params = alias_params + params
 
         virtual_availables = {
-            get_name(branch): {
+            branch.id: {
                 product_id: values['virtual_available']
                 for product_id, values in self.env['product.product'].with_context(
                     warehouse=branch.warehouse_ids.ids
-                ).search([
-                    ('id', 'in', product_ids)
-                ])._compute_quantities_dict(None, None, None).items()
+                ).browse(product_ids)._compute_quantities_dict(None, None, None).items()
                 if values.get('virtual_available')
             } for branch in branches
         }
@@ -318,11 +328,11 @@ class StockReplenishmentReport(models.Model):
                 branch_name = get_name(branch_id)
 
                 row[f"inv_{branch_name}"] = virtual_available = (
-                    virtual_availables[branch_name].get(product_id) or 0.0
+                    virtual_availables[branch_id.id].pop(product_id, None) or 0.0
                 )
 
                 quantity = row[f"quantity_{branch_name}"]
-                stock = virtual_available / (quantity or 1.0)
+                stock = (virtual_available / quantity) if quantity else 0.0
                 row[f"stock_{branch_name}"] = stock
 
                 if branch_id.is_mainland:
@@ -338,6 +348,18 @@ class StockReplenishmentReport(models.Model):
             row["order_is_required"] = stock < min_global
 
             product_data[product_id] = row
+
+        if any(virtual_availables.values()):
+            for branch_id, values in virtual_availables.items():
+                branch_names = {b.id: f"inv_{get_name(b)}" for b in branches}
+                for product_id, virtual_available in values.items():
+                    if product_id not in product_data:
+                        product_data[product_id] = {
+                            **self._generate_default_data(),
+                            "product_id": product_id,
+                        }
+                    if virtual_available:
+                        product_data[product_id][branch_names[branch_id]] = virtual_available
 
         return product_data
 
@@ -421,4 +443,4 @@ class StockReplenishmentReport(models.Model):
             data = product_data.get(product_id) or default_data
             row.extend([data.get(name) for name in selected_fields])
 
-        return res
+        return sorted(res, key=lambda row: row[0])
