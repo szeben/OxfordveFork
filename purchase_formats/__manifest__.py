@@ -19,7 +19,7 @@
     # Check https://github.com/odoo/odoo/blob/15.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Inventory',
-    'version': '15.0.0.1',
+    'version': '15.0.0.2',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'purchase', 'contact_type_restrictions'],
@@ -28,6 +28,8 @@
     'data': [       
         'report/report_purchasequotation_with_approvals_template.xml',
         'report/report_purchasequotation_with_approvals_view.xml',
+        'report/report_purchaseorder_with_approvals_template.xml',
+        'report/report_purchaseorder_with_approvals_view.xml',
     ],
     # only loaded in demonstration mode
     # 'demo': [
