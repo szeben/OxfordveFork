@@ -48,7 +48,7 @@
                         <th name="th_date_req" class="text-center"><strong>Fecha Req.</strong></th>
                         <th name="th_quantity" class="text-right"><strong>Cant</strong></th>
                         <th name="th_price_unit" class="text-right"><strong>Precio Unidad</strong></th>
-                        <th name="th_amount" class="text-right"><strong>MOnto</strong></th>
+                        <th name="th_amount" class="text-right"><strong>Monto</strong></th>
                     </tr>
                 </thead>
                 <tbody>
