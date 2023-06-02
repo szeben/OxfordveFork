@@ -35,6 +35,12 @@ class CommissionForGroup(models.Model):
     _description = 'Commission for Group'
     _inherit = 'commission.commission'
 
+    categ_id = fields.Many2one(
+        'product.category',
+        string="Categoría",
+        compute="_compute_categ_id",
+        store=True
+    )
     group_id = fields.Many2one(
         'commission.group',
         string="Grupo",
@@ -70,3 +76,11 @@ class CommissionForGroup(models.Model):
             if group_id:
                 commission.group_id = group_id
                 commission.update({'group_id': group_id})
+
+    @api.depends('group_id', 'group_id.product_ids', 'group_id.product_ids.categ_id')
+    def _compute_categ_id(self):
+        for commission in self:
+            if commission.group_id and commission.group_id.product_ids:
+                commission.categ_id = commission.group_id.product_ids[0].mapped('categ_id')
+            else:
+                commission.categ_id = False

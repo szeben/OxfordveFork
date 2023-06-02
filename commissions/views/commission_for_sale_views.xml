@@ -4,11 +4,11 @@
 
         <record id="commission_report_view_pivot" model="ir.ui.view">
             <field name="name">commission.report.view.pivot</field>
-            <field name="model">commissions.sales.report</field>
+            <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
                 <pivot string="Comisiones por ventas" display_quantity="0" sample="1">
                     <field name="categ_id" type="row" />
-                    <field name="commission_group_id" type="row" />
+                    <!-- <field name="commission_group_id" type="row" /> -->
                     <field name="product_id" type="row" />
                     <field name="date" interval="month" type="row" />
                     <field name="team_id" type="col" />
@@ -119,6 +119,117 @@
                                 <field name="bono_base_otra_com" />
                                 <field name="forma_de_calculo" />
                             </tree>
+                            <form string="Comisión" create="1" edit="1">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <group>
+                                            <field name="name" />
+                                        </group>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <group>
+                                            <field name="commission_type" widget='radio' />
+                                        </group>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <group>
+                                            <field name="product_id"
+                                                options="{'no_create': True, 'no_open': True, 'no_create_edit':True, 'no_quick_create':True}"
+                                                required="1" readonly="1" />
+                                            <field name="categ_id" />
+                                            <field name="basado_en"
+                                                attrs="{'invisible': [('commission_type', '=', 'fija')], 'required': [('commission_type', '=', 'basada_en_otra_comision')]}" />
+                                        </group>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-2.01" style="margin-left:15px;">
+                                        <group>
+                                            <h1>
+                                                <div
+                                                    attrs="{'invisible': [('commission_type', '=', 'fija')]}"
+                                                    style="font-size:40%;"> Cantidad mínima base </div>
+                                            </h1>
+                                        </group>
+                                    </div>
+
+                                    <div class="col-md-4" style="margin-left:40px; margin-top:1px;">
+                                        <group>
+                                            <field name="cant_min_base_factor_divisor"
+                                                string="Factor divisor"
+                                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                            <field name="cant_min_base_factor_multiplicador"
+                                                string="Factor multiplicador"
+                                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                            <field name="cant_min_base_factor_extra"
+                                                string="Factor extra"
+                                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                            <field name="cant_min_base_otra_com"
+                                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                        </group>
+                                    </div>
+
+                                    <div class="col-md-5.99" style="margin-left:1px;">
+                                        <group></group>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <group>
+                                            <h1>
+                                                <div
+                                                    attrs="{'invisible': [('commission_type', '=', 'fija')]}"
+                                                    style="font-size:40%;"> Bono base </div>
+                                            </h1>
+                                        </group>
+                                    </div>
+
+                                    <div class="col-md-4" style="margin-left:20px;">
+                                        <group>
+                                            <field name="bono_base_factor_divisor"
+                                                string="Factor divisor"
+                                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                            <field name="bono_base_factor_multiplicador"
+                                                string="Factor multiplicador"
+                                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                            <field name="bono_base_factor_extra"
+                                                string="Factor extra"
+                                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                            <field name="bono_base_otra_com"
+                                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                        </group>
+                                    </div>
+                                    <div class="col-md-6" style="margin-left:1px;">
+                                        <group></group>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <group>
+                                            <field name="cant_minima_base"
+                                                attrs="{'invisible': [('commission_type', '=', 'basada_en_otra_comision')]}"
+                                                required='1' />
+                                            <field name="bono_base"
+                                                attrs="{'invisible': [('commission_type', '=', 'basada_en_otra_comision')]}"
+                                                required='1' />
+                                        </group>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <group>
+                                            <field name="forma_de_calculo" widget='radio'
+                                                required='1' />
+                                        </group>
+                                    </div>
+                                </div>
+                            </form>
                         </field>
                     </page>
                 </xpath>
@@ -151,113 +262,117 @@
             <field name="arch" type="xml">
                 <form string="Comisión" create="1" edit="1">
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <group>
-                                <field name="name" />
-                            </group>
+                    <sheet name="commission_for_sale_sheet">
+                        <field name="id" invisible="True" />
+
+                        <div class="oe_title">
+                            <label for="name" string="Nombre del grupo de comisión" />
+                            <h1>
+                                <div class="d-flex">
+                                    <field class="o_text_overflow" name="name" />
+                                </div>
+                            </h1>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
+
+                        <group>
                             <group>
                                 <field name="commission_type" widget='radio' />
                             </group>
-                        </div>
-                        <div class="col-md-6">
                             <group>
                                 <field name="product_id"
                                     options="{'no_create': True, 'no_open': True, 'no_create_edit':True, 'no_quick_create':True}"
-                                    required="1" readonly="1" />
+                                    required="1" />
                                 <field name="categ_id" />
                                 <field name="basado_en"
                                     attrs="{'invisible': [('commission_type', '=', 'fija')], 'required': [('commission_type', '=', 'basada_en_otra_comision')]}" />
                             </group>
-                        </div>
-                    </div>
+                        </group>
 
-                    <div class="row">
-                        <div class="col-md-2.01" style="margin-left:15px;">
-                            <group>
-                                <h1>
-                                    <div attrs="{'invisible': [('commission_type', '=', 'fija')]}"
-                                        style="font-size:40%;"> Cantidad mínima base </div>
-                                </h1>
-                            </group>
-                        </div>
+                        <div class="row">
+                            <div class="col-md-2.01" style="margin-left:15px;">
+                                <group>
+                                    <h1>
+                                        <div
+                                            attrs="{'invisible': [('commission_type', '=', 'fija')]}"
+                                            style="font-size:40%;"> Cantidad mínima base </div>
+                                    </h1>
+                                </group>
+                            </div>
 
-                        <div class="col-md-4" style="margin-left:40px; margin-top:1px;">
-                            <group>
-                                <field name="cant_min_base_factor_divisor"
-                                    string="Factor divisor"
-                                    attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                <field name="cant_min_base_factor_multiplicador"
-                                    string="Factor multiplicador"
-                                    attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                <field name="cant_min_base_factor_extra"
-                                    string="Factor extra"
-                                    attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                <field name="cant_min_base_otra_com"
-                                    attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                            </group>
-                        </div>
+                            <div class="col-md-4" style="margin-left:40px; margin-top:1px;">
+                                <group>
+                                    <field name="cant_min_base_factor_divisor"
+                                        string="Factor divisor"
+                                        attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                    <field name="cant_min_base_factor_multiplicador"
+                                        string="Factor multiplicador"
+                                        attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                    <field name="cant_min_base_factor_extra"
+                                        string="Factor extra"
+                                        attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                    <field name="cant_min_base_otra_com"
+                                        attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                </group>
+                            </div>
 
-                        <div class="col-md-5.99" style="margin-left:1px;">
-                            <group></group>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-2">
-                            <group>
-                                <h1>
-                                    <div attrs="{'invisible': [('commission_type', '=', 'fija')]}"
-                                        style="font-size:40%;"> Bono base </div>
-                                </h1>
-                            </group>
+                            <div class="col-md-5.99" style="margin-left:1px;">
+                                <group></group>
+                            </div>
                         </div>
 
-                        <div class="col-md-4" style="margin-left:20px;">
-                            <group>
-                                <field name="bono_base_factor_divisor"
-                                    string="Factor divisor"
-                                    attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                <field name="bono_base_factor_multiplicador"
-                                    string="Factor multiplicador"
-                                    attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                <field name="bono_base_factor_extra"
-                                    string="Factor extra"
-                                    attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                <field name="bono_base_otra_com"
-                                    attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                            </group>
-                        </div>
-                        <div class="col-md-6" style="margin-left:1px;">
-                            <group></group>
-                        </div>
-                    </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <group>
+                                    <h1>
+                                        <div
+                                            attrs="{'invisible': [('commission_type', '=', 'fija')]}"
+                                            style="font-size:40%;"> Bono base </div>
+                                    </h1>
+                                </group>
+                            </div>
 
-                    <div class="row">
-                        <div class="col-md-4">
-                            <group>
-                                <field name="cant_minima_base"
-                                    attrs="{'invisible': [('commission_type', '=', 'basada_en_otra_comision')]}"
-                                    required='1' />
-                                <field name="bono_base"
-                                    attrs="{'invisible': [('commission_type', '=', 'basada_en_otra_comision')]}"
-                                    required='1' />
-                            </group>
+                            <div class="col-md-4" style="margin-left:20px;">
+                                <group>
+                                    <field name="bono_base_factor_divisor"
+                                        string="Factor divisor"
+                                        attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                    <field name="bono_base_factor_multiplicador"
+                                        string="Factor multiplicador"
+                                        attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                    <field name="bono_base_factor_extra"
+                                        string="Factor extra"
+                                        attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                    <field name="bono_base_otra_com"
+                                        attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                                </group>
+                            </div>
+                            <div class="col-md-6" style="margin-left:1px;">
+                                <group></group>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <group>
+                                    <field name="cant_minima_base"
+                                        attrs="{'invisible': [('commission_type', '=', 'basada_en_otra_comision')]}"
+                                        required='1' />
+                                    <field name="bono_base"
+                                        attrs="{'invisible': [('commission_type', '=', 'basada_en_otra_comision')]}"
+                                        required='1' />
+                                </group>
+                            </div>
+                        </div>
+
+                        <group>
                             <group>
                                 <field name="forma_de_calculo" widget='radio' required='1' />
                             </group>
-                        </div>
-                    </div>
+                        </group>
+
+                    </sheet>
                 </form>
+
             </field>
         </record>
 
@@ -436,7 +551,7 @@
                                 <field name="product_ids"
                                     context="{'show_attribute': False, 'default_group_id': active_id}"
                                     options="{'no_create': True, 'no_open': True, 'no_create_edit':True, 'no_quick_create':True}">
-                                    <tree create="0">
+                                    <tree create="0" delete="0" edit="0">
                                         <field name="name" />
                                         <field name="categ_id" />
                                         <field name="uom_id" />

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from itertools import groupby
+from collections import defaultdict
 from odoo import _, api, exceptions, fields, models
 
 
@@ -61,35 +62,14 @@ class ProductProduct(models.Model):
         self.ensure_one()
 
         commission_ids = (self.commission_group_id or self).commission_ids
-        comission_types = groupby(commission_ids, lambda x: x.commission_type)
-        max_commission = False
-
-        max_fixed_commission = max(
+        max_commission = max(
             filter(
-                lambda x: total_sales_amount >= x.cant_minima_base,
-                comission_types.get('fija', [])
+                lambda x: total_sales_amount >= x.base_min_qty,
+                commission_ids
             ),
-            default=False,
-            key=lambda x: x.cant_minima_base,
+            default=None,
+            key=lambda x: x.base_min_qty,
         )
-        max_other_commission = max(
-            filter(
-                lambda x: total_sales_amount >= x.cant_min_base_otra_com,
-                comission_types.get('basada_en_otra_comision', [])
-            ),
-            default=False,
-            key=lambda x: x.cant_min_base_otra_com,
-        )
-
-        if max_fixed_commission and max_other_commission:
-            if max_fixed_commission.cant_minima_base >= max_other_commission.cant_min_base_otra_com:
-                max_commission = max_fixed_commission
-            else:
-                max_commission = max_other_commission
-        elif max_fixed_commission:
-            max_commission = max_fixed_commission
-        elif max_other_commission:
-            max_commission = max_other_commission
 
         if max_commission:
             return max_commission.compute_commission(total_sales_amount)

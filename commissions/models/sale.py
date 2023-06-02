@@ -23,7 +23,11 @@ class SaleOrderLine(models.Model):
     categ_id = fields.Many2one(
         related='product_id.categ_id',
         string="Categoría del producto",
-        readonly=True,
+        store=True
+    )
+    product_commission_group_id = fields.Many2one(
+        related='product_id.commission_group_id',
+        string="Grupo de comisiones",
         store=True
     )
     team_id = fields.Many2one(
@@ -31,10 +35,6 @@ class SaleOrderLine(models.Model):
         string="Equipo de ventas",
         store=True,
         domain=[('order_id', '!=', False)]
-    )
-    quantity = fields.Float(
-        string="Cantidad facturada",
-        store=True
     )
     amount_sale = fields.Monetary(
         string="Monto de la venta",
@@ -46,8 +46,8 @@ class SaleOrderLine(models.Model):
         string="Fecha",
         store=True
     )
-    total_vendidos = fields.Float(
-        compute="_compute_total_vendidos",
+    total_sold = fields.Float(
+        compute="_compute_total_sold",
         string="Total vendidos",
         store=True
     )
@@ -62,7 +62,6 @@ class SaleOrderLine(models.Model):
         "date",
         "invoice_lines",
         "qty_invoiced",
-        "amount_sale",
         "order_id",
         "order_id.invoice_ids",
         "order_id.state",
@@ -76,7 +75,7 @@ class SaleOrderLine(models.Model):
         "order_id.invoice_ids.invoice_line_ids.product_id",
         "order_id.invoice_ids.invoice_line_ids.quantity",
     )
-    def _compute_total_vendidos(self):
+    def _compute_total_sold(self):
         for line in self:
             if not (
                 line.invoice_lines
@@ -94,27 +93,23 @@ class SaleOrderLine(models.Model):
                     continue
 
                 for invoice_line in invoice.invoice_line_ids:
-                    if invoice_line.product_id.id != line.product_id.id:
-                        continue
-
-                    total_vendidos += invoice_line.quantity_product_uom
+                    if invoice_line.product_id.id == line.product_id.id:
+                        total_vendidos += invoice_line.quantity_product_uom
 
             line.total_vendidos = total_vendidos
 
     @api.depends(
-        "total_vendidos",
+        "total_sold",
         "date",
         "team_id",
         "invoice_lines",
         "product_id",
         "product_id.commission_ids",
-        "product_id.commission_ids.commission_type",
-        "product_id.commission_ids.cant_minima_base",
-        "product_id.commission_ids.cant_min_base_otra_com",
+        "product_id.commission_ids.basic_bonus",
+        "product_id.commission_ids.base_min_qty",
         "product_id.commission_ids",
-        "product_id.commission_group_id.commission_ids.commission_type",
-        "product_id.commission_group_id.commission_ids.cant_minima_base",
-        "product_id.commission_group_id.commission_ids.cant_min_base_otra_com",
+        "product_id.commission_group_id.commission_ids.basic_bonus",
+        "product_id.commission_group_id.commission_ids.base_min_qty",
     )
     def _compute_commissions(self):
         for line in self:
@@ -123,7 +118,7 @@ class SaleOrderLine(models.Model):
             if not (
                 line.invoice_lines
                 and line.product_id.commission_ids
-                and line.total_vendidos != 0
+                and line.total_sold != 0
                 and line.date
                 and line.team_id
             ):
@@ -136,18 +131,18 @@ class SaleOrderLine(models.Model):
                     ('date', '<=', last_day),
                     ('product_id', '=', line.product_id.id),
                     ('team_id', '=', line.team_id.id),
-                    ('total_vendidos', '>', 0),
+                    ('total_sold', '>', 0),
                     ('product_id.commission_ids', '!=', False)
                 ],
-                fields=["total_vendidos:sum"],
+                fields=["total_sold:sum"],
                 groupby=[],
             )[0]
 
-            count = totals.get("__count", 0.0)
+            count = totals.get("__count", 0)
 
             if count == 0:
                 continue
 
             line.total_amount_commissions = line.product_id.compute_commission(
-                totals.get("total_vendidos", 0.0),
+                totals.get("total_sold", 0.0),
             ) / count

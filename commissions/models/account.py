@@ -54,27 +54,16 @@ class AccountMoveLine(models.Model):
             else:
                 line.commission_by_collection = 0
 
-    @api.depends(
-        "quantity",
-        "product_uom_id",
-        "product_id",
-        "product_id.uom_id",
-        # "product_uom_id.uom_type",
-        # "product_uom_id.factor_inv",
-        # "product_uom_id.factor",
-    )
+    @api.depends("quantity", "product_uom_id", "product_id", "product_id.uom_id")
     def _compute_quantity_product_uom(self):
         for line in self:
             quantity = 0.0
 
-            if line.product_uom_id != False and quantity:
-                if line.product_uom_id.id == line.product_id.uom_id.id:
-                    quantity = line.quantity
-                elif line.product_uom_id.uom_type == 'bigger':
-                    quantity *= (
-                        line.product_uom_id.factor_inv / line.product_id.uom_id.factor_inv
-                    )
-                elif line.product_uom_id.uom_type in {'smaller', 'reference'}:
-                    quantity *= line.product_id.uom_id.factor
+            if line.product_uom_id and line.quantity:
+                quantity = line.product_uom_id._compute_quantity(
+                    line.quantity,
+                    line.product_id.uom_id,
+                    round=False
+                )
 
             line.quantity_product_uom = quantity
