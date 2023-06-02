@@ -10,7 +10,7 @@
         </t>
         <t t-if="o.dest_address_id">
             <t t-set="information_block">
-                <strong>Shipping address:</strong>
+                <strong>Dirección de envío:</strong>
                 <div t-if="o.dest_address_id">
                     <div t-field="o.dest_address_id"
                         t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}' name="purchase_shipping_address"/>
@@ -21,21 +21,21 @@
         <div class="page">
             <div class="oe_structure"/>
 
-            <h2 t-if="o.state in ['draft', 'sent', 'to approve']">Request for Quotation #<span t-field="o.name"/></h2>
-            <h2 t-if="o.state in ['purchase', 'done']">Purchase Order #<span t-field="o.name"/></h2>
-            <h2 t-if="o.state == 'cancel'">Cancelled Purchase Order #<span t-field="o.name"/></h2>
+            <h2 t-if="o.state in ['draft', 'sent', 'to approve']">Solicitud de presupuesto #<span t-field="o.name"/></h2>
+            <h2 t-if="o.state in ['purchase', 'done']">Pedido de compra #<span t-field="o.name"/></h2>
+            <h2 t-if="o.state == 'cancel'">Pedido de compra cancelado #<span t-field="o.name"/></h2>
 
             <div id="informations" class="row mt32 mb32">
                 <div t-if="o.user_id" class="col-3 bm-2">
-                    <strong>Purchase Representative:</strong>
+                    <strong>Representante de compra:</strong>
                     <p t-field="o.user_id" class="m-0"/>
                 </div>
                 <div t-if="o.partner_ref" class="col-3 bm-2">
-                    <strong>Your Order Reference:</strong>
+                    <strong>Su referencia de pedido:</strong>
                     <p t-field="o.partner_ref" class="m-0"/>
                 </div>
                 <div t-if="o.date_order" class="col-3 bm-2">
-                    <strong>Order Date:</strong>
+                    <strong>Fecha del pedido:</strong>
                     <p t-field="o.date_order" class="m-0"/>
                 </div>
             </div>
@@ -43,12 +43,12 @@
             <table class="table table-sm o_main_table">
                 <thead>
                     <tr>
-                        <th name="th_description"><strong>Description</strong></th>
-                        <th name="th_taxes"><strong>Taxes</strong></th>
-                        <th name="th_date_req" class="text-center"><strong>Date Req.</strong></th>
-                        <th name="th_quantity" class="text-right"><strong>Qty</strong></th>
-                        <th name="th_price_unit" class="text-right"><strong>Unit Price</strong></th>
-                        <th name="th_amount" class="text-right"><strong>Amount</strong></th>
+                        <th name="th_description"><strong>Descripción</strong></th>
+                        <th name="th_taxes"><strong>Impuestos</strong></th>
+                        <th name="th_date_req" class="text-center"><strong>Fecha Req.</strong></th>
+                        <th name="th_quantity" class="text-right"><strong>Cant</strong></th>
+                        <th name="th_price_unit" class="text-right"><strong>Precio Unidad</strong></th>
+                        <th name="th_amount" class="text-right"><strong>MOnto</strong></th>
                     </tr>
                 </thead>
                 <tbody>
