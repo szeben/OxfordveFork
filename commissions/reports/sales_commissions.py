@@ -25,7 +25,6 @@ class CommissionSalesCommissionReport(models.Model):
                 SELECT
                     so.branch_id AS branch_id,
                     COALESCE(cfg.categ_id, pt.categ_id) AS categ_id,
-                    pt.categ_id AS categ_id,
                     so.team_id AS team_id,
                     DATE(so.date_order) AS "date",
                     sol.product_id AS product_id,
@@ -89,6 +88,22 @@ class CommissionSalesCommissionReport(models.Model):
                     AND am.move_type = 'out_invoice'
                     AND aml.product_id IS NOT NULL
                     AND aml.quantity > 0.0
+                    AND (
+                        EXISTS(
+                            SELECT 1
+                            FROM
+                                commission_for_sale cfs
+                            WHERE
+                                cfs.product_id = sol.product_id
+                        )
+                        OR EXISTS(
+                            SELECT 1
+                            FROM
+                                commission_for_group cfg
+                            WHERE
+                                cfg.group_id = pp.commission_group_id
+                        )
+                    )
                 GROUP BY
                     so.branch_id,
                     DATE(so.date_order),
@@ -160,7 +175,7 @@ class CommissionSalesCommissionReport(models.Model):
                     sol1.team_id,
                     sol1.commission_group_id
                 )
-            END AS commission
+            END AS total_amount_commissions
         FROM sol1
         WHERE sol1.total_sold > 0.0
     """
