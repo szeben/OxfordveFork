@@ -4,7 +4,7 @@
 
         <record id="commission_report_view_pivot" model="ir.ui.view">
             <field name="name">commission.report.view.pivot</field>
-            <field name="model">sale.order.line</field>
+            <field name="model">commissions.sales.report</field>
             <field name="arch" type="xml">
                 <pivot string="Comisiones por ventas" display_quantity="0" sample="1">
                     <field name="categ_id" type="row" />
