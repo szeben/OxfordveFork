@@ -32,24 +32,12 @@ class CommissionCommission(models.AbstractModel):
         default=1.0
     )
     cant_min_base_factor_extra = fields.Float(string='Factor extra Cant. Mín.')
-    cant_min_base_otra_com = fields.Float(
-        compute="_compute_cant_min_base_otra_com",
-        string='Cant. Mín. Base - otra comisión',
-        recursive=True,
-        store=True,
-    )
     bono_base_factor_divisor = fields.Float(string='Factor divisor Bono B.', default=1.0)
     bono_base_factor_multiplicador = fields.Float(
         string='Factor multiplicador Bono B.',
         default=1.0
     )
     bono_base_factor_extra = fields.Float(string='Factor extra Bono B.')
-    bono_base_otra_com = fields.Float(
-        compute="_compute_bono_base_otra_com",
-        string='Bono Base - otra comisión',
-        recursive=True,
-        store=True,
-    )
 
     forma_de_calculo = fields.Selection(
         [('fijo', 'Fijo'), ('regla_de_tres', 'Regla de tres')],
@@ -59,12 +47,14 @@ class CommissionCommission(models.AbstractModel):
 
     base_min_qty = fields.Float(
         string='Cantidad mínima base',
-        compute="_compute_base_min_qty_and_basic_bonus",
+        compute="_compute_base_min_qty",
+        recursive=True,
         store=True,
     )
     basic_bonus = fields.Float(
         string='Bono básico',
-        compute="_compute_base_min_qty_and_basic_bonus",
+        compute="_compute_basic_bonus",
+        recursive=True,
         store=True,
     )
 
@@ -83,51 +73,43 @@ class CommissionCommission(models.AbstractModel):
 
     @api.depends(
         "commission_type",
+        "cant_minima_base",
         "cant_min_base_factor_divisor",
         "cant_min_base_factor_multiplicador",
         "cant_min_base_factor_extra",
         "basado_en",
         "basado_en.base_min_qty",
     )
-    def _compute_cant_min_base_otra_com(self):
+    def _compute_base_min_qty(self):
         for commission in self:
-            if commission.commission_type == 'basada_en_otra_comision' and commission.cant_min_base_factor_divisor > 0:
-                commission.cant_min_base_otra_com = (
-                    (commission.basado_en.base_min_qty / commission.cant_min_base_factor_divisor) *
-                    commission.cant_min_base_factor_multiplicador
-                ) + commission.cant_min_base_factor_extra
+            if commission.commission_type == 'basada_en_otra_comision':
+                if commission.cant_min_base_factor_divisor > 0:
+                    commission.base_min_qty = (
+                        (commission.basado_en.base_min_qty / commission.cant_min_base_factor_divisor) *
+                        commission.cant_min_base_factor_multiplicador
+                    ) + commission.cant_min_base_factor_extra
+            elif commission.commission_type == 'fija':
+                commission.base_min_qty = commission.cant_minima_base
 
     @api.depends(
         "commission_type",
+        "bono_base",
         "bono_base_factor_divisor",
         "bono_base_factor_multiplicador",
         "bono_base_factor_extra",
         "basado_en",
         "basado_en.basic_bonus",
     )
-    def _compute_bono_base_otra_com(self):
+    def _compute_basic_bonus(self):
         for commission in self:
-            if commission.commission_type == 'basada_en_otra_comision' and commission.bono_base_factor_divisor > 0:
-                commission.bono_base_otra_com = (
-                    (commission.basado_en.basic_bonus / commission.bono_base_factor_divisor) *
-                    commission.bono_base_factor_multiplicador
-                ) + commission.bono_base_factor_extra
-
-    @api.depends(
-        "commission_type",
-        "cant_minima_base",
-        "cant_min_base_otra_com",
-        "bono_base",
-        "bono_base_otra_com",
-    )
-    def _compute_base_min_qty_and_basic_bonus(self):
-        for commission in self:
-            if commission.commission_type == 'fija':
-                commission.base_min_qty = commission.cant_minima_base
+            if commission.commission_type == 'basada_en_otra_comision':
+                if commission.bono_base_factor_divisor > 0:
+                    commission.basic_bonus = (
+                        (commission.basado_en.basic_bonus / commission.bono_base_factor_divisor) *
+                        commission.bono_base_factor_multiplicador
+                    ) + commission.bono_base_factor_extra
+            elif commission.commission_type == 'fija':
                 commission.basic_bonus = commission.bono_base
-            elif commission.commission_type == 'basada_en_otra_comision':
-                commission.base_min_qty = commission.cant_min_base_otra_com
-                commission.basic_bonus = commission.bono_base_otra_com
 
     def compute_commission(self, total_sales_amount=0.0):
         self.ensure_one()

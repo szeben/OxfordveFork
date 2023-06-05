@@ -115,8 +115,8 @@
                                 <field name="cant_minima_base" />
                                 <field name="bono_base" />
                                 <field name="basado_en" />
-                                <field name="cant_min_base_otra_com" />
-                                <field name="bono_base_otra_com" />
+                                <field name="base_min_qty" />
+                                <field name="basic_bonus" />
                                 <field name="forma_de_calculo" />
                             </tree>
                             <form string="Comisión" create="1" edit="1">
@@ -167,7 +167,7 @@
                                             <field name="cant_min_base_factor_extra"
                                                 string="Factor extra"
                                                 attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                            <field name="cant_min_base_otra_com"
+                                            <field name="base_min_qty"
                                                 attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                                         </group>
                                     </div>
@@ -199,7 +199,7 @@
                                             <field name="bono_base_factor_extra"
                                                 string="Factor extra"
                                                 attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                            <field name="bono_base_otra_com"
+                                            <field name="basic_bonus"
                                                 attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                                         </group>
                                     </div>
@@ -249,8 +249,8 @@
                     <field name="cant_minima_base" />
                     <field name="bono_base" />
                     <field name="basado_en" />
-                    <field name="cant_min_base_otra_com" />
-                    <field name="bono_base_otra_com" />
+                    <field name="base_min_qty" />
+                    <field name="basic_bonus" />
                     <field name="forma_de_calculo" />
                 </tree>
             </field>
@@ -310,7 +310,7 @@
                                     <field name="cant_min_base_factor_extra"
                                         string="Factor extra"
                                         attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                    <field name="cant_min_base_otra_com"
+                                    <field name="base_min_qty"
                                         attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                                 </group>
                             </div>
@@ -342,7 +342,7 @@
                                     <field name="bono_base_factor_extra"
                                         string="Factor extra"
                                         attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                                    <field name="bono_base_otra_com"
+                                    <field name="basic_bonus"
                                         attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                                 </group>
                             </div>
@@ -541,8 +541,8 @@
                                         <field name="cant_minima_base" />
                                         <field name="bono_base" />
                                         <field name="basado_en" />
-                                        <field name="cant_min_base_otra_com" />
-                                        <field name="bono_base_otra_com" />
+                                        <field name="base_min_qty" />
+                                        <field name="basic_bonus" />
                                         <field name="forma_de_calculo" />
                                     </tree>
                                 </field>
@@ -596,7 +596,7 @@
                             <field name="cant_min_base_factor_extra"
                                 string="Factor extra"
                                 attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                            <field name="cant_min_base_otra_com"
+                            <field name="base_min_qty"
                                 attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                         </group>
 
@@ -610,7 +610,7 @@
                             <field name="bono_base_factor_extra"
                                 string="Factor extra"
                                 attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
-                            <field name="bono_base_otra_com"
+                            <field name="basic_bonus"
                                 attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
                         </group>
 

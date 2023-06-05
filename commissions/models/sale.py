@@ -86,7 +86,7 @@ class SaleOrderLine(models.Model):
             ):
                 continue
 
-            total_vendidos = 0
+            total_sold = 0
 
             for invoice in line.order_id.invoice_ids:
                 if not (invoice.state == 'posted' and invoice.move_type == 'out_invoice'):
@@ -94,9 +94,9 @@ class SaleOrderLine(models.Model):
 
                 for invoice_line in invoice.invoice_line_ids:
                     if invoice_line.product_id.id == line.product_id.id:
-                        total_vendidos += invoice_line.quantity_product_uom
+                        total_sold += invoice_line.quantity_product_uom
 
-            line.total_vendidos = total_vendidos
+            line.total_sold = total_sold
 
     @api.depends(
         "total_sold",
