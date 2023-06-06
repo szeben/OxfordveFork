@@ -18,6 +18,22 @@
             </field>
         </record>
 
+        <record id="commission_report_view_search" model="ir.ui.view">
+            <field name="name">commission.report.view.search</field>
+            <field name="model">commissions.sales.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="categ_id" />
+                    <field name="commission_group_id" />
+                    <field name="product_id" />
+                    <field name="team_id" />
+                    <filter name="filter_sale_date" date="date" string="Fecha" />
+                    <filter name="filter_sale_date_last_three_months" string="Últimos 3 meses"
+                        domain="[('date', '&gt;=', (context_today()-relativedelta(months=3)).strftime('%%Y-%%m-01'))]" />
+                </search>
+            </field>
+        </record>
+
         <record id="view_sales_order_line_filter_inherit" model="ir.ui.view">
             <field name="name">view.sales.order.line.filter.inherit</field>
             <field name="model">sale.order.line</field>
