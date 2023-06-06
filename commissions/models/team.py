@@ -13,7 +13,7 @@ class TeamSaleReport(models.Model):
             SELECT
                 date,
                 team_id,
-                SUM(total_vendidos) AS total_vendidos,
+                SUM(total_sold) AS total_vendidos,
                 SUM(amount_sale) AS total_amount_sales,
                 SUM(total_amount_commissions) AS total_amount_commissions,
                 0.0 AS commission_by_collection,

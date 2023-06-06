@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <pivot string="Comisiones por ventas" display_quantity="0" sample="1">
                     <field name="categ_id" type="row" />
-                    <!-- <field name="commission_group_id" type="row" /> -->
+                    <field name="commission_group_id" type="row" />
                     <field name="product_id" type="row" />
                     <field name="date" interval="month" type="row" />
                     <field name="team_id" type="col" />
@@ -24,12 +24,12 @@
             <field name="arch" type="xml">
                 <search>
                     <field name="categ_id" />
-                    <field name="commission_group_id" />
                     <field name="product_id" />
+                    <field name="commission_group_id" />
                     <field name="team_id" />
-                    <filter name="filter_sale_date" date="date" string="Fecha" />
                     <filter name="filter_sale_date_last_three_months" string="Últimos 3 meses"
                         domain="[('date', '&gt;=', (context_today()-relativedelta(months=3)).strftime('%%Y-%%m-01'))]" />
+                    <filter name="filter_sale_date" date="date" string="Fecha" />
                 </search>
             </field>
         </record>
