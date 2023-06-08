@@ -3,7 +3,7 @@
 from odoo import _, api, exceptions, fields, models
 
 
-class CommissionSalesCommissionReport(models.Model):
+class CommissionSalesReport(models.Model):
     _name = "commissions.sales.report"
     _description = "Reporte de comisiones de ventas"
     _auto = False
