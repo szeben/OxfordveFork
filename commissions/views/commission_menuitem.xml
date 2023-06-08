@@ -63,7 +63,9 @@
             <field name="res_model">team.sale.report</field>
             <field name="view_mode">pivot</field>
             <field name="views">[[False, "pivot"]]</field>
-            <field name="domain"></field>
+            <field name="domain">
+                [("branch_id", "in", context.get("allowed_branch_ids") or [])]
+            </field>
             <field name="view_id" ref="assigned_commissions_report_view_pivot"></field>
         </record>
 
