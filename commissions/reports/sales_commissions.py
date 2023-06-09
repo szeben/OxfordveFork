@@ -21,7 +21,10 @@ class CommissionSalesReport(models.Model):
                         DATE_TRUNC('month', so.date_order)
                     ) AS "date",
                     SUM(
-                        aml.quantity / aml_uom.factor * pt_uom.factor
+                        CASE am.move_type
+                            WHEN 'out_invoice' THEN aml.quantity
+                            WHEN 'out_refund' THEN - aml.quantity
+                        END / aml_uom.factor * pt_uom.factor
                     ) FILTER(
                         WHERE
                             sol.product_id = aml.product_id
@@ -47,7 +50,7 @@ class CommissionSalesReport(models.Model):
                 WHERE
                     so.state = 'done'
                     AND am.state = 'posted'
-                    AND am.move_type = 'out_invoice'
+                    AND am.move_type IN ('out_invoice', 'out_refund')
                     AND aml.product_id IS NOT NULL
                 GROUP BY
                     so.branch_id,
