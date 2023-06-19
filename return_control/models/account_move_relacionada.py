@@ -17,7 +17,6 @@ class AccountMoveExtension(models.Model):
         if not self.dev_mercancia:
             self.stock_pick = ''
             
-    #revisar
     @api.onchange('stock_pick')
     def determine_client(self):
         if self.stock_pick.partner_id.id != self.partner_id.id:
@@ -36,21 +35,24 @@ class AccountMoveExtension(models.Model):
                 stock_move_lines_ratio = {}
                 stock_move_lines_rounding = {}
                 stock_move_lines_uom = {}
-                
-                
-                
+
+                if len(__record.stock_pick.move_line_ids) > len(__record.invoice_line_ids):
+                    raise UserError('La cantidad de líneas de la Nota de Crédito es menor que las líneas de devolución por inventario. Por favor, descarte esta Nota de Crédito y genere una nueva según las líneas de la devolución.')
+                if len(__record.stock_pick.move_line_ids) < len(__record.invoice_line_ids):
+                    raise UserError('La cantidad de líneas de la Nota de Crédito debe ser igual al de la devolución por inventario. Por favor, revise que sean los productos correctos, la misma cantidad de líneas y que no existan anotaciones o secciones adicionales.')
+                            
                 for y in __record.stock_pick.move_line_ids:
                     stock_move_lines.update({y.product_id.id: y.qty_done})
                     stock_move_lines_uom.update({y.product_id.id: y.product_uom_id.id})
-
                     stock_move_lines_ratio.update({y.product_id.id: y.product_uom_id.ratio})
-                    
                     numbepel = Decimal(str(y.product_uom_id.rounding)).as_tuple().exponent
                     numepel_clean = int(numbepel) * -1
                     stock_move_lines_rounding.update({y.product_id.id: numepel_clean})
                 
                 for x in __record.invoice_line_ids:
                     real_quantity = x.quantity * x.product_uom_id.ratio
+                    if x.product_id.id not in stock_move_lines_ratio:
+                        raise UserError('La nota de crédito no coincide en los productos y/o en las cantidades con la devolución de inventario. Por favor verifique e intente nuevamente.')
                     quantity_test = round(real_quantity / stock_move_lines_ratio[x.product_id.id], stock_move_lines_rounding[x.product_id.id])
                     
                     if stock_move_lines_uom[x.product_id.id] == x.product_uom_id.id:
