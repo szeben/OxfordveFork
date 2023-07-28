@@ -1,0 +1,11 @@
+<odoo>
+  <data>
+
+    <record id="group_reprocessing_validated_extract" model="res.groups">
+      <field name="name">Reprocess validated extracts</field>
+      <field name="category_id" ref="base.module_category_accounting" />
+      <field name="comment">The user can return to the "Processing" status of validated (confirmed) extracts</field>
+    </record>
+
+  </data>
+</odoo>

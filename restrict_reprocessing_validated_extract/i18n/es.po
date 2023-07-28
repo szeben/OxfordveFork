@@ -1,0 +1,57 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* restrict_reprocessing_validated_extract
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e-20220204\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-07-28 20:37+0000\n"
+"PO-Revision-Date: 2023-07-28 20:37+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: \n"
+
+#. module: restrict_reprocessing_validated_extract
+#: model:res.groups,name:restrict_reprocessing_validated_extract.group_reprocessing_validated_extract
+msgid "Reprocess validated extracts"
+msgstr "Reprocesar extractos validados"
+
+#. module: restrict_reprocessing_validated_extract
+#: model:res.groups,comment:restrict_reprocessing_validated_extract.group_reprocessing_validated_extract
+msgid ""
+"The user can return to the \"Processing\" status of validated (confirmed) "
+"extracts"
+msgstr ""
+"El usuario podrá retornar a estado “Procesando” extractos validados "
+"(confirmados)"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_restrict_reprocessing_validated_extract
+msgid ""
+"\n"
+"        Restricts unauthorized users from returning to the \"processing\" state of \n"
+"        validated extracts"
+msgstr ""
+"Restringe a usuarios no autorizados la posibilidad de retornar a estado \"procesando\" "
+"los extractos validados"
+
+#. module: base
+#: model:ir.module.module,description:base.module_restrict_reprocessing_validated_extract
+msgid ""
+"\n"
+"        Restricts unauthorized users from returning to the \"processing\" state of \n"
+"        validated extracts. In the list, the validated extracts are shown with green letters\n"
+"    "
+msgstr ""
+"Restringe a usuarios no autorizados la posibilidad de retornar a estado \"procesando\" los "
+"extractos validados. En el listado, los extractos validados son mostrados con letras verdes"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_restrict_reprocessing_validated_extract
+msgid "Restrict reprocessing of validated extract"
+msgstr "Restringir reprocesamiento de extracto validado"
