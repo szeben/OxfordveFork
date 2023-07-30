@@ -27,7 +27,7 @@ msgid ""
 "The user can return to the \"Processing\" status of validated (confirmed) "
 "extracts"
 msgstr ""
-"El usuario podrá retornar a estado “Procesando” extractos validados "
+"El usuario podrá retornar a estado \"Procesando\" extractos validados "
 "(confirmados)"
 
 #. module: base
