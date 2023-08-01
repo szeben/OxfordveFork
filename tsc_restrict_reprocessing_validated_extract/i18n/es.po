@@ -16,13 +16,13 @@ msgstr ""
 "Language: es\n"
 "Plural-Forms: \n"
 
-#. module: restrict_reprocessing_validated_extract
-#: model:res.groups,name:restrict_reprocessing_validated_extract.group_reprocessing_validated_extract
+#. module: tsc_restrict_reprocessing_validated_extract
+#: model:res.groups,name:tsc_restrict_reprocessing_validated_extract.group_reprocessing_validated_extract
 msgid "Reprocess validated extracts"
 msgstr "Reprocesar extractos validados"
 
-#. module: restrict_reprocessing_validated_extract
-#: model:res.groups,comment:restrict_reprocessing_validated_extract.group_reprocessing_validated_extract
+#. module: tsc_restrict_reprocessing_validated_extract
+#: model:res.groups,comment:tsc_restrict_reprocessing_validated_extract.group_reprocessing_validated_extract
 msgid ""
 "The user can return to the \"Processing\" status of validated (confirmed) "
 "extracts"
@@ -31,7 +31,7 @@ msgstr ""
 "(confirmados)"
 
 #. module: base
-#: model:ir.module.module,summary:base.module_restrict_reprocessing_validated_extract
+#: model:ir.module.module,summary:base.module_tsc_restrict_reprocessing_validated_extract
 msgid ""
 "\n"
 "        Restricts unauthorized users from returning to the \"processing\" state of \n"
@@ -41,7 +41,7 @@ msgstr ""
 "los extractos validados"
 
 #. module: base
-#: model:ir.module.module,description:base.module_restrict_reprocessing_validated_extract
+#: model:ir.module.module,description:base.module_tsc_restrict_reprocessing_validated_extract
 msgid ""
 "\n"
 "        Restricts unauthorized users from returning to the \"processing\" state of \n"
@@ -52,6 +52,6 @@ msgstr ""
 "extractos validados. En el listado, los extractos validados son mostrados con letras verdes"
 
 #. module: base
-#: model:ir.module.module,shortdesc:base.module_restrict_reprocessing_validated_extract
+#: model:ir.module.module,shortdesc:base.module_tsc_restrict_reprocessing_validated_extract
 msgid "Restrict reprocessing of validated extract"
 msgstr "Restringir reprocesamiento de extracto validado"
