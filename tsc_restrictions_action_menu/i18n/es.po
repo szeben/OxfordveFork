@@ -1,0 +1,121 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tsc_restrictions_action_menu
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-07-30 21:04+0000\n"
+"PO-Revision-Date: 2023-07-30 21:04+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_tsc_restrictions_action_menu
+msgid "Restricts the display of the Action menu. Restrict special Action menu options"
+msgstr "Restringe la visualización del menú de Acción. Restringe opciones especiales del menú de Acción"
+
+#. module: base
+#: model:ir.module.module,description:base.module_tsc_restrictions_action_menu
+msgid "Restricts the display of the Action menu. Restricts the option to archive/unarchive contacts and duplicate sales and purchase orders"
+msgstr "Restringe la visualización del menú de Acción. Restringe la opción de archivar/desarchivar contactos y duplicar órdenes de venta y compra"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_tsc_restrictions_action_menu
+msgid "Restrictions on Action menu"
+msgstr "Restricciones sobre menú de Acción"
+
+#. module: tsc_restrictions_action_menu
+#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_archive_unarchive_contacts_id
+msgid "Archive/unarchive contact"
+msgstr "Archivar/desarchivar contacto"
+
+#. module: tsc_restrictions_action_menu
+#: code:addons/tsc_restrictions_action_menu/models/tsc_res_partner.py:0
+#, python-format
+msgid "Archived contact"
+msgstr "Contacto archivado"
+
+#. module: tsc_restrictions_action_menu
+#: model:ir.model,name:tsc_restrictions_action_menu.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: tsc_restrictions_action_menu
+#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_duplicate_purchase_id
+msgid "Duplicate purchase order"
+msgstr "Duplicar pedido de compra"
+
+#. module: tsc_restrictions_action_menu
+#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_duplicate_sale_id
+msgid "Duplicate sales order"
+msgstr "Duplicar pedido de venta"
+
+#. module: tsc_restrictions_action_menu
+#: model:ir.model,name:tsc_restrictions_action_menu.model_purchase_order
+msgid "Purchase Order"
+msgstr "Pedido de compra"
+
+#. module: tsc_restrictions_action_menu
+#: code:addons/tsc_restrictions_action_menu/models/tsc_purchase_order.py:0
+#, python-format
+msgid ""
+"Purchase order created from: <a href=# data-oe-model=purchase.order data-oe-"
+"id=%d>%s</a>"
+msgstr ""
+"Pedido de compra creado a partir de: <a href=# data-oe-model=purchase.order data-oe-"
+"id=%d>%s</a>"
+
+#. module: tsc_restrictions_action_menu
+#: model:ir.model,name:tsc_restrictions_action_menu.model_sale_order
+msgid "Sales Order"
+msgstr "Pedido de venta"
+
+#. module: tsc_restrictions_action_menu
+#: code:addons/tsc_restrictions_action_menu/models/tsc_sale_order.py:0
+#, python-format
+msgid ""
+"Sales order created from: <a href=# data-oe-model=sale.order data-oe-"
+"id=%d>%s</a>"
+msgstr ""
+"Orden de venta creada a partir de: <a href=# data-oe-model=sale.order data-oe-"
+"id=%d>%s</a>"
+
+#. module: tsc_restrictions_action_menu
+#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_action_accounting_accounting_id
+#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_action_contacts_id
+#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_action_menu_purchase_id
+#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_action_menu_sale_id
+msgid "See Action menu"
+msgstr "Ver menú de Acción"
+
+#. module: tsc_restrictions_action_menu
+#: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_action_accounting_accounting_id
+#: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_action_contacts_id
+#: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_action_menu_purchase_id
+#: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_action_menu_sale_id
+msgid "The user will be able to see the Action menu"
+msgstr "El usuario podrá ver el menú de Acción"
+
+#. module: tsc_restrictions_action_menu
+#: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_archive_unarchive_contacts_id
+msgid ""
+"The user will be able to see the archive/unarchive option in the Action menu"
+msgstr "El usuario podrá ver la opción de archivar/desarchivar en el menú de Acción"
+
+#. module: tsc_restrictions_action_menu
+#: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_duplicate_purchase_id
+#: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_duplicate_sale_id
+msgid "The user will be able to see the duplicate option in the Action menu"
+msgstr "El usuario podrá ver la opción de duplicar en el menú de Acción"
+
+#. module: tsc_restrictions_action_menu
+#: code:addons/tsc_restrictions_action_menu/models/tsc_res_partner.py:0
+#, python-format
+msgid "Unarchived contact"
+msgstr "Contacto desarchivado"
