@@ -7,7 +7,7 @@
       <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view" />
       <field name="arch" type="xml">
         <xpath expr="/kanban/templates/t[3]/div[1]/div[1]/div[2]" position="attributes">
-          <attribute name='groups'>restrict_reprocessing_validated_extract.group_reprocessing_validated_extract</attribute>
+          <attribute name='groups'>tsc_restrict_reprocessing_validated_extract.group_reprocessing_validated_extract</attribute>
         </xpath>
       </field>
     </record>
@@ -29,7 +29,7 @@
       <field name="inherit_id" ref="account.view_bank_statement_form" />
       <field name="arch" type="xml">
         <button name="button_reprocess" type="object" position="attributes">
-          <attribute name='groups'>restrict_reprocessing_validated_extract.group_reprocessing_validated_extract</attribute>
+          <attribute name='groups'>tsc_restrict_reprocessing_validated_extract.group_reprocessing_validated_extract</attribute>
         </button>
       </field>
     </record>
