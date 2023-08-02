@@ -17,7 +17,7 @@
                 <xpath expr="//button[@name='action_post'][2]" position="replace">
                     <field name="tsc_check_user_group" invisible="1"/>
                     <button name="action_post" string="Confirm" class="oe_highlight"
-                            type="object" groups="account.group_account_invoice" data-hotkey="v"
+                            type="object" groups="tsc_restrict_credit_note_confirmation.tsc_confirm_customer_credit_note_group" data-hotkey="v"
                             attrs="{'invisible': [('tsc_check_user_group', '=', True)]}"/>
                 </xpath>
             </field>

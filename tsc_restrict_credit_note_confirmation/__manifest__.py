@@ -1,21 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': """
-        Restricción para confirmar factura rectificativa de cliente
-        (Restriction to confirm customer credit note)
-    """,
+    'name': "Restriction to confirm customer credit note",
 
-    'summary': """
-        Restringe la posibilidad de confirmar notas de créditos de clientes, permitiéndolo solo
-        a usuarios autorizados. (Restricts the ability to confirm customer credit notes, allowing only
-        authorized users)
-    """,
+    'summary': "Restricts the ability to confirm customer credit notes, allowing only authorized users",
 
-    'description': """
-        Restringe la posibilidad de confirmar notas de créditos de clientes, permitiéndolo
-        solo a usuarios autorizados. (Restricts the ability to confirm customer credit notes, allowing only
-        authorized users)
-    """,
+    'description': "Restricts the ability to confirm customer credit notes, allowing only authorized users",
 
     'author': "Techne Studio IT & Consulting",
     'website': "https://technestudioit.com/",

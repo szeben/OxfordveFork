@@ -32,3 +32,18 @@ msgstr "Reembolso completo y nuevo borrador de factura"
 #: model:ir.model.fields.selection,name:tsc_restrict_credit_note_confirmation.selection__account_move_reversal__refund_method__refund
 msgid "Partial Refund"
 msgstr "Reembolso parcial"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_tsc_restrict_credit_note_confirmation
+msgid "Restriction to confirm customer credit note"
+msgstr "Restricción para confirmar factura rectificativa de cliente"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_tsc_restrict_credit_note_confirmation
+msgid "Partial RefundRestricts the ability to confirm customer credit notes, allowing only authorized users"
+msgstr "Restringe la posibilidad de confirmar notas de créditos de clientes, permitiéndolo solo a usuarios autorizados."
+
+#. module: base
+#: model:ir.module.module,description:base.module_tsc_restrict_credit_note_confirmation
+msgid "Restricts the ability to confirm customer credit notes, allowing only authorized users"
+msgstr "Restringe la posibilidad de confirmar notas de créditos de clientes, permitiéndolo solo a usuarios autorizados."
