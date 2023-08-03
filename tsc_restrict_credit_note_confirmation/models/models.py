@@ -22,6 +22,10 @@ class TSCAccountMove(models.Model):
                 self.tsc_check_user_group = False
             else:
                 self.tsc_check_user_group = True
+        else:
+            if ((self.state != 'draft') or (self.auto_post == True) or (self.move_type == 'entry') or (self.display_inactive_currency_warning == True)):
+                self.tsc_check_user_group = True
+
 
 class TSCAccountMoveReversal(models.TransientModel):
     _inherit = 'account.move.reversal'
