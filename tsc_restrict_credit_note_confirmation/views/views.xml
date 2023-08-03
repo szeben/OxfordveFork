@@ -14,10 +14,10 @@
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_move_form" />
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='action_post'][2]" position="replace">
+                <xpath expr="//button[@name='action_post'][3]" position="replace">
                     <field name="tsc_check_user_group" invisible="1"/>
                     <button name="action_post" string="Confirm" class="oe_highlight"
-                            type="object" groups="tsc_restrict_credit_note_confirmation.tsc_confirm_customer_credit_note_group" data-hotkey="v"
+                            type="object" groups="account.group_account_invoice,tsc_restrict_credit_note_confirmation.tsc_confirm_customer_credit_note_group" data-hotkey="v"
                             attrs="{'invisible': [('tsc_check_user_group', '=', True)]}"/>
                 </xpath>
             </field>
