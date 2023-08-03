@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-30 21:04+0000\n"
-"PO-Revision-Date: 2023-07-30 21:04+0000\n"
+"POT-Creation-Date: 2023-08-03 00:47+0000\n"
+"PO-Revision-Date: 2023-08-03 00:47+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -68,8 +68,8 @@ msgid ""
 "Purchase order created from: <a href=# data-oe-model=purchase.order data-oe-"
 "id=%d>%s</a>"
 msgstr ""
-"Pedido de compra creado a partir de: <a href=# data-oe-model=purchase.order data-oe-"
-"id=%d>%s</a>"
+"Pedido de compra creado a partir de: <a href=# data-oe-model=purchase.order "
+"data-oe-id=%d>%s</a>"
 
 #. module: tsc_restrictions_action_menu
 #: model:ir.model,name:tsc_restrictions_action_menu.model_sale_order
@@ -83,20 +83,30 @@ msgid ""
 "Sales order created from: <a href=# data-oe-model=sale.order data-oe-"
 "id=%d>%s</a>"
 msgstr ""
-"Orden de venta creada a partir de: <a href=# data-oe-model=sale.order data-oe-"
-"id=%d>%s</a>"
+"Orden de venta creada a partir de: <a href=# data-oe-model=sale.order data-"
+"oe-id=%d>%s</a>"
 
 #. module: tsc_restrictions_action_menu
-#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_action_accounting_accounting_id
-#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_action_contacts_id
+#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_action_inventory_id
 #: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_action_menu_purchase_id
 #: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_action_menu_sale_id
 msgid "See Action menu"
 msgstr "Ver menú de Acción"
 
 #. module: tsc_restrictions_action_menu
+#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_action_accounting_accounting_id
+msgid "See Action menu accounting"
+msgstr "Ver menú de Acción contabilidad"
+
+#. module: tsc_restrictions_action_menu
+#: model:res.groups,name:tsc_restrictions_action_menu.tsc_see_action_contacts_id
+msgid "See Action menu contacts"
+msgstr "Ver menú de Acción contactos"
+
+#. module: tsc_restrictions_action_menu
 #: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_action_accounting_accounting_id
 #: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_action_contacts_id
+#: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_action_inventory_id
 #: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_action_menu_purchase_id
 #: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_action_menu_sale_id
 msgid "The user will be able to see the Action menu"
@@ -106,7 +116,8 @@ msgstr "El usuario podrá ver el menú de Acción"
 #: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_archive_unarchive_contacts_id
 msgid ""
 "The user will be able to see the archive/unarchive option in the Action menu"
-msgstr "El usuario podrá ver la opción de archivar/desarchivar en el menú de Acción"
+msgstr ""
+"El usuario podrá ver la opción de archivar/desarchivar en el menú de Acción"
 
 #. module: tsc_restrictions_action_menu
 #: model:res.groups,comment:tsc_restrictions_action_menu.tsc_see_duplicate_purchase_id

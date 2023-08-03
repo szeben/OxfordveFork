@@ -1,9 +1,71 @@
+const sale_module_models = [
+    'sale.order',
+    'crm.team',
+    'product.pricelist',
+    'producto.pricelist.item',
+    'coupon.program',
+    'crm.tag',
+];
+
+const purchase_module_models = [
+    'purchase.order',
+    'product.supplierinfo'
+];
+
+const contact_module_models = [
+    'res.partner',
+    'res.partner.category',
+    'res.partner.title',
+    'res.partner.industry',
+    'res.country',
+    'res.country.state',
+    'res.country.group',
+    'res.bank',
+    'res.partner.bank'
+];
+
+const accounting_module_models = [
+    'account.move',
+    'account.payment',
+    'hr.expense.sheet',
+    'account.move.line',
+    'account.transfer.model',
+    'account.asset',
+    'account.payment.term',
+    'account_followup.followup.line',
+    'account.incoterms',
+    'account.reconcile.model',
+    'account.online.link',
+    'account.account',
+    'account.account.type',
+    'account.tax',
+    'account.journal',
+    'res.currency',
+    'account.fiscal.position',
+    'account.journal.group',
+    'payment.acquirer'
+];
+
+const inventary_module_models = [
+    'product.template',
+    'product.product',
+    'delivery.carrier',
+    'product.attribute',
+    'uom.category',
+    'product.category'
+];
+
+const view_type = ['form', 'list'];
+
+
 odoo.define('tsc_restrictions_action_menu.HideAction', function (require) {
     "use strict";
 
     const BasicModel = require('web.BasicModel');
     const FormController = require('web.FormController');
     const ListController = require('web.ListController');
+    var session = require('web.session');
+
 
     BasicModel.include({
         _load: function () {
@@ -12,82 +74,114 @@ odoo.define('tsc_restrictions_action_menu.HideAction', function (require) {
             defs.push(this._super(...arguments));
 
             /**
-             * Se definen las variables de acuerdo a los grupos de usuario para ser usadas en el formController y ListController
+             * Se define la variable de los grupos para ser usada en el ListController
+             */
+            /**
+             * Sale module
+             */
+            defs.push(session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_menu_sale_id')
+                .then((result) => {
+                    if (self.loadParams) {
+                        const modelName = self.loadParams.modelName;
+                        const viewType = self.loadParams.viewType;
+                        if (modelName && sale_module_models.includes(modelName) && viewType && view_type.includes(viewType)) {
+                            self.user_is_in_sale_group = result;
+                        }
+                    }
+                }));
+
+            defs.push(session.user_has_group('tsc_restrictions_action_menu.tsc_see_duplicate_sale_id')
+                .then((result) => {
+                    if (self.loadParams) {
+                        const modelName = self.loadParams.modelName;
+                        const viewType = self.loadParams.viewType;
+                        if (modelName && sale_module_models.includes(modelName) && viewType && view_type.includes(viewType)) {
+                            self.user_is_in_duplicate_sale_group = result;
+                        }
+                    }
+                }));
+
+            /**
+             * Purchase module
              */
 
-            // contacts
-            defs.push(this.getSession().user_has_group('tsc_restrictions_action_menu.tsc_see_action_contacts_id').then(
-                (result) => {
+            defs.push(session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_menu_purchase_id')
+                .then((result) => {
                     if (self.loadParams) {
-                        if (self.loadParams.modelName && self.loadParams.modelName == 'res.partner' && self.loadParams.viewType && (self.loadParams.viewType == 'form' || self.loadParams.viewType == 'list')) {
-                            self.hide_action_button_contact = result
+                        const modelName = self.loadParams.modelName;
+                        const viewType = self.loadParams.viewType;
+                        if (modelName && purchase_module_models.includes(modelName) && viewType && view_type.includes(viewType)) {
+                            self.user_is_in_purchase_group = result;
                         }
                     }
-                }
-            ));
+                }));
 
-            defs.push(this.getSession().user_has_group('tsc_restrictions_action_menu.tsc_see_archive_unarchive_contacts_id').then(
-                (result) => {
+            defs.push(session.user_has_group('tsc_restrictions_action_menu.tsc_see_duplicate_purchase_id')
+                .then((result) => {
                     if (self.loadParams) {
-                        if (self.loadParams.modelName && self.loadParams.modelName == 'res.partner' && self.loadParams.viewType && (self.loadParams.viewType == 'form' || self.loadParams.viewType == 'list')) {
-                            self.hide_action_button_contact_archive_unarchive = result
+                        const modelName = self.loadParams.modelName;
+                        const viewType = self.loadParams.viewType;
+                        if (modelName && purchase_module_models.includes(modelName) && viewType && view_type.includes(viewType)) {
+                            self.user_is_in_duplicate_purchase_group = result;
                         }
                     }
-                }
-            ));
+                }));
 
-            // sale
-            defs.push(this.getSession().user_has_group('tsc_restrictions_action_menu.tsc_see_action_menu_sale_id').then(
-                (result) => {
+            /**
+             * Contact module
+             */
+            defs.push(session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_contacts_id')
+                .then((result) => {
                     if (self.loadParams) {
-                        if (self.loadParams.modelName && self.loadParams.modelName == 'sale.order' && self.loadParams.viewType && (self.loadParams.viewType == 'form' || self.loadParams.viewType == 'list')) {
-                            self.hide_action_button_sale = result
+                        const modelName = self.loadParams.modelName;
+                        const viewType = self.loadParams.viewType;
+                        if (modelName && contact_module_models.includes(modelName) && viewType && view_type.includes(viewType)) {
+                            self.user_is_in_contact_group = result;
                         }
                     }
-                }
-            ));
+                }));
 
-            defs.push(this.getSession().user_has_group('tsc_restrictions_action_menu.tsc_see_duplicate_sale_id').then(
-                (result) => {
+            defs.push(session.user_has_group('tsc_restrictions_action_menu.tsc_see_archive_unarchive_contacts_id')
+                .then((result) => {
                     if (self.loadParams) {
-                        if (self.loadParams.modelName && self.loadParams.modelName == 'sale.order' && self.loadParams.viewType && (self.loadParams.viewType == 'form' || self.loadParams.viewType == 'list')) {
-                            self.hide_action_button_duplicate_sale = result
+                        const modelName = self.loadParams.modelName;
+                        const viewType = self.loadParams.viewType;
+                        if (modelName && contact_module_models.includes(modelName) && viewType && view_type.includes(viewType)) {
+                            self.user_is_in_archive_unarchive_contact_group = result;
                         }
                     }
-                }
-            ));
+                }));
 
-            // purchase
-            defs.push(this.getSession().user_has_group('tsc_restrictions_action_menu.tsc_see_action_menu_purchase_id').then(
-                (result) => {
-                    if (self.loadParams) {
-                        if (self.loadParams.modelName && self.loadParams.modelName == 'purchase.order' && self.loadParams.viewType && (self.loadParams.viewType == 'form' || self.loadParams.viewType == 'list')) {
-                            self.hide_action_button_purchase = result
-                        }
-                    }
-                }
-            ));
+            /**
+             * Accounting Module
+             */
 
-            defs.push(this.getSession().user_has_group('tsc_restrictions_action_menu.tsc_see_duplicate_purchase_id').then(
-                (result) => {
+            defs.push(session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_accounting_accounting_id')
+                .then((result) => {
                     if (self.loadParams) {
-                        if (self.loadParams.modelName && self.loadParams.modelName == 'purchase.order' && self.loadParams.viewType && (self.loadParams.viewType == 'form' || self.loadParams.viewType == 'list')) {
-                            self.hide_action_button_duplicate_purchase = result
+                        const modelName = self.loadParams.modelName;
+                        const viewType = self.loadParams.viewType;
+                        if (modelName && accounting_module_models.includes(modelName) && viewType && view_type.includes(viewType)) {
+                            self.user_is_in_accounting_group = result;
                         }
                     }
-                }
-            ));
+                }));
 
-            // accounting
-            defs.push(this.getSession().user_has_group('tsc_restrictions_action_menu.tsc_see_action_accounting_accounting_id').then(
-                (result) => {
+            /**
+             * Inventory Module
+             */
+
+            defs.push(session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_inventory_id')
+                .then((result) => {
                     if (self.loadParams) {
-                        if (self.loadParams.modelName && self.loadParams.modelName == 'account.move' && self.loadParams.viewType && (self.loadParams.viewType == 'form' || self.loadParams.viewType == 'list')) {
-                            self.hide_action_button_accounting = result
+                        const modelName = self.loadParams.modelName;
+                        const viewType = self.loadParams.viewType;
+                        if (modelName && inventary_module_models.includes(modelName) && viewType && view_type.includes(viewType)) {
+                            self.user_is_in_inventory_group = result;
                         }
                     }
-                }
-            ));
+                }))
+
 
             return $.when(...defs);
         }
@@ -96,7 +190,6 @@ odoo.define('tsc_restrictions_action_menu.HideAction', function (require) {
     FormController.include({
         _getActionMenuItems: function (state) {
             let values = this._super.apply(this, arguments);
-
             return values;
         }
     });
@@ -105,38 +198,57 @@ odoo.define('tsc_restrictions_action_menu.HideAction', function (require) {
         _getActionMenuItems: function (state) {
             let values = this._super.apply(this, arguments);
 
+            const modelName = this.modelName;
             /**
-             * Se condiciona para ocultar/mostrar la opcion de exportar para las diferentes combinaciones de grupos
+             * Se agregan las condiciones para ocultar/mostrar la opcion de exportar para la vista list basado en las diferentes combinaciones de grupos
              */
+            /**
+             * Sale module
+             */
+            if (modelName && sale_module_models.includes(modelName)) {
+                if (!this.model.user_is_in_sale_group && !this.model.user_is_in_duplicate_sale_group) {
+                    this.isExportEnable = false;
+                }
+                if (!this.model.user_is_in_sale_group && this.model.user_is_in_duplicate_sale_group) {
+                    this.isExportEnable = false;
+                }
+            }
 
-            if (this.modelName && this.modelName == 'res.partner' && this.viewType && this.viewType == 'list' && !this.model.hide_action_button_contact && this.model.hide_action_button_contact_archive_unarchive) {
+            /**
+             * Purchase module
+             */
+            if (modelName && purchase_module_models.includes(modelName)) {
+                if (!this.model.user_is_in_purchase_group && !this.model.user_is_in_duplicate_purchase_group) {
+                    this.isExportEnable = false;
+                }
+                if (!this.model.user_is_in_purchase_group && this.model.user_is_in_duplicate_purchase_group) {
+                    this.isExportEnable = false;
+                }
+            }
+
+            /**
+             * Contact module
+             */
+            if (modelName && contact_module_models.includes(modelName)) {
+                if (!this.model.user_is_in_contact_group && !this.model.user_is_in_archive_unarchive_contact_group) {
+                    this.isExportEnable = false;
+                }
+                if (!this.model.user_is_in_contact_group && this.model.user_is_in_archive_unarchive_contact_group) {
+                    this.isExportEnable = false;
+                }
+            }
+
+            /**
+             * Accounting module
+             */
+            if (modelName && accounting_module_models.includes(modelName) && !this.model.user_is_in_accounting_group) {
                 this.isExportEnable = false;
             }
 
-
-            if (this.modelName && this.modelName == 'sale.order' && this.viewType && this.viewType == 'list') {
-                if (!this.model.hide_action_button_sale && this.model.hide_action_button_duplicate_sale) {
-                    this.isExportEnable = false;
-                }
-                if (!this.model.hide_action_button_sale && !this.model.hide_action_button_duplicate_sale) {
-                    this.isExportEnable = false;
-                }
-
-            }
-
-            if (this.modelName && this.modelName == 'purchase.order' && this.viewType && this.viewType == 'list') {
-
-                if (!this.model.hide_action_button_purchase && this.model.hide_action_button_duplicate_purchase) {
-                    this.isExportEnable = false;
-                }
-
-                if (!this.model.hide_action_button_purchase && !this.model.hide_action_button_duplicate_purchase) {
-                    this.isExportEnable = false;
-                }
-
-            }
-
-            if (this.modelName && this.modelName == 'account.move' && this.viewType && this.viewType == 'list' && !this.model.hide_action_button_accounting) {
+            /**
+             * Inventory module
+             */
+            if (modelName && inventary_module_models.includes(modelName) && !this.model.user_is_in_inventory_group) {
                 this.isExportEnable = false;
             }
 
@@ -151,18 +263,17 @@ odoo.define('tsc_restrictions_action_menu.BasicView', function (require) {
     "use strict";
 
     var session = require('web.session');
-
     var BasicView = require('web.BasicView');
 
     BasicView.include({
 
-        init: function (viewInfo, params) {
+        init: async function (viewInfo, params) {
 
             var self = this;
             this._super.apply(this, arguments);
 
-            var modelName = self.controllerParams.modelName;
-            var viewType = self.controllerParams.viewType;
+            const modelName = self.controllerParams.modelName;
+            const viewType = self.controllerParams.viewType;
 
             /**
              * Se muestra/oculta el menu de Action para la vista form/list de acuerdo a los permisos del usuario
@@ -170,99 +281,148 @@ odoo.define('tsc_restrictions_action_menu.BasicView', function (require) {
              * Se usa el ListController porque la variable isExportEnable no esta disponible en el BasicView sino que es propia del ListController
              */
 
-            // contacts
-            if (modelName && modelName == 'res.partner' && viewType && (viewType == 'list' || viewType == 'form')) {
+            /**
+             * Sale Module
+             */
+            const sale_module_include = sale_module_models.includes(modelName);
+            const sale_view_type_included = view_type.includes(viewType);
 
-                session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_contacts_id')
-                    .then(function (is_contact_group) {
-                        session.user_has_group('tsc_restrictions_action_menu.tsc_see_archive_unarchive_contacts_id')
-                            .then(function (is_archive_unarchive_contact_group) {
+            if (sale_module_include && sale_view_type_included) {
 
-                                if (!is_contact_group && !is_archive_unarchive_contact_group) {
-                                    self.controllerParams.hasActionMenus = false;
-                                }
+                const user_is_in_sale_group = await session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_menu_sale_id');
+                const user_is_in_duplicate_sale_group = await session.user_has_group('tsc_restrictions_action_menu.tsc_see_duplicate_sale_id');
 
-                                if (is_contact_group && !is_archive_unarchive_contact_group) {
-                                    self.controllerParams.archiveEnabled = false;
-                                }
+                if (!user_is_in_sale_group && !user_is_in_duplicate_sale_group) {
+                    self.controllerParams.toolbarActions.action = [];
+                    self.controllerParams.activeActions.duplicate = false;
+                    self.controllerParams.activeActions.delete = false;
+                    self.controllerParams.archiveEnabled = false;
+                }
 
-                                if (!is_contact_group && is_archive_unarchive_contact_group) {
-                                    self.controllerParams.activeActions.delete = false;
-                                    self.controllerParams.activeActions.duplicate = false;
-                                    self.controllerParams.toolbarActions.action = [];
-                                }
-                            });
-                    });
+                if (!user_is_in_sale_group && user_is_in_duplicate_sale_group && modelName != 'sale.order') {
+                    self.controllerParams.toolbarActions.action = [];
+                    self.controllerParams.activeActions.duplicate = false;
+                    self.controllerParams.activeActions.delete = false;
+                    self.controllerParams.archiveEnabled = false;
+                }
+
+                if (user_is_in_sale_group && !user_is_in_duplicate_sale_group && modelName == 'sale.order') {
+                    self.controllerParams.activeActions.duplicate = false;
+                }
+
+                if (!user_is_in_sale_group && user_is_in_duplicate_sale_group && modelName == 'sale.order') {
+                    self.controllerParams.toolbarActions.action = [];
+                    self.controllerParams.activeActions.delete = false;
+                }
             }
 
-            // sale
-            if (modelName && modelName == 'sale.order' && viewType && (viewType == 'list' || viewType == 'form')) {
+            /**
+             * purchase Module
+             */
+            const purchase_module_include = purchase_module_models.includes(modelName);
+            const purchase_view_type_included = view_type.includes(viewType);
 
-                session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_menu_sale_id')
-                    .then(function (is_sale_group) {
-                        session.user_has_group('tsc_restrictions_action_menu.tsc_see_duplicate_sale_id')
-                            .then(function (is_duplicate_sale_group) {
+            if (purchase_module_include && purchase_view_type_included) {
 
-                                if (!is_sale_group && !is_duplicate_sale_group) {
-                                    self.controllerParams.toolbarActions.action = [];
-                                    self.controllerParams.activeActions.duplicate = false;
-                                    self.controllerParams.activeActions.delete = false;
-                                }
+                const user_is_in_purchase_group = await session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_menu_purchase_id');
+                const user_is_in_duplicate_purchase_group = await session.user_has_group('tsc_restrictions_action_menu.tsc_see_duplicate_purchase_id');
 
-                                if (is_sale_group && !is_duplicate_sale_group) {
-                                    self.controllerParams.activeActions.duplicate = false;
-                                }
+                if (!user_is_in_purchase_group && !user_is_in_duplicate_purchase_group) {
+                    self.controllerParams.toolbarActions.action = [];
+                    self.controllerParams.activeActions.duplicate = false;
+                    self.controllerParams.activeActions.delete = false;
+                    self.controllerParams.archiveEnabled = false;
+                }
 
-                                if (!is_sale_group && is_duplicate_sale_group) {
-                                    self.controllerParams.activeActions.delete = false;
-                                    self.controllerParams.toolbarActions.action = [];
-                                }
+                if (!user_is_in_purchase_group && user_is_in_duplicate_purchase_group && modelName != 'purchase.order') {
+                    self.controllerParams.toolbarActions.action = [];
+                    self.controllerParams.activeActions.duplicate = false;
+                    self.controllerParams.activeActions.delete = false;
+                    self.controllerParams.archiveEnabled = false;
+                }
 
-                            })
-                    })
+                if (user_is_in_purchase_group && !user_is_in_duplicate_purchase_group && modelName == 'purchase.order') {
+                    self.controllerParams.activeActions.duplicate = false;
+                }
+
+                if (!user_is_in_purchase_group && user_is_in_duplicate_purchase_group && modelName == 'purchase.order') {
+                    self.controllerParams.toolbarActions.action = [];
+                    self.controllerParams.activeActions.delete = false;
+                }
             }
 
-            // purchase
-            if (modelName && modelName == 'purchase.order' && viewType && (viewType == 'list' || viewType == 'form')) {
+            /**
+             * Contact Module
+             */
+            const contact_module_include = contact_module_models.includes(modelName);
+            const contact_view_type_included = view_type.includes(viewType);
 
-                session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_menu_purchase_id')
-                    .then(function (is_purchase_group) {
-                        session.user_has_group('tsc_restrictions_action_menu.tsc_see_duplicate_purchase_id')
-                            .then(function (is_duplicate_purchase_group) {
+            if (contact_module_include && contact_view_type_included) {
 
-                                if (!is_purchase_group && !is_duplicate_purchase_group) {
-                                    self.controllerParams.toolbarActions.action = [];
-                                    self.controllerParams.activeActions.duplicate = false;
-                                    self.controllerParams.activeActions.delete = false;
-                                }
+                const user_is_in_contact_group = await session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_contacts_id');
+                const user_is_in_archive_unarchive_contact_group = await session.user_has_group('tsc_restrictions_action_menu.tsc_see_archive_unarchive_contacts_id');
 
-                                if (is_purchase_group && !is_duplicate_purchase_group) {
-                                    self.controllerParams.activeActions.duplicate = false;
-                                }
+                if (!user_is_in_contact_group && !user_is_in_archive_unarchive_contact_group) {
+                    self.controllerParams.toolbarActions.action = [];
+                    self.controllerParams.activeActions.duplicate = false;
+                    self.controllerParams.activeActions.delete = false;
+                    self.controllerParams.archiveEnabled = false;
+                }
 
-                                if (!is_purchase_group && is_duplicate_purchase_group) {
-                                    self.controllerParams.activeActions.delete = false;
-                                    self.controllerParams.toolbarActions.action = [];
-                                }
+                if (!user_is_in_contact_group && user_is_in_archive_unarchive_contact_group && modelName != 'res.partner') {
+                    self.controllerParams.toolbarActions.action = [];
+                    self.controllerParams.activeActions.duplicate = false;
+                    self.controllerParams.activeActions.delete = false;
+                    self.controllerParams.archiveEnabled = false;
+                }
 
-                            })
-                    })
+                if (user_is_in_contact_group && !user_is_in_archive_unarchive_contact_group && modelName == 'res.partner') {
+                    self.controllerParams.archiveEnabled = false;
+                }
+
+                if (!user_is_in_contact_group && user_is_in_archive_unarchive_contact_group && modelName == 'res.partner') {
+                    self.controllerParams.toolbarActions.action = [];
+                    self.controllerParams.activeActions.duplicate = false;
+                    self.controllerParams.activeActions.delete = false;
+                }
+
             }
 
-            // accounting
-            if (modelName && modelName == 'account.move' && viewType && (viewType == 'list' || viewType == 'form')) {
-                session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_accounting_accounting_id').
-                    then(function (is_accounting_group) {
-                        if (!is_accounting_group) {
-                            // self.controllerParams.hasActionMenus = false;
-                            self.controllerParams.toolbarActions.action = [];
-                            self.controllerParams.activeActions.duplicate = false;
-                            self.controllerParams.activeActions.delete = false;
+            /**
+             * Accounting Module
+             */
+            const accounting_module_include = accounting_module_models.includes(modelName);
+            const accounting_view_type_included = view_type.includes(viewType);
 
-                        }
-                    })
+            if (accounting_module_include && accounting_view_type_included) {
+
+                const user_is_in_accounting_group = await session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_accounting_accounting_id');
+
+                if (!user_is_in_accounting_group) {
+                    self.controllerParams.toolbarActions.action = [];
+                    self.controllerParams.activeActions.duplicate = false;
+                    self.controllerParams.activeActions.delete = false;
+                    self.controllerParams.archiveEnabled = false;
+                }
             }
 
+            /**
+             * Inventory Module
+             */
+            const inventory_module_include = inventary_module_models.includes(modelName);
+            const inventory_view_type_included = view_type.includes(viewType);
+
+            if (inventory_module_include && inventory_view_type_included) {
+                const user_is_in_inventory_group = await session.user_has_group('tsc_restrictions_action_menu.tsc_see_action_inventory_id');
+
+                if (!user_is_in_inventory_group) {
+                    self.controllerParams.toolbarActions.action = [];
+                    self.controllerParams.activeActions.duplicate = false;
+                    self.controllerParams.activeActions.delete = false;
+                    self.controllerParams.archiveEnabled = false;
+                }
+
+            }
         },
 
     });

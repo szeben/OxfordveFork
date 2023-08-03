@@ -13,15 +13,21 @@
     </record>
 
     <record id="tsc_see_action_contacts_id" model="res.groups">
-        <field name="name">See Action menu</field>
+        <field name="name">See Action menu contacts</field>
         <field name="comment">The user will be able to see the Action menu</field>
         <field name="category_id" ref=""/>
     </record>
 
     <record id="tsc_see_action_accounting_accounting_id" model="res.groups">
+        <field name="name">See Action menu accounting</field>
+        <field name="comment">The user will be able to see the Action menu</field>
+        <field name="category_id" ref=""/>
+    </record>
+
+    <record id="tsc_see_action_inventory_id" model="res.groups">
         <field name="name">See Action menu</field>
         <field name="comment">The user will be able to see the Action menu</field>
-        <field name="category_id" ref="base.module_category_accounting_accounting"/>
+        <field name="category_id" ref="base.module_category_inventory_inventory"/>
     </record>
 
     <record id="tsc_see_archive_unarchive_contacts_id" model="res.groups">
@@ -35,7 +41,6 @@
         <field name="comment">The user will be able to see the duplicate option in the Action menu</field>
         <field name="category_id" ref="base.module_category_sales_sales"/>
     </record>
-
 
     <record id="tsc_see_duplicate_purchase_id" model="res.groups">
         <field name="name">Duplicate purchase order</field>
