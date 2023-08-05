@@ -19,7 +19,10 @@ class TSCAccountMove(models.Model):
             res_user = self.env['res.users'].search([('id', '=', self._uid)])
 
             if res_user.has_group('tsc_restrict_credit_note_confirmation.tsc_confirm_customer_credit_note_group'):
-                self.tsc_check_user_group = False
+                if ((self.state != 'draft') or (self.auto_post == True) or (self.move_type == 'entry') or (self.display_inactive_currency_warning == True)):
+                    self.tsc_check_user_group = True
+                else:
+                    self.tsc_check_user_group = False
             else:
                 self.tsc_check_user_group = True
         else:
