@@ -18,7 +18,7 @@
                     <field name="tsc_check_user_group" invisible="1"/>
                 </xpath>
                 <xpath expr="//button[@name='action_post'][3]" position="attributes">
-                    <attribute name="attrs">{'invisible': [('tsc_check_user_group', '=', True)]}</attribute>
+                    <attribute name="attrs">{'invisible': ['|', ('tsc_check_user_group', '=', True), ('move_type', 'in', ['in_invoice', 'in_refund'])]}</attribute>
                 </xpath>
             </field>
         </record>
