@@ -1,0 +1,27 @@
+<odoo>
+    <data>
+
+        <record id="tsc_confirm_customer_credit_note_group" model="res.groups">
+            <field name="name">Confirm customer credit note</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="comment">
+                The user will be able to confirm customer credit notes
+            </field>
+        </record>
+
+        <record id="tsc_custom_confirm" model="ir.ui.view">
+            <field name="name">tsc_account.out.refund.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_post']" position="after">
+                    <field name="tsc_check_user_group" invisible="1"/>
+                </xpath>
+                <xpath expr="//button[@name='action_post'][3]" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('tsc_check_user_group', '=', True), ('move_type', 'in', ['in_invoice', 'in_refund'])]}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+
+</odoo>

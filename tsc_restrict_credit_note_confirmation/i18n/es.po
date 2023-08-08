@@ -1,0 +1,49 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tsc_restrict_credit_note_confirmation
+
+#. module: tsc_restrict_credit_note_confirmation
+#: model:res.groups,name:tsc_restrict_credit_note_confirmation.tsc_confirm_customer_credit_note_group
+msgid "Confirm customer credit note"
+msgstr "Confirmar nota de crédito de cliente"
+
+#. module: tsc_restrict_credit_note_confirmation
+#: model:res.groups,comment:tsc_restrict_credit_note_confirmation.tsc_confirm_customer_credit_note_group
+msgid "The user will be able to confirm customer credit notes"
+msgstr "El usuario podrá confirmar notas de créditos de clientes."
+
+#. module: tsc_restrict_credit_note_confirmation
+#: model_terms:ir.ui.view,arch_db:tsc_restrict_credit_note_confirmation.tsc_custom_confirm
+#, python-format
+msgid "Confirm"
+msgstr "Confirmar"
+
+#. module: tsc_restrict_credit_note_confirmation
+#: model:ir.model.fields.selection,name:tsc_restrict_credit_note_confirmation.selection__account_move_reversal__refund_method__cancel
+msgid "Full Refund"
+msgstr "Reembolso completo"
+
+#. module: tsc_restrict_credit_note_confirmation
+#: model:ir.model.fields.selection,name:tsc_restrict_credit_note_confirmation.selection__account_move_reversal__refund_method__modify
+msgid "Full refund and new draft invoice"
+msgstr "Reembolso completo y nuevo borrador de factura"
+
+#. module: tsc_restrict_credit_note_confirmation
+#: model:ir.model.fields.selection,name:tsc_restrict_credit_note_confirmation.selection__account_move_reversal__refund_method__refund
+msgid "Partial Refund"
+msgstr "Reembolso parcial"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_tsc_restrict_credit_note_confirmation
+msgid "Restriction to confirm customer credit note"
+msgstr "Restricción para confirmar factura rectificativa de cliente"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_tsc_restrict_credit_note_confirmation
+msgid "Partial RefundRestricts the ability to confirm customer credit notes, allowing only authorized users"
+msgstr "Restringe la posibilidad de confirmar notas de créditos de clientes, permitiéndolo solo a usuarios autorizados."
+
+#. module: base
+#: model:ir.module.module,description:base.module_tsc_restrict_credit_note_confirmation
+msgid "Restricts the ability to confirm customer credit notes, allowing only authorized users"
+msgstr "Restringe la posibilidad de confirmar notas de créditos de clientes, permitiéndolo solo a usuarios autorizados."
