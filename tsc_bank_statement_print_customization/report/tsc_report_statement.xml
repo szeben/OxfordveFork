@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="custom_report_statement">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.internal_layout">
+                        <div class="page">
+
+                            <div class="border border-top-0 border-right-0 border-left-0 border-info">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h4 class="text-right w-100">
+                                            <strong>
+                                                <span t-if="o.journal_id.type == 'bank'">Bank Statement</span>
+                                                <span t-else="">Cash Statement</span>
+                                            </strong>
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-2 pb-2 border border-top-0 border-right-0 border-left-0 border-info">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h5>
+                                            <strong>
+                                                <span t-field="o.journal_id"/>
+                                                <t t-if="o.journal_id.bank_account_id"> -
+                                                    <span t-field="o.journal_id.bank_account_id"/>
+                                                </t>
+                                                <t t-if="o.journal_id.code"> -                                                
+                                                    <span t-field="o.journal_id.code"/>
+                                                </t>
+                                            </strong>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h5>
+                                            <strong>
+                                                <t t-if="o.name">
+                                                    <span t-field="o.name"/> 
+                                                - </t>
+                                                <span t-field="o.date"/>
+                                            </strong>
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table class="table table-borderless m-0">
+                                <tbody>
+                                    <tr t-foreach="o.line_ids" t-as="line">
+                                        <td class="pl-0 pr-0 p-0">
+                                            <table class="table table-borderless p-0 my-1">
+                                                <tr>
+                                                    <td class="p-0 w-25">
+                                                        <span class="d-block font-weight-bold" t-field="line.date"/>
+                                                    </td>
+                                                    <td class="p-0 m-0">
+                                                        <span class="d-block font-weight-bold" t-if="line.partner_id" t-field="line.partner_id"/>
+                                                        <span class="d-block" t-if="line.partner_bank_id" t-field="line.partner_bank_id"/>
+                                                        <span class="d-block" t-if="line.payment_ref" t-field="line.payment_ref"/>
+                                                    </td>
+                                                    <td class="text-right p-0 m-0">
+                                                        <span class="d-block font-weight-bold" t-field="line.amount"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="table table-lg m-0 table-borderless border border-right-0 border-left-0 border-bottom-0 border-info">
+                                <tbody>
+                                    <tr>
+                                        <td class="pt-2 pb-2 pl-0 pr-0">
+                                            <table class="table table-borderless m-0">
+                                                <tr>
+                                                    <td class="p-0 w-25">
+                                                        <strong>Transaction Subtotal</strong>
+                                                    </td>
+                                                    <td class="text-right p-0">
+                                                        <strong>
+                                                            <span t-field="o.total_entry_encoding"/>
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
