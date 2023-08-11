@@ -1,17 +1,6 @@
 <odoo>
   <data>
 
-    <record id="inherited_account_journal_dashboard_kanban_view" model="ir.ui.view">
-      <field name="name">inherited.account.journal.dashboard.kanban</field>
-      <field name="model">account.journal</field>
-      <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view" />
-      <field name="arch" type="xml">
-        <xpath expr="/kanban/templates/t[3]/div[1]/div[1]/div[2]" position="attributes">
-          <attribute name='groups'>tsc_restrict_reprocessing_validated_extract.group_reprocessing_validated_extract</attribute>
-        </xpath>
-      </field>
-    </record>
-
     <record id="inherited_view_bank_statement_tree" model="ir.ui.view">
       <field name="name">inherited.account.bank.statement.tree</field>
       <field name="model">account.bank.statement</field>
