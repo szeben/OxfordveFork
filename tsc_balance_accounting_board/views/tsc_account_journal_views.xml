@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="tsc_account_journal_form_view">
+            <field name="name">tsc.account.journal.form.inherit</field>
+            <field name="model">account.journal</field> 
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="sheet/notebook/page[@name='bank_account']/group/group/field[@name='currency_id']" position="after">
+                    <field name="tsc_other_currency_balance"/>
+                </xpath>
+            </field>
+        </record>   
+
+        <record model="ir.ui.view" id="tsc_account_journal_kanban_view">
+            <field name="name">tsc.account.journal.kanban.inherit</field>
+            <field name="model">account.journal</field> 
+            <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="templates//div[@id='dashboard_bank_cash_right']/div[1]" position="after">
+                    <div class="row" t-if="dashboard.tsc_other_currency_balance">
+                        <div id="dashboard_bank_cash_balance" class="col overflow-hidden text-left">
+                            <span title="Balance in Another Currency">Balance in Another currency</span>
+                        </div>
+                        <div class="col-auto text-right">
+                            <span><t t-esc="dashboard.tsc_another_currency_balance_value"/></span>
+                        </div>
+                    </div>                    
+                </xpath>                
+            </field>
+        </record>   
+        
+    </data>
+</odoo>
+
