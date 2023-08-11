@@ -46,7 +46,7 @@ class tsc_AccountJournal(models.Model):
                 tsc_new_float = "{:,.3f}".format(tsc_line_sum)
                 lang=self.env.user.lang
 
-                if lang == "es_ES":
+                if lang.startswith("es"):
                     tsc_new_float = tsc_new_float.replace('.', 'x')
                     tsc_new_float = tsc_new_float.replace(',', '.')
                     tsc_new_float = tsc_new_float.replace('x', ',')
