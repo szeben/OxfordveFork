@@ -16,7 +16,7 @@ class tsc_AccountJournal(models.Model):
                                                tracking=True,
                                                default=False)
 
-    tsc_another_currency_balance_value = fields.Float(string="Balance in another currency value",
+    tsc_another_currency_balance_value = fields.Char(string="Balance in another currency value",
                                                      compute="_compute_tsc_another_currency_balance_value")
 
 
@@ -43,7 +43,8 @@ class tsc_AccountJournal(models.Model):
                 for tsc_line in tsc_search_line:
                     tsc_line_sum += tsc_line[tsc_index]
 
-                record.tsc_another_currency_balance_value = tsc_line_sum
+                record.tsc_another_currency_balance_value = "{:,.2f}".format(tsc_line_sum)
+
             else:
                 record.tsc_another_currency_balance_value = False
 
