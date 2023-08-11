@@ -38,12 +38,20 @@ class tsc_AccountJournal(models.Model):
                         ('parent_state', '=', 'posted'),
                         ('account_id', '=', record.default_account_id.id)
                     ])
-                tsc_line_sum = 0.00
+                tsc_line_sum = 0.000
                 tsc_index = 'balance' if record.currency_id != False and record.currency_id.id != self.env.company.currency_id.id else 'amount_currency'
                 for tsc_line in tsc_search_line:
                     tsc_line_sum += tsc_line[tsc_index]
 
-                record.tsc_another_currency_balance_value = "{:,.2f}".format(tsc_line_sum)
+                tsc_new_float = "{:,.3f}".format(tsc_line_sum)
+                lang=self.env.user.lang
+
+                if lang == "es_ES":
+                    tsc_new_float = tsc_new_float.replace('.', 'x')
+                    tsc_new_float = tsc_new_float.replace(',', '.')
+                    tsc_new_float = tsc_new_float.replace('x', ',')
+
+                record.tsc_another_currency_balance_value = tsc_new_float
 
             else:
                 record.tsc_another_currency_balance_value = False
