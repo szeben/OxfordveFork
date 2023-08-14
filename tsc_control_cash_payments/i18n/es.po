@@ -1,0 +1,28 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tsc_control_cash_payments
+
+#. module: tsc_control_cash_payments
+#: model:res.groups,name:tsc_control_cash_payments.tsc_make_cash_payment_group
+msgid "Make cash payment"
+msgstr "Realizar pago en efectivo"
+
+#. module: tsc_control_cash_payments
+#: model:res.groups,comment:tsc_control_cash_payments.tsc_make_cash_payment_group
+msgid "The user will be able to register cash payments associated with clients or suppliers"
+msgstr "El usuario podrá registrar pagos en efectivo asociados a clientes o proveedores."
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_tsc_control_cash_payments
+msgid "Control of cash payments"
+msgstr "Control de pagos en efectivo"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_tsc_control_cash_payments
+msgid "Allows the registration of cash payments only for certain users. Automatically generate statements for cash payments to suppliers"
+msgstr "Permite el registro de pagos en efectivo solo para ciertos usuarios. Genera extractos de forma automática por pagos en efectivo a proveedores."
+
+#. module: base
+#: model:ir.module.module,description:base.module_tsc_control_cash_payments
+msgid "Allows the registration of cash payments only for certain users. Creating a new usergroup for this. Automatically generate statements for cash payments to suppliers."
+msgstr "Permite el registro de pagos en efectivo solo para ciertos usuarios. Creando un nuevo grupo de usuario para esto. Genera extractos de forma automática por pagos en efectivo a proveedores."
