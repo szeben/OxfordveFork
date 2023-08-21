@@ -1,6 +1,5 @@
 <odoo>
     <data>
-
         <record id="tsc_make_cash_payment_group" model="res.groups">
             <field name="name">Make cash payment</field>
             <field name="category_id" ref="base.module_category_accounting"/>
@@ -30,14 +29,26 @@
             <field name="model">account.journal</field>
             <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view" />
             <field name="arch" type="xml">
-                <xpath expr="//a[@name='create_customer_payment']" position="attributes">
-                    <attribute name="groups">tsc_control_cash_payments.tsc_make_cash_payment_group</attribute>
+                <xpath expr="//a[@name='create_customer_payment']" position="after">
+                    <field name="tsc_check_user_group" invisible="1"/>
                 </xpath>
-                <xpath expr="//a[@name='create_supplier_payment']" position="attributes">
-                    <attribute name="groups">tsc_control_cash_payments.tsc_make_cash_payment_group</attribute>
+                <xpath expr="//a[@name='create_customer_payment']" position="replace">
+                    <t t-if="journal_type == 'cash'">
+                        <a role="menuitem" type="object" name="create_customer_payment" groups="tsc_control_cash_payments.tsc_make_cash_payment_group">Cust. Payment</a>
+                    </t>
+                    <t t-else="">
+                        <a role="menuitem" type="object" name="create_customer_payment">Cust. Payment</a>
+                    </t>
+                </xpath>
+                <xpath expr="//a[@name='create_supplier_payment']" position="replace">
+                    <t t-if="journal_type == 'cash'">
+                        <a role="menuitem" type="object" name="create_supplier_payment" groups="tsc_control_cash_payments.tsc_make_cash_payment_group">Vendor Payment</a>
+                    </t>
+                    <t t-else="">
+                        <a role="menuitem" type="object" name="create_supplier_payment">Vendor Payment</a>
+                    </t>
                 </xpath>
             </field>
         </record>
     </data>
-
 </odoo>

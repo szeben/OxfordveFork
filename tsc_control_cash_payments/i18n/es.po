@@ -26,3 +26,25 @@ msgstr "Permite el registro de pagos en efectivo solo para ciertos usuarios. Gen
 #: model:ir.module.module,description:base.module_tsc_control_cash_payments
 msgid "Allows the registration of cash payments only for certain users. Creating a new usergroup for this. Automatically generate statements for cash payments to suppliers."
 msgstr "Permite el registro de pagos en efectivo solo para ciertos usuarios. Creando un nuevo grupo de usuario para esto. Genera extractos de forma automática por pagos en efectivo a proveedores."
+
+#. module: account
+#: model_terms:ir.ui.view,arch_db:account.account_journal_dashboard_kanban_view
+msgid "Cust. Payment"
+msgstr "Pago de cliente"
+
+#. module: tsc_control_cash_payments
+#: model_terms:ir.ui.view,arch_db:tsc_control_cash_payments.tsc_custom_payment_kanban
+msgid "Cust. Payment"
+msgstr "Pago de cliente"
+
+#. module: tsc_control_cash_payments
+#: model_terms:ir.ui.view,arch_db:tsc_control_cash_payments.tsc_custom_payment_kanban
+#, python-format
+msgid "Vendor Payment"
+msgstr "Pago a proveedor"
+
+#. module: tsc_control_cash_payments
+#: code:tsc_control_cash_payments/models/account_payment.py:0
+#, python-format
+msgid "You are not authorized to record cash payments."
+msgstr "No está autorizado para registrar pagos en efectivo."
