@@ -2,11 +2,14 @@
 <odoo>
     <data>
 
-     <record id="tsc_bank_account_chatter" model="ir.ui.view">
-        <field name="name">res.partner.bank.chatter</field>
+    <record id="tsc_partner_bank_view_form" model="ir.ui.view">
+        <field name="name">res.partner.bank.form.extension</field>
         <field name="model">res.partner.bank</field>
         <field name="inherit_id" ref="base.view_partner_bank_form"/>
         <field name="arch" type="xml">
+            <xpath expr="sheet/group/group[2]/field[@name='active']" position="after">
+                <field name="tsc_verified" readonly="1"/>
+            </xpath>
             <xpath expr="sheet" position="after">
                 <div class="oe_chatter">
                 	<field name="message_follower_ids"/>
@@ -16,13 +19,14 @@
         </field>
     </record>
 
-    <record id="tsc_partner_bank_view_form" model="ir.ui.view">
-        <field name="name">res.partner.bank.form.extension</field>
+     <record id="tsc_partner_bank_view_form_validators_group" model="ir.ui.view">
+        <field name="name">res.partner.bank.chatter</field>
         <field name="model">res.partner.bank</field>
         <field name="inherit_id" ref="base.view_partner_bank_form"/>
+        <field name="groups_id" eval="[(4, ref('tsc_management_bank_accounts_contacts.tsc_contacts_bank_accounts_validators_group'))]"/>
         <field name="arch" type="xml">
-            <xpath expr="sheet/group/group[2]/field[@name='active']" position="after">
-                <field name="tsc_verified"/>
+            <xpath expr="sheet/group/group[2]/field[@name='tsc_verified']" position="attributes">
+                <attribute name="readonly">0</attribute>
             </xpath>
         </field>
     </record>
@@ -56,7 +60,7 @@
             </xpath>
         </field>
     </record> 
-        
+
     <record id="tsc_partner_property_view_form_validators_group" model="ir.ui.view">
         <field name="name">res.partner.property.form.validators.extension</field>
         <field name="model">res.partner</field>
@@ -86,6 +90,6 @@
             </xpath>
         </field>
     </record> 
-               
+
     </data>
 </odoo>
