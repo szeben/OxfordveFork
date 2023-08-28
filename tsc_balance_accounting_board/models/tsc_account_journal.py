@@ -38,7 +38,8 @@ class tsc_AccountJournal(models.Model):
                         ('account_id', '=', record.default_account_id.id)
                     ])
                 tsc_line_sum = 0.000
-                tsc_index = 'balance' if record.currency_id != False and record.currency_id.id != self.env.company.currency_id.id else 'amount_currency'
+                tsc_index = 'amount_currency' if record.currency_id.id == False or record.currency_id.id == self.env.company.currency_id.id else 'balance'
+                
                 for tsc_line in tsc_search_line:
                     tsc_line_sum += tsc_line[tsc_index]
 
