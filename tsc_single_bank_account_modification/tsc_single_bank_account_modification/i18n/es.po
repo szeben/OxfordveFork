@@ -1,0 +1,60 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tsc_single_bank_account_modification
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e-20230421\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-05 18:51+0000\n"
+"PO-Revision-Date: 2023-09-05 18:51+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: tsc_single_bank_account_modification
+#: model:ir.model.constraint,message:tsc_single_bank_account_modification.constraint_res_partner_bank_unique_number
+msgid "Account Number must be unique"
+msgstr "El número de cuenta debe ser único"
+
+#. module: tsc_single_bank_account_modification
+#: model:ir.model,name:tsc_single_bank_account_modification.model_res_partner_bank
+msgid "Bank Accounts"
+msgstr "Cuentas bancarias"
+
+#. module: tsc_single_bank_account_modification
+#: code:addons/tsc_single_bank_account_modification/models/tsc_single_bank_account_modification.py:0
+#, python-format
+msgid "The account number that you will proceed to save already exists in the system."
+msgstr "El número de cuenta que procederá a guardar ya existe en el sistema"
+
+#. module: tsc_single_bank_account_modification
+#: code:addons/tsc_single_bank_account_modification/models/tsc_single_bank_account_modification.py:0
+#, python-format
+msgid "Important!"
+msgstr "Importante!"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_tsc_single_bank_account_modification
+msgid "Single Bank Account Validation Modification"
+msgstr "Modificación de validación de cuenta bancaria única"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_tsc_single_bank_account_modification
+msgid "Allows the registration of repeated account numbers, displaying a confirmation message"
+msgstr "Permite el registro de números de cuenta repetidos, mostrando un mensaje de confirmación."
+
+#. module: base
+#: model:ir.module.module,description:base.module_tsc_single_bank_account_modification
+msgid "Allows the registration of repeated account numbers, displaying a confirmation message"
+msgstr "Permite el registro de números de cuenta repetidos, mostrando un mensaje de confirmación."
+
+#. module: base
+#: model:ir.module.module,description_html:base.module_tsc_single_bank_account_modification
+msgid "Allows the registration of repeated account numbers, displaying a confirmation message"
+msgstr "Permite el registro de números de cuenta repetidos, mostrando un mensaje de confirmación."
+
+
