@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="tsc_stock_picking_type_form_extension" model="ir.ui.view">
+            <field name="name">stock.picking.type.form.extension</field>
+            <field name="model">stock.picking.type</field>
+            <field name="inherit_id" ref="stock.view_picking_type_form"/>
+            <field name="arch" type="xml">
+               <xpath expr="//sheet/group/group[2]/field[@name='show_operations']" position="after">
+                    <field name="tsc_picking_internal_use" attrs="{'invisible': [('code', '!=', 'incoming')]}"/>
+                    <field name="tsc_picking_merchandise_use" attrs="{'invisible': [('code', '!=', 'incoming')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!--record id="tsc_stock_picking_type_kanban_extension" model="ir.ui.view">
+            <field name="name">stock.picking.type.kanban.extension</field>
+            <field name="model">stock.picking.type</field>
+            <field name="inherit_id" ref="stock.stock_picking_type_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='count_picking_backorders']" position="after">
+                    <field name="tsc_picking_internal_use" invisible="1"/>
+                    <field name="tsc_picking_merchandise_use" invisible="1"/>
+                </xpath>
+               <xpath expr="//templates/t/div[@name='stock_picking']" position="attributes">
+                   <attribute name="t-if">['incoming', 'outgoing', 'internal'].indexOf(record.code.raw_value) &gt; -1 and record.tsc_picking_internal_use.raw_value == false and record.tsc_picking_merchandise_use.raw_value == false</attribute>     
+               </xpath>
+            </field>
+        </record>
+
+        <record id="tsc_stock_picking_type_kanban_extension_internal_group" model="ir.ui.view">
+            <field name="name">stock.picking.type.kanban.extension.internal</field>
+            <field name="model">stock.picking.type</field>
+            
+            <field name="arch" type="xml">
+
+                <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban" create="0" group_create="false">
+                    <field name="color"/>
+                    <field name="code" readonly="1"/>
+                    <field name="count_picking_ready"/>
+                    <field name="count_picking_draft"/>
+                    <field name="count_picking_waiting"/>
+                    <field name="count_picking_late"/>
+                    <field name="count_picking_backorders"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-if="['incoming', 'outgoing', 'internal'].indexOf(record.code.raw_value)" t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}" name="stock_picking">
+                                <div>
+                                    <div t-attf-class="o_kanban_card_header">
+                                        <div class="o_kanban_card_header_title">
+                                            <div class="o_primary" t-if="!selection_mode">
+                                                <a type="object" name="get_stock_picking_action_picking_type">
+                                                    <field name="name"/>
+                                                </a>
+                                            </div>
+                                            <div class="o_primary" t-if="selection_mode">
+                                                <field name="name"/>
+                                            </div>
+                                            <div class="o_secondary"><field class="o_secondary"  name="warehouse_id" readonly="1" groups="stock.group_stock_multi_warehouses"/></div>
+                                        </div>
+                                        <div class="o_kanban_manage_button_section" t-if="!selection_mode">
+                                            <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/></a>
+                                        </div>
+                                    </div>
+                                    <div class="container o_kanban_card_content" t-if="!selection_mode">
+                                        <div class="row">
+                                            <div class="col-6 o_kanban_primary_left">
+                                                <button class="btn btn-primary" name="get_action_picking_tree_ready" type="object">
+                                                    <span t-if="record.code.raw_value =='incoming'"><t t-esc="record.count_picking_ready.value"/> To Process</span>
+                                                    <span t-if="record.code.raw_value =='outgoing'"><t t-esc="record.count_picking_ready.value"/> To Process</span>
+                                                    <span t-if="record.code.raw_value =='internal'"><t t-esc="record.count_picking_ready.value"/> To Process</span>
+                                                </button>
+                                            </div>
+                                            <div class="col-6 o_kanban_primary_right">
+                                                <div t-if="record.count_picking_ready.raw_value > 0" class="row">
+                                                </div>
+
+                                                <div t-if="record.count_picking_waiting.raw_value > 0" class="row">
+                                                    <div class="col-12">
+                                                        <a name="get_action_picking_tree_waiting" type="object">
+                                                            <field name="count_picking_waiting"/>
+                                                            Waiting
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div t-if="record.count_picking_late.raw_value > 0" class="row">
+                                                    <div class="col-12">
+                                                        <a class="oe_kanban_stock_picking_type_list" name="get_action_picking_tree_late" type="object">
+                                                            <field name="count_picking_late"/>
+                                                            Late
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div t-if="record.count_picking_backorders.raw_value > 0" class="row" name="picking_type_backorder_count">
+                                                    <div class="col-12">
+                                                        <a class="oe_kanban_stock_picking_type_list" name="get_action_picking_tree_backorder" type="object">
+                                                            <field name="count_picking_backorders"/>
+                                                            Back Orders
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><div class="container o_kanban_card_manage_pane dropdown-menu" role="menu">
+                                        <div class="row">
+                                            <div class="col-6 o_kanban_card_manage_section o_kanban_manage_view">
+                                                <div role="menuitem" class="o_kanban_card_manage_title">
+                                                    <span t-if="record.code.raw_value == 'internal'">Transfers</span>
+                                                    <span t-else="">View</span>
+                                                </div>
+                                                <div role="menuitem">
+                                                    <a name="get_stock_picking_action_picking_type" type="object">All</a>
+                                                </div>
+                                                <div role="menuitem">
+                                                    <a name="get_action_picking_tree_ready" type="object">Ready</a>
+                                                </div>
+                                                <div role="menuitem">
+                                                    <a name="get_action_picking_tree_waiting" type="object">Waiting</a>
+                                                </div>
+                                                <div role="menuitem">
+                                                    <a name="get_action_picking_type_operations" type="object">Operations</a>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 o_kanban_card_manage_section o_kanban_manage_new">
+                                                <div role="menuitem" class="o_kanban_card_manage_title">
+                                                    <span>New</span>
+                                                </div>
+                                                <div role="menuitem">
+                                                    <a name="%(stock.action_picking_form)d" type="action" context="{'default_immediate_transfer': True}">Immediate Transfer</a>
+                                                </div>
+                                                <div role="menuitem">
+                                                    <a name="%(stock.action_picking_form)d" type="action">Planned Transfer</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                            <div class="col-8" role="menuitem" aria-haspopup="true">
+                                                <ul class="oe_kanban_colorpicker" data-field="color" role="menu"/>
+                                            </div>
+                                            <div role="menuitem" class="col-4">
+                                                <a class="dropdown-item" role="menuitem" type="edit">Configuration</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                    </templates>
+                </kanban>                
+                
+            </field>
+        </record>
+        
+        <record id="tsc_stock_picking_type_action_internal" model="ir.actions.act_window">
+            <field name="name">Internal Purchases Overview</field>
+            <field name="res_model">stock.picking.type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">kanban,form</field>
+            <field name="view_id" ref="tsc_adjustments_for_internal_purchases.tsc_stock_picking_type_kanban_extension_internal_group"/>
+            <field name="view_ids" eval="[(5, 0, 0), 
+                                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('tsc_adjustments_for_internal_purchases.tsc_stock_picking_type_kanban_extension_internal_group')})]"/>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new operation type
+              </p><p>
+                The operation type system allows you to assign each stock
+                operation a specific type which will alter its views accordingly.
+                On the operation type you could e.g. specify if packing is needed by default,
+                if it should show the customer.
+              </p>
+            </field>
+        </record-->
+
+        <!--record id="tsc_stock_picking_type_action_merchandise" model="ir.actions.act_window">
+            <field name="name">Merchandise Purchases Overview</field>
+            <field name="res_model">stock.picking.type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="tsc_adjustments_for_internal_purchases.tsc_stock_picking_type_kanban_extension_internal_group"/>
+            <field name="domain">[('tsc_picking_internal_use', '=', True)]</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new operation type
+              </p><p>
+                The operation type system allows you to assign each stock
+                operation a specific type which will alter its views accordingly.
+                On the operation type you could e.g. specify if packing is needed by default,
+                if it should show the customer.
+              </p>
+            </field>
+        </record-->
+
+        <!--menuitem id="tsc_menu_stock_original_overview_action" 
+            action="stock.stock_picking_type_action" 
+            parent="stock.stock_picking_type_menu" 
+            name="Overview" 
+            sequence="0"/-->
+
+            
+        <!--menuitem id="tsc_menu_stock_internal_purchases_action" 
+            action="tsc_adjustments_for_internal_purchases.tsc_stock_picking_type_action_internal" 
+            parent="stock.stock_picking_type_menu" 
+            name="Internal Purchases" 
+            sequence="1" 
+            groups="tsc_adjustments_for_internal_purchases.tsc_internal_purchases_group"/-->
+        
+        <!--menuitem id="tsc_menu_stock_merchandise_purchases_action" 
+            parent="stock.stock_picking_type_menu" 
+            name="Merchandise Purchases" 
+            sequence="2" 
+            groups="tsc_adjustments_for_internal_purchases.tsc_merchandise_purchase_group"/-->        
+
+
+    </data>
+</odoo>
