@@ -41,9 +41,7 @@ class tsc_ProductTemplate(models.Model):
         tsc_user_in_internal_group = self.tsc_in_internal_group()
         tsc_user_in_merchandise_group = self.tsc_in_merchandise_group()
 
-        if (not tsc_user_in_internal_group and not tsc_user_in_merchandise_group) or \
-        (tsc_user_in_internal_group and not tsc_product_category.tsc_internal_purpose_category and not tsc_user_in_merchandise_group) or \
-        (tsc_user_in_merchandise_group and tsc_product_category.tsc_internal_purpose_category and not tsc_user_in_internal_group):
+        if tsc_product_category.tsc_internal_purpose_category and not tsc_user_in_internal_group:
             raise UserError(_("You are not currently allowed to create products under the selected category. Merchandise purchase or internal purchase permissions are needed."))
             
     @api.model

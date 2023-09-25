@@ -47,7 +47,7 @@ msgstr "Determina si la operación será empleada exclusivamente para compras "
 #. module: tsc_adjustments_for_internal_purchases
 #: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__tsc_picking_merchandise_use
 msgid "Is it for Merchandise Purchases?"
-msgstr "¿Es para Compra de Mercancía?"
+msgstr "¿Es para compra de mercancía?"
 
 #. module: tsc_adjustments_for_internal_purchases
 #: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_needaction
