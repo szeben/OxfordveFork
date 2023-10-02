@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tsc_control_cash_payments_tsc_control_cash_payments,tsc_control_cash_payments.tsc_control_cash_payments,model_tsc_control_cash_payments_tsc_control_cash_payments,base.group_user,1,1,1,1

@@ -22,18 +22,18 @@ msgstr "Es enviado"
 
 #. module: tsc_mark_products_received
 #: model_terms:ir.ui.view,arch_db:tsc_mark_products_received.tsc_purchase_order_view_tree_inherit
-msgid "Prod recibidos?"
-msgstr "prod received"
+msgid "Prod received?"
+msgstr "Prod recibidos?"
 
 #. module: tsc_mark_products_received
 #: model_terms:ir.ui.view,arch_db:tsc_mark_products_received.tsc_purchase_order_view_search_inherit
-msgid "Productos por recibir"
-msgstr "Products to receive"
+msgid "Products to receive"
+msgstr "Productos por recibir"
 
 #. module: tsc_mark_products_received
 #: model_terms:ir.ui.view,arch_db:tsc_mark_products_received.tsc_purchase_order_view_search_inherit
-msgid "Productos recibidos"
-msgstr "products received"
+msgid "Products received"
+msgstr "Productos recibidos"
 
 #. module: tsc_mark_products_received
 #: model:ir.model,name:tsc_mark_products_received.model_purchase_order
@@ -42,8 +42,8 @@ msgstr "Pedido de compra"
 
 #. module: tsc_mark_products_received
 #: model_terms:ir.ui.view,arch_db:tsc_mark_products_received.tsc_purchase_order_form_inherit
-msgid "¿Productos recibidos?"
-msgstr "Products received?"
+msgid "Products received?"
+msgstr "¿Productos recibidos?"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_tsc_mark_products_received

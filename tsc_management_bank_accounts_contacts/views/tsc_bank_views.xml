@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    <record id="tsc_partner_bank_view_form" model="ir.ui.view">
+        <field name="name">res.partner.bank.form.extension</field>
+        <field name="model">res.partner.bank</field>
+        <field name="inherit_id" ref="base.view_partner_bank_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="sheet/group/group[2]/field[@name='active']" position="after">
+                <field name="tsc_verified" readonly="1"/>
+            </xpath>
+            <xpath expr="sheet" position="after">
+                <div class="oe_chatter">
+                	<field name="message_follower_ids"/>
+                	<field name="message_ids"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+     <record id="tsc_partner_bank_view_form_validators_group" model="ir.ui.view">
+        <field name="name">res.partner.bank.chatter</field>
+        <field name="model">res.partner.bank</field>
+        <field name="inherit_id" ref="base.view_partner_bank_form"/>
+        <field name="groups_id" eval="[(4, ref('tsc_management_bank_accounts_contacts.tsc_contacts_bank_accounts_validators_group'))]"/>
+        <field name="arch" type="xml">
+            <xpath expr="sheet/group/group[2]/field[@name='tsc_verified']" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="tsc_partner_bank_view_tree" model="ir.ui.view">
+        <field name="name">res.partner.bank.tree.extension</field>
+        <field name="model">res.partner.bank</field>
+        <field name="inherit_id" ref="base.view_partner_bank_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="field[@name='partner_id']" position="after">
+                <field name="tsc_verified"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="tsc_partner_property_view_form" model="ir.ui.view">
+        <field name="name">res.partner.property.form.extension</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page/group/group/field[@name='bank_ids']/tree" position="inside">
+                <field name="tsc_verified" readonly="1"/>
+            </xpath>
+
+            <xpath expr="//page/group/group/field[@name='bank_ids']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <xpath expr="//page/group/group/field[@name='bank_ids']/tree" position="attributes">
+                <attribute name="delete">0</attribute>
+            </xpath>
+        </field>
+    </record> 
+
+    <record id="tsc_partner_property_view_form_validators_group" model="ir.ui.view">
+        <field name="name">res.partner.property.form.validators.extension</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+         <field name="groups_id" eval="[(4, ref('tsc_management_bank_accounts_contacts.tsc_contacts_bank_accounts_validators_group'))]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page/group/group/field[@name='bank_ids']/tree" position="attributes">
+                <attribute name="create">0</attribute>
+            </xpath>
+            <xpath expr="//page/group/group/field[@name='bank_ids']" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </xpath>
+            <xpath expr="//page/group/group/field[@name='bank_ids']/tree/field[@name='tsc_verified']" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </xpath>
+        </field>
+    </record>   
+
+    <record id="tsc_partner_property_view_form_management_group" model="ir.ui.view">
+        <field name="name">res.partner.property.form.management.extension</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+         <field name="groups_id" eval="[(4, ref('tsc_management_bank_accounts_contacts.tsc_contacts_bank_accounts_management_group'))]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page/group/group/field[@name='bank_ids']" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </xpath>
+        </field>
+    </record> 
+
+    </data>
+</odoo>

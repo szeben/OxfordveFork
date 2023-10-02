@@ -1,0 +1,285 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tsc_adjustments_for_internal_purchases
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-06 14:12+0000\n"
+"PO-Revision-Date: 2023-09-06 14:12+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: base
+#: model:ir.module.module,description:base.module_tsc_adjustments_for_internal_purchases
+msgid ""
+"\n"
+"        Restricts the display of product categories and warehouses on products of internal use.\n"
+"    "
+msgstr "Restringe la visualización de categorías de productos y almacenes para productos de uso interno."
+
+#. module: base
+#: model:ir.module.module,summary:base.module_tsc_adjustments_for_internal_purchases
+msgid ""
+"\n"
+"       Restricts the display of product categories and warehouses on products of internal use.\n"
+"    "
+msgstr "Restricts the display of product categories and warehouses for products for internal use."
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_tsc_adjustments_for_internal_purchases
+msgid "Adjustments for Internal Purchases"
+msgstr "Ajustes para Compras Internas"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_picking_type__tsc_picking_merchandise_use
+msgid ""
+"Mark as checked if the operation will be used exclusively for merchandise "
+"purchases."
+msgstr "Determina si la operación será empleada exclusivamente para compras "
+"de mercancía."
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__tsc_picking_merchandise_use
+msgid "Is it for Merchandise Purchases?"
+msgstr "¿Es para compra de mercancía?"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_needaction
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_needaction
+msgid "Action Needed"
+msgstr "Acción Necesaria"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_attachment_count
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_follower_ids
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_partner_ids
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__has_message
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__has_message
+msgid "Has Message"
+msgstr "Tiene un mensaje"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_location__message_needaction
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_location__message_unread
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_needaction
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_unread
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_location__message_has_error
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_location__message_has_sms_error
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_has_error
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:res.groups,name:tsc_adjustments_for_internal_purchases.tsc_internal_purchases_group
+msgid "Internal Purchases"
+msgstr "Compras Internas"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model,name:tsc_adjustments_for_internal_purchases.model_stock_location
+msgid "Inventory Locations"
+msgstr "Ubicaciones de inventario"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_is_follower
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_product_category__tsc_internal_purpose_category
+msgid "Is it for internal use?"
+msgstr "¿Es para uso interno?"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_product_category__tsc_internal_purpose_category
+msgid ""
+"Mark as checked if the category will contain products of internal use. In "
+"other words, products not available for sale."
+msgstr "Identifica si la categoría contendrá productos de uso interno, es decir, que no serán para la venta."
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_main_attachment_id
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_main_attachment_id
+msgid "Main Attachment"
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__tsc_picking_internal_use
+msgid "Is it for Internal Purchases?"
+msgstr "¿Es para compras internas?"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_picking_type__tsc_picking_internal_use
+msgid ""
+"Mark as checked if the operation will be used exclusively for internal "
+"purchases."
+msgstr "Determina si la operación será empleada exclusivamente para compras internas."
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:res.groups,name:tsc_adjustments_for_internal_purchases.tsc_merchandise_purchase_group
+msgid "Merchandise Purchases"
+msgstr "Compras de Mercancía"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_has_error
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_ids
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_needaction_counter
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de Acciones"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_has_error_counter
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_location__message_needaction_counter
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_location__message_has_error_counter
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_location__message_unread_counter
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_unread_counter
+msgid "Number of unread messages"
+msgstr "Número de mensajes no leídos"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model,name:tsc_adjustments_for_internal_purchases.model_stock_picking_type
+msgid "Picking Type"
+msgstr "Tipo de albarán"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model,name:tsc_adjustments_for_internal_purchases.model_product_category
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_product_product__categ_id
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_product_template__categ_id
+msgid "Product Category"
+msgstr "Categoría de producto"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model,name:tsc_adjustments_for_internal_purchases.model_product_template
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model,name:tsc_adjustments_for_internal_purchases.model_purchase_order
+msgid "Purchase Order"
+msgstr "Pedido de compra"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_has_sms_error
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_product_product__categ_id
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_product_template__categ_id
+msgid "Select category for the current product"
+msgstr "Seleccione la categoría para el producto actual."
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:res.groups,comment:tsc_adjustments_for_internal_purchases.tsc_internal_purchases_group
+msgid ""
+"The user will only be able to create products in the expenses categories and"
+" see warehouses of internal use."
+msgstr "El usuario solamente podrá crear productos en las categorías de Gastos y ver almacenes de uso interno."
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:res.groups,comment:tsc_adjustments_for_internal_purchases.tsc_merchandise_purchase_group
+msgid ""
+"The user will only be able to create purchases and inventory operations "
+"related to locations of merchandise for sale."
+msgstr "El usuario solamente podrá crear compras y operaciones de inventario relacionado con ubicaciones para mercancía para la venta."
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_unread
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_unread
+msgid "Unread Messages"
+msgstr "Mensajes sin leer"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__message_unread_counter
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr "Contador de mensajes sin leer"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_location__website_message_ids
+#: model:ir.model.fields,field_description:tsc_adjustments_for_internal_purchases.field_stock_picking_type__website_message_ids
+msgid "Website Messages"
+msgstr "Mensajes del Sitio Web"
+
+#. module: tsc_adjustments_for_internal_purchases
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_location__website_message_ids
+#: model:ir.model.fields,help:tsc_adjustments_for_internal_purchases.field_stock_picking_type__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: tsc_adjustments_for_internal_purchases
+#: code:addons/tsc_adjustments_for_internal_purchases/models/tsc_purchase_extension.py:0
+#, python-format
+msgid ""
+"You are not currently allowed to create or modify purchase orders. "
+"Merchandise purchase or internal purchase permissions are needed."
+msgstr "No tiene permiso para operaciones de recepción de este tipo. Por favor compruebe su perfil como usuario de Compras."
+
+#. module: tsc_adjustments_for_internal_purchases
+#: code:addons/tsc_adjustments_for_internal_purchases/models/tsc_product_extension.py:0
+#, python-format
+msgid ""
+"You are not currently allowed to create products under the selected "
+"category. Merchandise purchase or internal purchase permissions are needed."
+msgstr “No se encuentra autorizado para crear productos en la categoría seleccionada. Debe tener permiso de Compras de mercancía o de Compras internas.”
+
+#. module: tsc_adjustments_for_internal_purchases
+#: code:addons/tsc_adjustments_for_internal_purchases/models/tsc_stock_extension.py:0
+#, python-format
+msgid ""
+"You are not currently allowed to create or modify inventory transfers. "
+"Merchandise purchase or internal purchase permissions are needed."
+msgstr "No es usuario autorizado para crear operaciones de almacén de este tipo. Por favor, verifique su perfil de Compras."

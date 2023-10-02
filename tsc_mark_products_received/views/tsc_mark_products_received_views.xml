@@ -12,7 +12,7 @@
                 <xpath expr="//field[@name='picking_type_id']" position="after">
                     <field
                         name="is_shipped"
-                        string="¿Productos recibidos?"
+                        string="Products received?"
                         widget="boolean"
                         attrs="{'invisible': [('state', '=', 'draft')]}"
                     />
@@ -31,7 +31,7 @@
                 <xpath expr="//field[@name='date_planned']" position="after">
                     <field
                         name="is_shipped"
-                        string="Prod recibidos?"
+                        string="Prod received?"
                         widget="boolean"
                     />
                 </xpath>
@@ -47,9 +47,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//filter[@name='order_date']" position="after">
                     <separator />
-                    <filter name="tsc_is_shipped_true" string="Productos recibidos"
+                    <filter name="tsc_is_shipped_true" string="Products received"
                         domain="[('is_shipped', '=', True)]" />
-                    <filter name="tsc_is_shipped_false" string="Productos por recibir"
+                    <filter name="tsc_is_shipped_false" string="Products to receive"
                         domain="[('is_shipped', '=', False)]" />
                     <separator />
                 </xpath>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+     <record id="tsc_view_cnpp_tree" model="ir.ui.view">
+            <field name="name">tsc.account.move.line.tree</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <tree string="Corrective Invoices by Product" create="false" import="false" delete="false" edit="false">
+                    <field name="move_id" string="Credit Note"/>                 
+                    <field name="date" string="Credit Note Date"/>                 
+                    <field name="tsc_reversed_entry_id"/>  
+                    <field name="tsc_invoice_origin"/>   
+                    <field name="ref" string="Reference"/> 
+                    <field name="partner_id" string="Client"/> 
+                    <field name="product_id"/> 
+                    <field name="quantity"/> 
+                    <field name="product_uom_id" string="UOM"/> 
+                    <field name="price_unit" string="Price"/> 
+                    <field name="tax_ids" widget="many2many_tags"/> 
+                    <field name="price_subtotal"/> 
+                    <field name="tsc_amount_total_in_currency_signed"/> 
+                    <field name="branch_id"/> 
+                    <field name="tsc_team_id"/> 
+                    <field name="parent_state"/> 
+                    <field name="tsc_payment_state"/> 
+                </tree>
+                
+            </field>
+        </record>
+
+
+        <record id="tsc_view_cnpp_form" model="ir.ui.view">
+            <field name="name">tsc.account.move.line.form</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+               <form string="Corrective Invoices by Product" create="false" edit="false" import="false" delete="false">
+                    <sheet>
+                        <field name="company_id" invisible="1"/>
+                        <field name="parent_state" invisible="1"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="partner_id"
+                                domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]"
+                                readonly="1"/>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Information" name="information">
+                                <group>
+                                    <group string="Amount">
+                                        <field name="account_id" options="{'no_create': True}" domain="[('company_id', '=', company_id)]" readonly="1"/>
+                                        <field name="debit" readonly="1"/>
+                                        <field name="credit" readonly="1"/>
+                                        <field name="quantity" readonly="1"/>
+                                    </group>
+                                    <group string="Accounting Documents">
+                                        <field name="move_id" readonly="1"/>
+                                        <field name="statement_id" readonly="True" attrs="{'invisible': [('statement_id','=',False)]}"/>
+                                    </group>
+                                    <group string="Dates">
+                                        <field name="date" groups="account.group_account_readonly"/>
+                                        <field name="date_maturity"/>
+                                    </group>
+
+                                    <group string="Taxes" attrs="{'invisible': [('tax_line_id','=',False), ('tax_ids','=',[])]}">
+                                        <field name="tax_line_id" readonly="1" attrs="{'invisible': [('tax_line_id','=',False)]}"/>
+                                        <field name="tax_ids" widget="many2many_tags" readonly="1" attrs="{'invisible': [('tax_ids','=',[])]}"/>
+                                        <field name="tax_tag_invert" readonly="1" groups="base.group_no_one"/>
+                                        <field name="tax_audit"/>
+                                    </group>
+                                    <group string="Matching" attrs="{'invisible':[('matched_debit_ids', '=', []),('matched_credit_ids', '=', [])]}">
+                                        <label for="full_reconcile_id"/>
+                                        <div>
+                                            <field name="full_reconcile_id" attrs="{'invisible':[('full_reconcile_id','=',False)]}"/>
+                                            <field name="matched_debit_ids" invisible="1"/>
+                                            <field name="matched_credit_ids" invisible="1"/>
+                                            <button name="open_reconcile_view"
+                                                class="oe_link"
+                                                type="object"
+                                                string="-> View partially reconciled entries"
+                                                attrs="{'invisible': ['|', ('full_reconcile_id', '!=', False), '&amp;', ('matched_debit_ids', '=', []),('matched_credit_ids', '=', [])]}">
+                                            </button>
+                                        </div>
+                                    </group>
+                                    <group string="Currency" groups="base.group_multi_currency">
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="amount_currency"/>
+                                    </group>
+                                    <group string="Product" attrs="{'invisible': [('product_id', '=', False)]}">
+                                        <field name="product_id" readonly="1"/>
+                                    </group>
+                                    <group string="States">
+                                        <field name="blocked"/>
+                                    </group>
+                                    <group string="Analytic" groups="analytic.group_analytic_accounting,analytic.group_analytic_tags">
+                                        <field name="analytic_account_id" groups="analytic.group_analytic_accounting"
+                                            domain="['|', ('company_id', '=', company_id), ('company_id', '=', False)]"
+                                            readonly="1"/>
+                                        <field name="analytic_tag_ids" groups="analytic.group_analytic_tags"
+                                            widget="many2many_tags"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Analytic Lines" name="analytic_lines" groups="analytic.group_analytic_accounting">
+                                <field name="date" invisible="1"/>
+                                <field name="analytic_line_ids" context="{'tree_view_ref':'analytic.view_account_analytic_line_tree', 'default_general_account_id':account_id, 'default_name': name, 'default_date':date, 'amount': (debit or 0.0)-(credit or 0.0)}"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+
+
+                </form>
+                
+            </field>
+        </record>
+
+    </data>
+</odoo>
