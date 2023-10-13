@@ -224,7 +224,7 @@ class StockReplenishmentReport(models.Model):
         min_by_branch = self.min_by_branch
         min_global = self.min_global
 
-        branches = self.env['res.branch'].search([])
+        branches = self.env['res.branch'].search([], order="is_main DESC")
         query = super()._where_calc(AND([domain, [('product_id', 'in', product_ids)]]))
         query._tables[self._table] = """
             SELECT
@@ -345,7 +345,7 @@ class StockReplenishmentReport(models.Model):
                     row[f"replenishment_{branch_name}"] = stock < min_by_branch and stock_main > min_global
 
             row["stock_mainland"] = stock_mainland / (total_quantity_mainland or 1.0)
-            row["order_is_required"] = stock < min_global
+            row["order_is_required"] = row["stock_mainland"] < min_global
 
             product_data[product_id] = row
 
