@@ -133,7 +133,7 @@ class TeamSaleReport(models.Model):
                                 DATE_TRUNC('month', date_order)
                             ) AS "date",
                             team_id,
-                            SUM(amount_total) AS total
+                            SUM(amount_total / currency_rate) AS total
                         FROM
                             sale_order
                         WHERE
@@ -189,7 +189,7 @@ class TeamSaleReport(models.Model):
         readonly=True
     )
 
-    date = fields.Datetime(
+    date = fields.Date(
         string="Fecha",
         readonly=True
     )
