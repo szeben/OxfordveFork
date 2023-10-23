@@ -18,11 +18,19 @@
     'license': 'Other proprietary',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': [
+        'base', 
+        'sale', 
+        'purchase',
+        'account'
+    ],
 
     # always loaded
     'data': [
         "security/tsc_access.xml",
+        'views/tsc_sale_views.xml',
+        'views/tsc_purchase_views.xml',
+        'views/tsc_accounting_views.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
