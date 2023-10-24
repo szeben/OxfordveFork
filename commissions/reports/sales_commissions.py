@@ -88,7 +88,7 @@ class CommissionSalesReport(models.Model):
                             commission_for_sale cfs
                         WHERE
                             cfs.product_id = sol.grouping_column
-                            AND sol.total_sold >= cfs.base_min_qty
+                            AND ROUND(sol.total_sold, GREATEST(2, SCALE(cfs.base_min_qty::NUMERIC))) >= cfs.base_min_qty
                         ORDER BY
                             cfs.base_min_qty DESC
                         LIMIT
@@ -104,7 +104,7 @@ class CommissionSalesReport(models.Model):
                             commission_for_group cfg
                         WHERE
                             - sol.grouping_column = cfg.group_id
-                            AND sol.total_sold >= cfg.base_min_qty
+                            AND ROUND(sol.total_sold, GREATEST(2, SCALE(cfg.base_min_qty::NUMERIC))) >= cfg.base_min_qty
                         ORDER BY
                             cfg.base_min_qty DESC
                         LIMIT
