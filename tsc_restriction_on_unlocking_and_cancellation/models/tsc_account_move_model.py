@@ -11,12 +11,14 @@ class tsc_AccountMove(models.Model):
     tsc_posted_once = fields.Boolean(string="Was it posted once?", default=False)
 
     def button_cancel(self):
+        """
         tsc_sale_order = self.invoice_origin
         self.tsc_posted_once = True
         if self.move_type == "out_invoice" and tsc_sale_order:
             tsc_picking_id = tsc_sale_order.picking_ids
             if tsc_picking_id.picking_type_code == "outgoing" and tsc_picking_id.state == "done":
                 raise UserError(_("It is not possible to cancel the invoice that has confirmed merchandise already dispatched. Please try to generate a credit note."))
+        """
         self.write({'auto_post': False, 'state': 'cancel'})
 
     
