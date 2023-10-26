@@ -33,7 +33,7 @@ class tsc_AccountMove(models.Model):
             for node in doc.xpath("//field"):
                 modifiers = simplejson.loads(node.get("modifiers"))
                 if 'readonly' not in modifiers:
-                    modifiers['readonly'] = ['&amp;', ['posted_before','=',True], ['move_type','in',["out_invoice", "out_refund"]]]
+                    modifiers['readonly'] = [['posted_before','=',True], ['move_type','in',["out_invoice", "out_refund"]]]
                 elif type(modifiers['readonly']) != bool:
                         modifiers['readonly'].insert(0, '|')
                         modifiers['readonly'] += ['&', ['posted_before','=',True], ['move_type','in',["out_invoice", "out_refund"]]]
