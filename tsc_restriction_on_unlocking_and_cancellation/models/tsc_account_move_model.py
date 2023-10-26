@@ -12,12 +12,11 @@ class tsc_AccountMove(models.Model):
         if self.move_type == "out_invoice":
             tsc_sale_order = self.invoice_origin
             if tsc_sale_order:
-                tsc_sale_order_search = self.env['sale.order'].search([
-                    ('name','=',tsc_sale_order),
-                    ('picking_ids.picking_type_code','=','outgoing'),
-                    ('picking_ids.state','=','done')])
+                tsc_sale_order_search = self.env['sale.order'].search([('name','=',tsc_sale_order)])
                 if tsc_sale_order_search.exists():
-                    raise UserError(_("It is not possible to cancel the invoice that has confirmed merchandise already dispatched. Please try to generate a credit note."))
+                    tsc_picking_ids = tsc_sale_order_search.picking_ids
+                    if tsc_picking_ids.picking_type_code == 'outgoing' and tsc_picking_ids.state == 'done':
+                       raise UserError(_("It is not possible to cancel the invoice that has confirmed merchandise already dispatched. Please try to generate a credit note."))
         self.write({'auto_post': False, 'state': 'cancel'})
 
     
@@ -37,7 +36,7 @@ class tsc_AccountMove(models.Model):
                     modifiers['readonly'] = ['&amp;', ['posted_before','=',True], ['move_type','in',["out_invoice", "out_refund"]]]
                 elif type(modifiers['readonly']) != bool:
                         modifiers['readonly'].insert(0, '|')
-                        modifiers['readonly'] += ['&amp;', ['posted_before','=',True], ['move_type','in',["out_invoice", "out_refund"]]]
+                        modifiers['readonly'] += ['&', ['posted_before','=',True], ['move_type','in',["out_invoice", "out_refund"]]]
                 node.set('modifiers', simplejson.dumps(modifiers)) 
                 
 

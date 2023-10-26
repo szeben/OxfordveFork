@@ -13,7 +13,7 @@
                 </xpath>
                 <!--customer-->
                 <xpath expr="//button[@name='button_draft']" position="after">
-                    <button name="button_draft" string="Reset to Draft Supplier" type="object" groups="tsc_restriction_on_unlocking_and_cancellation.tsc_return_supplier_invoices_to_draft_group" attrs="{'invisible': ['|', ('show_reset_to_draft_button', '=', False),('move_type','not in',['in_invoice', 'in_refund'])]}" data-hotkey="q"/>
+                    <button name="button_draft" string="Reset to Draft" type="object" groups="tsc_restriction_on_unlocking_and_cancellation.tsc_return_supplier_invoices_to_draft_group" attrs="{'invisible': ['|', ('show_reset_to_draft_button', '=', False),('move_type','not in',['in_invoice', 'in_refund'])]}" data-hotkey="q"/>
                 </xpath> 
                 <!--vendor-->
                 <xpath expr="//button[@name='button_draft']" position="after">
