@@ -7,29 +7,24 @@
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//form" position="inside">
-                    <field name="tsc_posted_once" invisible="1"/>
-                </xpath>
+                <!--general-->
                 <xpath expr="//button[@name='button_draft']" position="attributes">
-                    <attribute name="attrs">{'invisible':['|', ('show_reset_to_draft_button', '=', False), ('state','=','posted')]}</attribute>
+                    <attribute name="attrs">{'invisible':['|', ('show_reset_to_draft_button', '=', False), ('move_type','in',["in_invoice", "in_refund", "out_invoice", "out_refund"])]}</attribute>
                 </xpath>
+                <!--customer-->
+                <xpath expr="//button[@name='button_draft']" position="after">
+                    <button name="button_draft" string="Reset to Draft Supplier" type="object" groups="tsc_restriction_on_unlocking_and_cancellation.tsc_return_supplier_invoices_to_draft_group" attrs="{'invisible': ['|', ('show_reset_to_draft_button', '=', False),('move_type','not in',['in_invoice', 'in_refund'])]}" data-hotkey="q"/>
+                </xpath> 
+                <!--vendor-->
+                <xpath expr="//button[@name='button_draft']" position="after">
+                    <button name="button_draft" string="Reset to Draft" type="object" groups="tsc_restriction_on_unlocking_and_cancellation.tsc_return_customer_invoices_to_draft_group" attrs="{'invisible': ['|', ('show_reset_to_draft_button', '=', False),('move_type','not in',['out_invoice', 'out_refund'])]}" data-hotkey="q"/>
+                </xpath> 
+                
                  <xpath expr="//button[@name='button_cancel'][2]" position="attributes">
                     <attribute name="attrs">{'invisible':['|', '|', ('id', '=', False), ('state', '!=', 'draft'), '|', ('move_type', '==', 'entry'), ('move_type','in',["out_invoice"])]}</attribute>
                 </xpath>               
             </field>
         </record>
-
-        <record id="tsc_redraft_account_customer_invoice_view" model="ir.ui.view">
-            <field name="name">unlock.account.customer.order.form.extension</field>
-            <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_move_form"/>
-            <field name="groups_id" eval="[(4, ref('tsc_restriction_on_unlocking_and_cancellation.tsc_return_customer_invoices_to_draft_group'))]"/>
-            <field name="arch" type="xml">
-                <xpath expr="//button[@name='button_draft']" position="attributes">
-                    <attribute name="attrs">{'invisible':['|', ('show_reset_to_draft_button', '=', False), '&amp;', ('state','=','posted'), ('move_type','not in',["out_invoice", "out_refund"])]}</attribute>
-                </xpath>               
-            </field>
-        </record>   
 
         <record id="tsc_cancel_account_customer_invoice_view" model="ir.ui.view">
             <field name="name">cancel.account.customer.order.form.extension</field>
@@ -42,20 +37,6 @@
                 </xpath>                 
             </field>
         </record>  
-
-        <record id="tsc_redraft_account_vendor_invoice_view" model="ir.ui.view">
-            <field name="name">cancel.account.vendor.order.form.extension</field>
-            <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_move_form"/>
-            <field name="groups_id" eval="[(4, ref('tsc_restriction_on_unlocking_and_cancellation.tsc_return_supplier_invoices_to_draft_group'))]"/>
-            <field name="arch" type="xml">
-                 <xpath expr="//button[@name='button_draft']" position="attributes">
-                    <attribute name="attrs">{'invisible':['|', ('show_reset_to_draft_button', '=', False), '&amp;', ('state','=','posted'), ('move_type','not in',["in_invoice", "in_refund"])]}</attribute>
-                </xpath>                 
-            </field>
-        </record> 
-
-        
 
     </data>
 </odoo>

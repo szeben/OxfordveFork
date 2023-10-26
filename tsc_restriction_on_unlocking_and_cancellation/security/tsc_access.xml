@@ -38,19 +38,5 @@
             <field name="comment">The user may cancel customer invoices without confirmed dispatch.</field>
         </record>  
 
-        
-
-        <!--record id="tsc_customer_invoice_redraft_rule" model="ir.rule">
-            <field name="name">Customer invoice can be modified only before its first publication</field>
-            <field ref="account.model_account_move" name="model_id"/>
-            <field name="domain_force">[('tsc_posted_once', '=', True)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>  
-            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
-        </record-->
-
-
     </data>
 </odoo>
