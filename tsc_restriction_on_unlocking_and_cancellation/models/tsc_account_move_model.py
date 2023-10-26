@@ -13,7 +13,7 @@ class tsc_AccountMove(models.Model):
             tsc_sale_order = self.invoice_origin
             if tsc_sale_order:
                 tsc_sale_order_search = self.env['sale.order'].search([('name','=',tsc_sale_order)])
-                if tsc_sale_order_search.exists():
+                if tsc_sale_order_search.exists() and 'picking_ids' in tsc_sale_order_search:
                     tsc_picking_ids = tsc_sale_order_search.picking_ids
                     if tsc_picking_ids.picking_type_code == 'outgoing' and tsc_picking_ids.state == 'done':
                        raise UserError(_("It is not possible to cancel the invoice that has confirmed merchandise already dispatched. Please try to generate a credit note."))
