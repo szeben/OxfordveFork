@@ -1,0 +1,128 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tsc_restriction_on_unlocking_and_cancellation
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-10-26 13:54+0000\n"
+"PO-Revision-Date: 2023-10-26 13:54+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_tsc_restriction_on_unlocking_and_cancellation
+msgid ""
+"Restrictions on unlocking or cancelling sale orders, purchase orders and "
+"invoices"
+msgstr "Restricción en desbloqueo y cancelación de órdenes de venta, de compra y facturas"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_tsc_restriction_on_unlocking_and_cancellation
+msgid ""
+"\n"
+"       Allows authorized users to unlock confirmed sales and purchase orders, return published customer and vendor invoices to draft, cancel sales orders, and cancel customer invoices.\n"
+"    "
+msgstr "Permite a los usuarios autorizados, desbloquear las órdenes de venta y de compra confirmadas, devolver a borrador las facturas de clientes y proveedores publicadas, cancelar órdenes de venta y cancelar facturas de clientes."
+
+#. module: base
+#: model:ir.module.module,description:base.module_tsc_restriction_on_unlocking_and_cancellation
+msgid ""
+"\n"
+"        Allows authorized users to unlock confirmed sales and purchase orders, return published customer and supplier invoices to draft, cancel sales orders, and cancel customer invoices that do not have confirmed shipments. All permissions are through user groups.\n"
+"    "
+msgstr "Permite a los usuarios autorizados, desbloquear las órdenes de venta y de compra confirmadas, devolver a borrador las facturas de clientes y proveedores publicadas, cancelar órdenes de venta y cancelar facturas de clientes que no tengan despachos confirmados. Todos los permisos son a través de grupos de usuarios."
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model_terms:ir.ui.view,arch_db:tsc_restriction_on_unlocking_and_cancellation.tsc_cancel_sale_order_view
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,name:tsc_restriction_on_unlocking_and_cancellation.tsc_cancel_customer_invoices_group
+msgid "Cancel customer invoices"
+msgstr "Cancelar facturas de clientes"
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,name:tsc_restriction_on_unlocking_and_cancellation.tsc_cancel_sale_orders_group
+msgid "Cancel sale orders"
+msgstr "Cancelar órdenes de venta"
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: code:addons/tsc_restriction_on_unlocking_and_cancellation/models/tsc_account_move_model.py:0
+#, python-format
+msgid ""
+"It is not possible to cancel the invoice that has confirmed merchandise "
+"already dispatched. Please try to generate a credit note."
+msgstr "No es posible cancelar la factura que ya tiene despacho de mercancía confirmada. Por favor intente generar una nota de crédito."
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:ir.model,name:tsc_restriction_on_unlocking_and_cancellation.model_account_move
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model_terms:ir.ui.view,arch_db:tsc_restriction_on_unlocking_and_cancellation.tsc_redraft_account_invoice_view
+msgid "Reset to Draft"
+msgstr "Restablecer Borrador"
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,name:tsc_restriction_on_unlocking_and_cancellation.tsc_return_customer_invoices_to_draft_group
+msgid "Return customer invoices to draft"
+msgstr "Retornar a borrador las facturas de clientes"
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,name:tsc_restriction_on_unlocking_and_cancellation.tsc_return_supplier_invoices_to_draft_group
+msgid "Return supplier invoices to draft"
+msgstr "Retornar a borrador las facturas de proveedores"
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,comment:tsc_restriction_on_unlocking_and_cancellation.tsc_cancel_customer_invoices_group
+msgid "The user will be able to cancel customer invoices without confirmed dispatch."
+msgstr "El usuario podrá cancelar las facturas de clientes sin despacho confirmado."
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,comment:tsc_restriction_on_unlocking_and_cancellation.tsc_cancel_sale_orders_group
+msgid "The user will be able to cancel sale orders."
+msgstr "El usuario podrá cancelar las órdenes de venta."
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,comment:tsc_restriction_on_unlocking_and_cancellation.tsc_return_customer_invoices_to_draft_group
+msgid "The user will be able to return customer invoices to draft."
+msgstr "El usuario podrá retornar a borrador las facturas de clientes."
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,comment:tsc_restriction_on_unlocking_and_cancellation.tsc_return_supplier_invoices_to_draft_group
+msgid "The user will be able to return supplier invoices to draft."
+msgstr "El usuario podrá retornar a borrador las facturas de proveedores."
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,comment:tsc_restriction_on_unlocking_and_cancellation.tsc_unlock_purchase_orders_group
+msgid "The user will be able to unlock confirmed purchase orders."
+msgstr "El usuario podrá desbloquear las órdenes de compra confirmadas."
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,comment:tsc_restriction_on_unlocking_and_cancellation.tsc_unlock_sale_orders_group
+msgid "The user will be able to unlock confirmed sales orders."
+msgstr "El usuario podrá desbloquear las órdenes de venta confirmadas."
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model_terms:ir.ui.view,arch_db:tsc_restriction_on_unlocking_and_cancellation.tsc_unlock_purchase_order_view
+#: model_terms:ir.ui.view,arch_db:tsc_restriction_on_unlocking_and_cancellation.tsc_unlock_sale_order_view
+msgid "Unlock"
+msgstr "Desbloquear"
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,name:tsc_restriction_on_unlocking_and_cancellation.tsc_unlock_purchase_orders_group
+msgid "Unlock purchase orders"
+msgstr "Desbloquear órdenes de compra"
+
+#. module: tsc_restriction_on_unlocking_and_cancellation
+#: model:res.groups,name:tsc_restriction_on_unlocking_and_cancellation.tsc_unlock_sale_orders_group
+msgid "Unlock sale orders"
+msgstr "Desbloquear órdenes de venta"
