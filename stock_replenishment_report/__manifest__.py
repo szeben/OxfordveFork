@@ -20,7 +20,7 @@
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Stock',
-    'version': '0.1',
+    'version': '1.1',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'account', 'stock', 'branch', 'product_available_by_branch_kanban'],
