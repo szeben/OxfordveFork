@@ -62,7 +62,7 @@
         <field name="view_id"></field>
         <field name="search_view_id" ref="tsc_view_order_product_search"/>
         <field name="domain">[
-            ('team_id.x_studio_many2one_field_a2jVA','in', context.get('allowed_branch_ids'))
+           ('tsc_custom_domain_oxford','=',1)
         ]</field>
         <field name="context" eval="{
                 'search_default_sales_channel': 1,
