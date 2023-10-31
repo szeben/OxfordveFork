@@ -24,10 +24,20 @@ class TeamSaleReport(models.Model):
                             WHEN 'out_invoice' THEN aml.quantity
                             WHEN 'out_refund' THEN - aml.quantity
                         END / aml_uom.factor * pt_uom.factor
-                    ) FILTER(
+                    ) FILTER (
                         WHERE
                             sol.product_id = aml.product_id
-                    ) AS total_sold
+                    ) AS total_sold,
+                    SUM(
+                        sol.price_subtotal / so.currency_rate
+                    ) AS amount_sale, (
+                        SELECT digits
+                        FROM
+                            decimal_precision
+                        WHERE
+                            name = 'Product Price'
+                        LIMIT 1
+                    ) AS dp
                 FROM
                     sale_order_line sol
                     INNER JOIN sale_order so ON (so.id = sol.order_id)
@@ -84,7 +94,7 @@ class TeamSaleReport(models.Model):
                     sol.branch_id,
                     sol.team_id,
                     sol."date",
-                    ot.total AS amount_sale,
+                    sol.amount_sale,
                     sol.total_sold,
                     COALESCE(
                         CASE
@@ -98,7 +108,10 @@ class TeamSaleReport(models.Model):
                                     commission_for_sale cfs
                                 WHERE
                                     cfs.product_id = sol.grouping_column
-                                    AND ROUND(sol.total_sold, GREATEST(2, SCALE(cfs.base_min_qty::NUMERIC))) >= cfs.base_min_qty
+                                    AND ROUND(sol.total_sold, sol.dp) >= ROUND(
+                                        cfs.base_min_qty :: NUMERIC,
+                                        sol.dp
+                                    )
                                 ORDER BY
                                     cfs.base_min_qty DESC
                                 LIMIT
@@ -114,7 +127,10 @@ class TeamSaleReport(models.Model):
                                     commission_for_group cfg
                                 WHERE
                                     - sol.grouping_column = cfg.group_id
-                                    AND ROUND(sol.total_sold, GREATEST(2, SCALE(cfg.base_min_qty::NUMERIC))) >= cfg.base_min_qty
+                                    AND ROUND(sol.total_sold, sol.dp) >= ROUND(
+                                        cfg.base_min_qty :: NUMERIC,
+                                        sol.dp
+                                    )
                                 ORDER BY
                                     cfg.base_min_qty DESC
                                 LIMIT
@@ -126,29 +142,6 @@ class TeamSaleReport(models.Model):
                     0.0 AS commission_by_collection,
                     0.0 AS debit
                 FROM sol
-                    LEFT OUTER JOIN (
-                        SELECT
-                            branch_id,
-                            DATE(
-                                DATE_TRUNC('month', date_order)
-                            ) AS "date",
-                            team_id,
-                            SUM(amount_total / currency_rate) AS total
-                        FROM
-                            sale_order
-                        WHERE
-                            state = 'done'
-                        GROUP BY
-                            branch_id,
-                            DATE(
-                                DATE_TRUNC('month', date_order)
-                            ),
-                            team_id
-                    ) ot ON (
-                        ot.branch_id = sol.branch_id
-                        AND ot."date" = sol."date"
-                        AND ot.team_id = sol.team_id
-                    )
                 WHERE
                     sol.total_sold > 0.0
             )
