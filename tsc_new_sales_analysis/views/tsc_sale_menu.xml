@@ -48,8 +48,7 @@
         <field name="name">tsc.sale.report.pivot</field>
         <field name="model">sale.report</field>
         <field name="arch" type="xml">
-            <pivot string="Sales Analysis Oxford" disable_linking="1" display_quantity="1" sample="1">
-
+            <pivot string="Sales Analysis Oxford" disable_linking="1" sample="1">
                 <field name="branch_id" type="col"/>
                 <field name="qty_invoiced" type="measure"/>
             </pivot>
@@ -62,8 +61,7 @@
         <field name="view_mode">pivot</field>
         <field name="view_id"></field>
         <field name="search_view_id" ref="tsc_view_order_product_search"/>
-        <field name="domain">['|',
-            ('team_id.x_studio_many2one_field_a2jVA','=',False),
+        <field name="domain">[
             ('team_id.x_studio_many2one_field_a2jVA','in', context.get('allowed_branch_ids'))
         ]</field>
         <field name="context" eval="{
