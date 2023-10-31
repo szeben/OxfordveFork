@@ -30,13 +30,16 @@ class TeamSaleReport(models.Model):
                     ) AS total_sold,
                     SUM(
                         sol.price_subtotal / so.currency_rate
-                    ) AS amount_sale, (
-                        SELECT digits
-                        FROM
-                            decimal_precision
-                        WHERE
-                            name = 'Product Price'
-                        LIMIT 1
+                    ) AS amount_sale,
+                    COALESCE( (
+                            SELECT digits
+                            FROM
+                                decimal_precision
+                            WHERE
+                                name = 'Commission'
+                            LIMIT
+                                1
+                        ), 2
                     ) AS dp
                 FROM
                     sale_order_line sol

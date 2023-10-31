@@ -31,13 +31,16 @@ class CommissionSalesReport(models.Model):
                     ) AS total_sold,
                     SUM(
                         sol.price_subtotal / so.currency_rate
-                    ) AS amount_sale, (
-                        SELECT digits
-                        FROM
-                            decimal_precision
-                        WHERE
-                            name = 'Product Price'
-                        LIMIT 1
+                    ) AS amount_sale,
+                    COALESCE( (
+                            SELECT digits
+                            FROM
+                                decimal_precision
+                            WHERE
+                                name = 'Commission'
+                            LIMIT
+                                1
+                        ), 2
                     ) AS dp
                 FROM
                     sale_order_line sol
@@ -132,14 +135,6 @@ class CommissionSalesReport(models.Model):
         FROM sol
         WHERE sol.total_sold > 0.0
     """
-
-    @api.model
-    def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-        res = super().read_group(domain, fields, groupby, offset, limit, orderby, lazy)
-        from pprint import pprint
-        print(domain, fields, groupby, offset, limit, orderby, lazy)
-        pprint(res)
-        return res
 
     branch_id = fields.Many2one(
         "res.branch",
