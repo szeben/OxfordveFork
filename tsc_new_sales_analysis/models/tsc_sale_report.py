@@ -15,4 +15,4 @@ class SaleReport(models.Model):
         print('computed')
 
     def oxford_branch_ids_search(self, operator, operand):
-        return ['|', ('team_id.x_studio_many2one_field_a2jVA', '=', False), ('team_id.x_studio_many2one_field_a2jVA', 'in', [b.id for b in self.env.user.branch_ids])]
+        return ['|', ('branch_id', '=', False), ('branch_id', 'in', [b.id for b in self.env.user.branch_ids])]
