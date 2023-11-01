@@ -146,10 +146,20 @@ class TeamSaleReport(models.Model):
                 FROM sol
                 WHERE
                     sol.total_sold > 0.0
+            ),
+            ct AS (
+                SELECT
+                    id,
+                    ROW_NUMBER() OVER (
+                        ORDER BY
+                            name
+                    ) as team_name_index
+                FROM crm_team
             )
         SELECT
             ROW_NUMBER() OVER () AS id,
             ucommissions.branch_id,
+            ct.team_name_index,
             ucommissions.team_id,
             ucommissions.date,
             SUM(total_sold) AS total_vendidos,
@@ -161,15 +171,17 @@ class TeamSaleReport(models.Model):
                 COALESCE(total_amount_commissions, 0) + COALESCE(commission_by_collection, 0)
             ) AS total_commissions
         FROM ucommissions
+            LEFT JOIN ct ON (ucommissions.team_id = ct.id)
         WHERE
             ucommissions.date IS NOT NULL
         GROUP BY
-            ucommissions.branch_id,
+            ct.team_name_index,
             ucommissions.team_id,
+            ucommissions.branch_id,
             ucommissions.date
         ORDER BY
-            ucommissions.branch_id,
             ucommissions.team_id,
+            ucommissions.branch_id,
             ucommissions.date
     """
 
@@ -182,6 +194,11 @@ class TeamSaleReport(models.Model):
         'crm.team',
         string="Equipo de ventas",
         readonly=True
+    )
+    team_name_index = fields.Integer(
+        string="Nombre del equipo de ventas",
+        readonly=True,
+        group_operator="min",
     )
 
     date = fields.Date(
@@ -213,3 +230,8 @@ class TeamSaleReport(models.Model):
         string="Total de comisiones asignadas",
         readonly=True
     )
+
+    # @api.model
+    # def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
+    #     print(domain, fields, groupby, offset, limit, orderby, lazy)
+    #     return super().read_group(domain, fields, groupby, offset, limit, orderby, lazy)
