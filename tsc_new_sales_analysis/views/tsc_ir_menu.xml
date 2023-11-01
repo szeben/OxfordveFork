@@ -62,19 +62,4 @@
             <field name="perm_unlink">0</field>
         </record>
 
-        <record id="tsc_report_oxford_sales_analysis_rule" model="ir.rule">
-                <field name="name">
-                        Rule to filter by sales team branch
-                </field>
-                <field name="perm_read" eval="1" />
-                <field name="perm_write" eval="0" />
-                <field name="perm_create" eval="0" />
-                <field name="perm_unlink" eval="0" />
-                <field name="domain_force">['|',('team_id.x_studio_many2one_field_a2jVA', '=', False),('team_id.x_studio_many2one_field_a2jVA', 'in', user.branch_ids.ids)]
-                </field>
-                <field name="model_id" ref="sale.model_sale_report" />
-                <field name="groups" eval="[(4, ref('tsc_new_sales_analysis.tsc_restrict_report_oxford_sales_analysis'))]"/>
-
-        </record>
-
 </odoo>
