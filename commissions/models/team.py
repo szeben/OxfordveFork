@@ -115,6 +115,7 @@ class TeamSaleReport(models.Model):
                                         cfs.base_min_qty :: NUMERIC,
                                         sol.dp
                                     )
+                                ORDER BY
                                     cfs.base_min_qty DESC
                                 LIMIT
                                     1
