@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record id="tsc_restrict_report_oxford_sales_analysis" model="res.groups">
+            <field name="name">Show sub menu Oxford Sales Analysis</field>
+            <field name="category_id" ref="base.module_category_sales_sales"/>
+            <field name="comment">The user will be able to enter the “Oxford Sales Analysis” submenu of the “Reports” menu. Created by: Techne</field>
+        </record>
+
+        <record id="tsc_restrict_report_dashboard" model="res.groups">
+            <field name="name">Show sub menu Dashboard</field>
+            <field name="category_id" ref="base.module_category_sales_sales"/>
+            <field name="comment">The user will be able to enter the “Dashboard” submenu of the “Reports” menu. Created by: Techne</field>
+        </record>
+
+        <record id="tsc_restrict_report_sales" model="res.groups">
+            <field name="name">Show sub menu Sales</field>
+            <field name="category_id" ref="base.module_category_sales_sales"/>
+            <field name="comment">The user will be able to enter the “Sales” submenu of the “Reports” menu. Created by: Techne</field>
+        </record>
+
+    </data>
+</odoo>

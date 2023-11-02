@@ -1,0 +1,184 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* tsc_new_sales_analysis
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-10-29 13:34+0000\n"
+"PO-Revision-Date: 2023-10-29 13:34+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: base
+#: model:ir.module.module,summary:base.module_tsc_new_sales_analysis
+msgid "Includes a new sales analysis pivot view without accessing detailed information. Only visible to authorized users."
+msgstr "Incluye una nueva vista pivote de análisis de ventas sin acceder a información detallada de la misma. Solo visible para usuarios autorizados."
+
+#. module: base
+#: model:ir.module.module,description:base.module_tsc_new_sales_analysis
+msgid "Includes a new sales analysis pivot view without accessing detailed information. Only visible to authorized users."
+msgstr "Incluye una nueva vista pivote de análisis de ventas sin acceder a información detallada de la misma. Solo visible para usuarios autorizados."
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_tsc_new_sales_analysis
+msgid "New sales analysis"
+msgstr "Nuevo análisis de ventas"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Branch"
+msgstr "Rama"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Company"
+msgstr "Empresa"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.actions.act_window,help:tsc_new_sales_analysis.tsc_sale_order_pivot_view
+msgid "Create a new sales order"
+msgstr "Crear un nuevo pedido de ventas"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Customer Country"
+msgstr "País del cliente"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Customer Industry"
+msgstr "Industria del Cliente"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Date"
+msgstr "Fecha"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Extended Filters"
+msgstr "Filtros extendidos"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.actions.act_window,help:tsc_new_sales_analysis.tsc_sale_order_pivot_view
+msgid "No data yet!"
+msgstr "No hay información aún"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Order Date"
+msgstr "Fecha de pedido"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Order Date: Last 365 Days"
+msgstr "Fecha del pedido: Últimos 365 días"
+
+#. module: tsc_new_sales_analysis
+#: model:ir.actions.act_window,name:tsc_new_sales_analysis.tsc_sale_order_pivot_view
+#: model:ir.ui.menu,name:tsc_new_sales_analysis.tsc_sale_order_pivot_oxford_menu
+msgid "Oxford Sales Analysis"
+msgstr "Análisis de ventas Oxford"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Product"
+msgstr "Producto"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Product Category"
+msgstr "Categoría de producto"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Quotations"
+msgstr "Cotizaciones"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Sales Analysis"
+msgstr "Análisis de ventas"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_sale_order_pivot_final_view
+msgid "Sales Analysis Oxford"
+msgstr "Análisis de ventas Oxford"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Sales Orders"
+msgstr "Pedidos de ventas"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Sales Team"
+msgstr "Equipo de Venta"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Salesperson"
+msgstr "Comercial"
+
+#. module: tsc_new_sales_analysis
+#: model:res.groups,name:tsc_new_sales_analysis.tsc_restrict_report_dashboard
+msgid "Show sub menu Dashboard"
+msgstr "Mostrar sub menú Tablero"
+
+#. module: tsc_new_sales_analysis
+#: model:res.groups,name:tsc_new_sales_analysis.tsc_restrict_report_oxford_sales_analysis
+msgid "Show sub menu Oxford Sales Analysis"
+msgstr "Mostrar sub menú Análisis de ventas Oxford"
+
+#. module: tsc_new_sales_analysis
+#: model:res.groups,name:tsc_new_sales_analysis.tsc_restrict_report_sales
+msgid "Show sub menu Sales"
+msgstr "Mostrar sub menú Ventas"
+
+#. module: tsc_new_sales_analysis
+#: model_terms:ir.ui.view,arch_db:tsc_new_sales_analysis.tsc_view_order_product_search
+msgid "Status"
+msgstr "Estado"
+
+#. module: tsc_new_sales_analysis
+#: model:res.groups,comment:tsc_new_sales_analysis.tsc_restrict_report_dashboard
+msgid ""
+"The user will be able to enter the “Dashboard” submenu of the “Reports” "
+"menu. Created by: Techne"
+msgstr ""
+"El usuario podrá ingresar al sub menú “Tablero” del menú “Informes”. "
+"Creado por: Techne"
+
+#. module: tsc_new_sales_analysis
+#: model:res.groups,comment:tsc_new_sales_analysis.tsc_restrict_report_oxford_sales_analysis
+msgid ""
+"The user will be able to enter the “Oxford Sales Analysis” submenu of the "
+"“Reports” menu. Created by: Techne"
+msgstr ""
+"El usuario podrá ingresar al sub menú “Análisis de ventas Oxford” del "
+"menú “Informes”. Creado por: Techne "
+
+#. module: tsc_new_sales_analysis
+#: model:res.groups,comment:tsc_new_sales_analysis.tsc_restrict_report_sales
+msgid ""
+"The user will be able to enter the “Sales” submenu of the “Reports” menu. "
+"Created by: Techne"
+msgstr ""
+"El usuario podrá ingresar al sub menú “Ventas” del menú “Informes”. "
+"Creado por: Techne"
