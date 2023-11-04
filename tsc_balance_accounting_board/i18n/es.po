@@ -19,17 +19,17 @@ msgstr ""
 #: model:ir.module.module,description:base.module_tsc_balance_accounting_board
 msgid ""
 "\n"
-"        Identifies which accounting journals will show an additional balance in secondary currency, and displays the same on the accounting dashboard.\n"
+"        Identifies which accounting journals will show an additional balance in secondary currency and displays it on the accounting dashboard, based on the last exchange rate recorded.\n"
 "    "
-msgstr "Identifica cuales diarios contables mostraran un saldo adicional en moneda secundaria y muestra el mismo en el tablero contable."
+msgstr "Identifica cuales diarios contables mostraran un saldo adicional en moneda secundaria y muestra el mismo en el tablero contable, según la última tasa de cambio registrada."
 
 #. module: base
 #: model:ir.module.module,summary:base.module_tsc_balance_accounting_board
 msgid ""
 "\n"
-"       Displays an additional balance in a secondary currency on the dashboard. \n"
+"       Displays on the dashboard an additional balance in a secondary currency based on the last recorded exchange rate. \n"
 "    "
-msgstr "Muestra en el tablero contable un saldo adicional en una moneda secundaria."
+msgstr "Muestra en el tablero contable un saldo adicional en una moneda secundaria, según la última tasa de cambio registrada."
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_tsc_balance_accounting_board

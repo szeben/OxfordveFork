@@ -7,30 +7,32 @@ class tsc_AccountJournal(models.Model):
     _name = 'account.journal'
     _inherit = ['account.journal', 'mail.thread']
 
-    tsc_other_currency_balance = fields.Boolean(string="Balance in another currency",
+    tsc_other_currency_balance = fields.Many2one(string="Balance in another currency",
                                                help="Identifies if the accounting journal will show a balance in another currency on the accounting dashboard",
+                                                 comodel_name="res.currency",
                                                required=False,
                                                readonly=False,
                                                store=True,
                                                copy=False,
                                                tracking=True,
+                                               domain=[('active','=',True)], 
                                                default=False)
 
     tsc_another_currency_balance_value = fields.Char(string="Balance in another currency value",
-                                                     compute="_compute_tsc_another_currency_balance_value")
+                                            compute="_compute_tsc_another_currency_balance_value")
 
-
+    
     def get_journal_dashboard_datas(self):
         res = super(tsc_AccountJournal, self).get_journal_dashboard_datas()
         res.update({
-            'tsc_other_currency_balance': self.tsc_other_currency_balance,
+            'tsc_other_currency_balance': self.tsc_other_currency_balance.name != False,
             'tsc_another_currency_balance_value': self.tsc_another_currency_balance_value,
         })
         return res
 
-    #@api.onchange()
     @api.depends('tsc_other_currency_balance')
     def _compute_tsc_another_currency_balance_value(self):
+        
         for record in self:
             if record.tsc_other_currency_balance:
                 tsc_search_line = self.env['account.move.line'].search([
@@ -50,11 +52,13 @@ class tsc_AccountJournal(models.Model):
                     tsc_new_float = tsc_new_float.replace('.', 'x')
                     tsc_new_float = tsc_new_float.replace(',', '.')
                     tsc_new_float = tsc_new_float.replace('x', ',')
+               
 
                 record.tsc_another_currency_balance_value = tsc_new_float
 
             else:
                 record.tsc_another_currency_balance_value = False
+
 
 
 

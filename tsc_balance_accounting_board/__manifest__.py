@@ -3,23 +3,23 @@
     'name': "Balance on Accounting Board",
 
     'summary': """
-       Displays an additional balance in a secondary currency on the dashboard. 
+       Displays on the dashboard an additional balance in a secondary currency based on the last recorded exchange rate. 
     """,
 
     'description': """
-        Identifies which accounting journals will show an additional balance in secondary currency, and displays the same on the accounting dashboard.
+        Identifies which accounting journals will show an additional balance in secondary currency and displays it on the accounting dashboard, based on the last exchange rate recorded.
     """,
 
     'author': "Techne Studio IT & Consulting",
     'website': "https://technestudioit.com/",
 
     'category': 'Accounting',
-    'version': '0.1',
+    'version': '2.0',
 
     'license': 'Other proprietary',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account'],
+    'depends': ['base', 'account', 'branch'],
 
     # always loaded
     'data': [
