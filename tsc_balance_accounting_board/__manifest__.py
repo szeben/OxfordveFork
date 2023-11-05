@@ -24,6 +24,7 @@
     # always loaded
     'data': [
         'views/tsc_account_journal_views.xml',
+        'views/tsc_actions_overrides.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

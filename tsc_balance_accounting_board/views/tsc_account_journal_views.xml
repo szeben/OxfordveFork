@@ -21,7 +21,7 @@
                 <xpath expr="templates//div[@id='dashboard_bank_cash_right']/div[1]" position="after">
                     <div class="row" t-if="dashboard.tsc_other_currency_balance">
                         <div id="dashboard_bank_cash_balance" class="col overflow-hidden text-left">
-                            <span title="Balance in Another Currency">Balance in Another currency</span>
+                            <span title="Balance in Another Currency">Balance in Another Currency</span>
                         </div>
                         <div class="col-auto text-right">
                             <span><t t-esc="dashboard.tsc_another_currency_balance_value"/> <t t-esc="dashboard.tsc_other_currency_balance_symbol"/></span>
@@ -29,8 +29,7 @@
                     </div>                    
                 </xpath>                
             </field>
-        </record>   
-        
+        </record>
     </data>
 </odoo>
 
