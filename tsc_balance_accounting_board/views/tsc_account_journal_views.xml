@@ -24,7 +24,7 @@
                             <span title="Balance in Another Currency">Balance in Another currency</span>
                         </div>
                         <div class="col-auto text-right">
-                            <span><t t-esc="dashboard.tsc_another_currency_balance_value"/></span>
+                            <span><t t-esc="dashboard.tsc_another_currency_balance_value"/> <t t-esc="dashboard.tsc_other_currency_balance_symbol"/></span>
                         </div>
                     </div>                    
                 </xpath>                
