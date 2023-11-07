@@ -62,7 +62,7 @@
         <field name="view_id"></field>
         <field name="search_view_id" ref="tsc_view_order_product_search"/>
         <field name="domain">[
-           ('tsc_custom_domain_oxford','=',1)
+           ('tsc_oxford_domain','=',1)
         ]</field>
         <field name="context" eval="{
                 'search_default_sales_channel': 1,
