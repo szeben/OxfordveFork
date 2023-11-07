@@ -25,6 +25,7 @@
     'data': [
         'views/tsc_account_journal_views.xml',
         'views/tsc_account_payment_views.xml',
+        'views/tsc_account_move_views.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

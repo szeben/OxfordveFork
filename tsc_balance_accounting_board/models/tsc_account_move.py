@@ -6,6 +6,17 @@ class tsc_AccountMove(models.Model):
 
     _inherit = 'account.move'
 
+    tsc_journal_ids = fields.Many2many('account.journal', string='Branch-filtered Journals', 
+                                       store=False, readonly=False,
+                                       compute='tsc_compute_tsc_journal_ids')
+    
+    def tsc_compute_tsc_journal_ids(self):
+        self.tsc_journal_ids = self.env['account.journal'].search([
+                 '|',
+                 ('branch_id','=',False),
+                 ('branch_id','=',self.env.user.branch_id.id)
+                 ])    
+
     @api.model
     def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
         domain = domain or []

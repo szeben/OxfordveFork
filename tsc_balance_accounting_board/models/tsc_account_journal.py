@@ -22,7 +22,7 @@ class tsc_AccountJournal(models.Model):
                                                     related="tsc_other_currency_balance.symbol")
 
     tsc_another_currency_balance_value = fields.Char(string="Balance in another currency value",
-                                            compute="_compute_tsc_another_currency_balance_value")
+                                            compute="tsc_compute_tsc_another_currency_balance_value")
 
     
     def get_journal_dashboard_datas(self):
@@ -35,7 +35,7 @@ class tsc_AccountJournal(models.Model):
         return res
 
     @api.depends('tsc_other_currency_balance')
-    def _compute_tsc_another_currency_balance_value(self):
+    def tsc_compute_tsc_another_currency_balance_value(self):
         
         for record in self:
             if record.tsc_other_currency_balance.id != False:

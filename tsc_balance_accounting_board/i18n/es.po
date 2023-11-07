@@ -16,12 +16,9 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base
-#: model:ir.module.module,description:base.module_tsc_balance_accounting_board
-msgid ""
-"\n"
-"        Identifies which accounting journals will show an additional balance in secondary currency and displays it on the accounting dashboard, based on the last exchange rate recorded.\n"
-"    "
-msgstr "Identifica cuales diarios contables mostraran un saldo adicional en moneda secundaria y muestra el mismo en el tablero contable, según la última tasa de cambio registrada."
+#: model:ir.module.module,shortdesc:base.module_tsc_balance_accounting_board
+msgid "Balance on Accounting Board"
+msgstr "Saldo en Tablero Contable"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_tsc_balance_accounting_board
@@ -32,9 +29,13 @@ msgid ""
 msgstr "Muestra en el tablero contable un saldo adicional en una moneda secundaria, según la última tasa de cambio registrada."
 
 #. module: base
-#: model:ir.module.module,shortdesc:base.module_tsc_balance_accounting_board
-msgid "Balance on Accounting Board"
-msgstr "Saldo en Tablero Contable"
+#: model:ir.module.module,description:base.module_tsc_balance_accounting_board
+msgid ""
+"\n"
+"        Identifies which accounting journals will show an additional balance in secondary currency and displays it on the accounting dashboard, based on the last exchange rate recorded.\n"
+"    "
+msgstr ""
+"Identifica cuales diarios contables mostraran un saldo adicional en moneda secundaria y muestra el mismo en el tablero contable, según la última tasa de cambio registrada."
 
 #. module: tsc_balance_accounting_board
 #: model_terms:ir.ui.view,arch_db:tsc_balance_accounting_board.tsc_account_journal_kanban_view
@@ -57,13 +58,13 @@ msgstr "Nº de archivos adjuntos"
 #: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_bank_statement_import_journal_creation__tsc_other_currency_balance
 #: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_journal__tsc_other_currency_balance
 msgid "Balance in another currency"
-msgstr "Saldo en Otra Moneda"
+msgstr "Saldo en otra moneda"
 
 #. module: tsc_balance_accounting_board
 #: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_bank_statement_import_journal_creation__tsc_another_currency_balance_value
 #: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_journal__tsc_another_currency_balance_value
 msgid "Balance in another currency value"
-msgstr "Valor del Saldo en Otra Moneda"
+msgstr "Valor del saldo en otra moneda"
 
 #. module: tsc_balance_accounting_board
 #: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_journal__message_follower_ids
@@ -175,3 +176,16 @@ msgstr "Mensajes del sitio web"
 #: model:ir.model.fields,help:tsc_balance_accounting_board.field_account_journal__website_message_ids
 msgid "Website communication history"
 msgstr "Historial de comunicaciones del sitio web"
+
+#. module: tsc_balance_accounting_board
+#: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_bank_statement_line__tsc_journal_ids
+#: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_move__tsc_journal_ids
+#: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_payment__tsc_journal_ids
+#: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_payment_register__tsc_journal_ids
+msgid "Branch-filtered Journals"
+msgstr "Diarios filtrados por Rama"
+
+#. module: tsc_balance_accounting_board
+#: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_journal__tsc_other_currency_balance_symbol
+msgid "Balance in another currency symbol"
+msgstr "Símbolo del balance en otra moneda"
