@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from itertools import groupby
-from collections import defaultdict
 from odoo import _, api, exceptions, fields, models
+
+
+class ProductCategory(models.Model):
+    _inherit = 'product.category'
+
+    commission_ids = fields.One2many(
+        'commission.for.category',
+        'categ_id',
+        string="Comisiones"
+    )
 
 
 class ProductProduct(models.Model):
@@ -11,7 +19,7 @@ class ProductProduct(models.Model):
     commission_ids = fields.One2many(
         'commission.for.sale',
         'product_id',
-        string="Productos"
+        string="Comisiones"
     )
     commission_group_id = fields.Many2one(
         'commission.group',
@@ -21,6 +29,10 @@ class ProductProduct(models.Model):
         compute="_compute_total_commissions",
         string="Comisiones asociadas",
         store=True
+    )
+    commission_by_category = fields.Boolean(
+        string="¿Tiene comisión por categoria?",
+        default=False
     )
 
     def check_is_commission_or_group(self):
