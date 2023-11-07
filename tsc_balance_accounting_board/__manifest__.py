@@ -19,12 +19,12 @@
     'license': 'Other proprietary',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account', 'branch'],
+    'depends': ['base', 'account', 'branch', 'branch_defaults'],
 
     # always loaded
     'data': [
         'views/tsc_account_journal_views.xml',
-        'views/tsc_actions_overrides.xml',
+        'views/tsc_account_payment_views.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

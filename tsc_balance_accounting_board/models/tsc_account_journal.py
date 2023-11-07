@@ -9,7 +9,7 @@ class tsc_AccountJournal(models.Model):
 
     tsc_other_currency_balance = fields.Many2one(string="Balance in another currency",
                                                help="Identifies if the accounting journal will show a balance in another currency on the accounting dashboard",
-                                                 comodel_name="res.currency",
+                                               comodel_name="res.currency",
                                                required=False,
                                                readonly=False,
                                                store=True,
@@ -63,6 +63,15 @@ class tsc_AccountJournal(models.Model):
 
             else:
                 record.tsc_another_currency_balance_value = False
+
+    @api.model
+    def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
+        domain = domain or []
+        tsc_search_default_dashboard = self.env.context.get('search_default_dashboard')
+        if tsc_search_default_dashboard == 1:
+            domain.extend(['|', ('branch_id','=',False),
+                       ('branch_id','=',self.env.user.branch_id.id)])
+        return super(tsc_AccountJournal, self).search_read(domain, fields, offset, limit, order)
 
 
 
