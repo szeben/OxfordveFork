@@ -14,7 +14,8 @@ class SaleOrderLine(models.Model):
         domain=[('order_id', '!=', False)]
     )
     team_id = fields.Many2one(
-        related='order_id.partner_id.team_id',
+        comodel_name='crm.team',
+        related='order_id.team_id',
         string="Equipo de ventas",
         store=True,
         domain=[('order_id', '!=', False)]
