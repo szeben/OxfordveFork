@@ -40,7 +40,8 @@ class CommissionForSale(models.Model):
                 ('id', '!=', record.id)
             ]) > 0:
                 raise exceptions.ValidationError(
-                    'El producto tiene una o más comisiones con nombres repetidos. Por favor, verifique'
+                    'El producto tiene una o más comisiones con '
+                    'nombres repetidos. Por favor, verifique'
                 )
 
     @api.onchange('product_id')

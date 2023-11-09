@@ -6,14 +6,13 @@
             <field name="name">commission.report.view.pivot</field>
             <field name="model">commissions.sales.report</field>
             <field name="arch" type="xml">
-                <pivot string="Comisiones por ventas" display_quantity="0" sample="1">
+                <pivot string="Comisiones por ventas de productos" display_quantity="0" sample="1">
                     <field name="categ_id" type="row" />
-                    <field name="commission_group_id" type="row" />
                     <field name="product_id" type="row" />
                     <field name="date" interval="month" type="row" />
                     <field name="team_id" type="col" />
                     <field name="total_sold" type="measure" />
-                    <field name="total_amount_commissions" type="measure" />
+                    <field name="amount_commissions" type="measure" />
                 </pivot>
             </field>
         </record>
@@ -25,7 +24,64 @@
                 <search>
                     <field name="categ_id" />
                     <field name="product_id" />
-                    <field name="commission_group_id" />
+                    <field name="team_id" />
+                    <filter name="filter_sale_date_last_three_months" string="Últimos 3 meses"
+                        domain="[('date', '&gt;=', (context_today()-relativedelta(months=3)).strftime('%%Y-%%m-01'))]" />
+                    <filter name="filter_sale_date" date="date" string="Fecha" />
+                </search>
+            </field>
+        </record>
+
+        <record id="commission_group_report_view_pivot" model="ir.ui.view">
+            <field name="name">commission.group.report.view.pivot</field>
+            <field name="model">commissions.sales.group.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Comisiones por ventas de grupos" display_quantity="0" sample="1">
+                    <field name="group_id" type="row" />
+                    <field name="product_id" type="row" />
+                    <field name="date" interval="month" type="row" />
+                    <field name="team_id" type="col" />
+                    <field name="total_sold" type="measure" />
+                    <field name="amount_commissions" type="measure" />
+                </pivot>
+            </field>
+        </record>
+
+        <record id="commission_group_report_view_search" model="ir.ui.view">
+            <field name="name">commission.group.report.view.search</field>
+            <field name="model">commissions.sales.group.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="group_id" />
+                    <field name="product_id" />
+                    <field name="team_id" />
+                    <filter name="filter_sale_date_last_three_months" string="Últimos 3 meses"
+                        domain="[('date', '&gt;=', (context_today()-relativedelta(months=3)).strftime('%%Y-%%m-01'))]" />
+                    <filter name="filter_sale_date" date="date" string="Fecha" />
+                </search>
+            </field>
+        </record>
+
+        <record id="commission_category_report_view_pivot" model="ir.ui.view">
+            <field name="name">commission.category.report.view.pivot</field>
+            <field name="model">commissions.sales.category.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Comisiones por ventas de categorías" display_quantity="0" sample="1">
+                    <field name="categ_id" type="row" />
+                    <field name="date" interval="month" type="row" />
+                    <field name="team_id" type="col" />
+                    <field name="total_sold" type="measure" />
+                    <field name="amount_commissions" type="measure" />
+                </pivot>
+            </field>
+        </record>
+
+        <record id="commission_category_report_view_search" model="ir.ui.view">
+            <field name="name">commission.report.view.search</field>
+            <field name="model">commissions.sales.category.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="categ_id" />
                     <field name="team_id" />
                     <filter name="filter_sale_date_last_three_months" string="Últimos 3 meses"
                         domain="[('date', '&gt;=', (context_today()-relativedelta(months=3)).strftime('%%Y-%%m-01'))]" />
@@ -64,7 +120,7 @@
             <field name="inherit_id" ref="sale.view_order_line_tree" />
             <field name="arch" type="xml">
                 <!-- <xpath expr="//field[@name='price_subtotal']" position="after">
-                    <field name="total_amount_commissions" />
+                    <field name="amount_commissions" />
                 </xpath> -->
                 <xpath expr="//field[@name='order_id']" position="after">
                     <field name="team_id" />
@@ -91,14 +147,16 @@
 
         <record id="assigned_commissions_report_view_pivot" model="ir.ui.view">
             <field name="name">assigned.commissions.report.view.pivot</field>
-            <field name="model">team.sale.report</field>
+            <field name="model">commission.assignment.report</field>
             <field name="arch" type="xml">
-                <pivot string="Comisiones asignadas" display_quantity="0" sample="1">
+                <pivot string="Comisiones asignadas" display_quantity="0" sample="1"
+                    default_order="team_name_index asc">
                     <field name="date" interval="month" type="row" />
                     <field name="team_id" type="row" />
+                    <field name="team_name_index" type="measure" invisible="1" />
                     <field name="total_vendidos" type="measure" string="Cant. Ventas" />
                     <field name="total_amount_sales" type="measure" string="Ventas en $" />
-                    <field name="total_amount_commissions" type="measure" string="Com. Ventas" />
+                    <field name="amount_commissions" type="measure" string="Com. Ventas" />
                     <field name="debit" type="measure" string="Cobranza en $" />
                     <field name="commission_by_collection" type="measure" string="Com. Cobranzas" />
                     <field name="total_commissions" type="measure"
@@ -247,6 +305,10 @@
                         </field>
                     </page>
                 </xpath>
+
+                <field name="uom_po_id" position="after">
+                    <field name="commission_by_category" />
+                </field>
 
             </field>
         </record>
@@ -452,7 +514,6 @@
             </field>
         </record>
 
-
         <record id="product_product_tree_view_inherit" model="ir.ui.view">
             <field name="name">product.product.tree.view.inherit</field>
             <field name="model">product.product</field>
@@ -577,6 +638,7 @@
         <record id="commission_for_group_view_form" model="ir.ui.view">
             <field name="name">commission.for.group.view.form</field>
             <field name="model">commission.for.group</field>
+            <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Comisión" create="1" edit="1">
                     <group>
@@ -590,6 +652,107 @@
 
                         <group colspan="2">
                             <field name="group_id"
+                                attrs="{'invisible': [('commission_type', '=', 'fija')], 'required': [('commission_type', '=', 'basada_en_otra_comision')]}"
+                                readonly="True" />
+                            <field name="basado_en"
+                                attrs="{'invisible': [('commission_type', '=', 'fija')], 'required': [('commission_type', '=', 'basada_en_otra_comision')]}" />
+                        </group>
+
+                        <group string="Cantidad mínima base">
+                            <field name="cant_min_base_factor_divisor"
+                                string="Factor divisor"
+                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                            <field name="cant_min_base_factor_multiplicador"
+                                string="Factor multiplicador"
+                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                            <field name="cant_min_base_factor_extra"
+                                string="Factor extra"
+                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                            <field name="base_min_qty"
+                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                        </group>
+
+                        <group string="Bono base">
+                            <field name="bono_base_factor_divisor"
+                                string="Factor divisor"
+                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                            <field name="bono_base_factor_multiplicador"
+                                string="Factor multiplicador"
+                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                            <field name="bono_base_factor_extra"
+                                string="Factor extra"
+                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                            <field name="basic_bonus"
+                                attrs="{'invisible': [('commission_type', '=', 'fija')]}" />
+                        </group>
+
+                    </group>
+
+                    <group
+                        string="Fija"
+                        attrs="{'invisible': [('commission_type', '=', 'basada_en_otra_comision')]}">
+                        <field name="cant_minima_base"
+                            attrs="{'invisible': [('commission_type', '=', 'basada_en_otra_comision')]}"
+                            required='1' />
+                        <field name="bono_base"
+                            attrs="{'invisible': [('commission_type', '=', 'basada_en_otra_comision')]}"
+                            required='1' />
+                    </group>
+
+                    <group string="Forma de cálculo">
+                        <field name="forma_de_calculo" widget='radio' required='1' />
+                    </group>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="product_category_form_view_inherit" model="ir.ui.view">
+            <field name="name">product.category.form.inherit</field>
+            <field name="model">product.category</field>
+            <field name="mode">extension</field>
+            <field name="priority" eval="8" />
+            <field name="inherit_id" ref="product.product_category_form_view" />
+            <field name="arch" type="xml">
+
+                <xpath expr="//sheet/*[last()]" position="after">
+                    <notebook>
+                        <page string="Comisiones" name="commissions">
+                            <field name="commission_ids"
+                                context="{'show_attribute': False, 'default_category_id': active_id}">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="commission_type" />
+                                    <field name="base_min_qty" />
+                                    <field name="basic_bonus" />
+                                    <field name="basado_en" />
+                                    <field name="forma_de_calculo" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="commission_for_category_view_form" model="ir.ui.view">
+            <field name="name">commission.for.category.view.form</field>
+            <field name="model">commission.for.category</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Comisión" create="1" edit="1">
+                    <group>
+                        <field name="id" invisible="True" />
+                        <field name="name" />
+                        <field name="commission_type" widget='radio' />
+                    </group>
+
+                    <group string="Basado en otra comisión"
+                        attrs="{'invisible': [('commission_type', '=', 'fija')]}">
+
+                        <group colspan="2">
+                            <field name="categ_id"
                                 attrs="{'invisible': [('commission_type', '=', 'fija')], 'required': [('commission_type', '=', 'basada_en_otra_comision')]}"
                                 readonly="True" />
                             <field name="basado_en"

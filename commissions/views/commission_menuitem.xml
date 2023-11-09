@@ -15,7 +15,7 @@
         </record>
 
         <record id="commission_product_action" model="ir.actions.act_window">
-            <field name="name">Comisiones por ventas</field>
+            <field name="name">Comisiones por ventas de productos</field>
             <field name="res_model">commissions.sales.report</field>
             <field name="view_mode">pivot</field>
             <field name="domain">
@@ -26,6 +26,34 @@
             </field>
             <field name="views">[[False, "pivot"]]</field>
             <field name="view_id" ref="commission_report_view_pivot"></field>
+        </record>
+
+        <record id="commission_group_action" model="ir.actions.act_window">
+            <field name="name">Comisiones por ventas de grupos</field>
+            <field name="res_model">commissions.sales.group.report</field>
+            <field name="view_mode">pivot</field>
+            <field name="domain">
+                [("branch_id", "in", context.get("allowed_branch_ids") or [])]
+            </field>
+            <field name="context">
+                {'search_default_filter_sale_date_last_three_months': 1}
+            </field>
+            <field name="views">[[False, "pivot"]]</field>
+            <field name="view_id" ref="commission_group_report_view_pivot"></field>
+        </record>
+
+        <record id="commission_category_action" model="ir.actions.act_window">
+            <field name="name">Comisiones por ventas de categorías</field>
+            <field name="res_model">commissions.sales.category.report</field>
+            <field name="view_mode">pivot</field>
+            <field name="domain">
+                [("branch_id", "in", context.get("allowed_branch_ids") or [])]
+            </field>
+            <field name="context">
+                {'search_default_filter_sale_date_last_three_months': 1}
+            </field>
+            <field name="views">[[False, "pivot"]]</field>
+            <field name="view_id" ref="commission_category_report_view_pivot"></field>
         </record>
 
         <record id="commission_by_payment" model="ir.actions.act_window">
@@ -60,7 +88,7 @@
 
         <record id="assigned_commissions_pivot" model="ir.actions.act_window">
             <field name="name">Comisiones asignadas</field>
-            <field name="res_model">team.sale.report</field>
+            <field name="res_model">commission.assignment.report</field>
             <field name="view_mode">pivot</field>
             <field name="views">[[False, "pivot"]]</field>
             <field name="domain">
@@ -100,52 +128,66 @@
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
         <menuitem id="menu_commission_sale_report"
-            name="Comisiones por venta"
+            name="Comisiones por venta de productos"
             parent="commissions.menu_commission_report"
             action="commissions.commission_product_action"
             sequence="3"
+            groups="commissions.group_commission_manager,commissions.group_commission_user" />
+        
+        <menuitem id="menu_commission_sale_group_report"
+            name="Comisiones por venta de grupos"
+            parent="commissions.menu_commission_report"
+            action="commissions.commission_group_action"
+            sequence="4"
+            groups="commissions.group_commission_manager,commissions.group_commission_user" />
+
+        <menuitem id="menu_commission_sale_category_report"
+            name="Comisiones por venta de categorias"
+            parent="commissions.menu_commission_report"
+            action="commissions.commission_category_action"
+            sequence="5"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
         <menuitem id="menu_commission_report_collection_report"
             name="Comisiones por cobranza"
             parent="commissions.menu_commission_report"
             action="commissions.commission_by_payment_pivot"
-            sequence="4"
+            sequence="6"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
         <menuitem id="menu_commission_assigned_report"
             name="Comisiones asignadas"
             parent="commissions.menu_commission_report"
             action="commissions.assigned_commissions_pivot"
-            sequence="5"
+            sequence="7"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
         <menuitem id="menu_commission_collections"
             name="Cobranzas"
             parent="commissions.menu_commission_root"
             action="commissions.commission_list_action"
-            sequence="6"
+            sequence="8"
             groups="commissions.group_commission_manager" />
 
         <menuitem id="menu_commission_collections_done"
             name="Cobranzas realizadas"
             parent="commissions.menu_commission_collections"
             action="commissions.commission_by_payment"
-            sequence="7"
+            sequence="9"
             groups="commissions.group_commission_manager" />
 
         <menuitem id="menu_commission_collections_setting"
             name="Configuración"
             parent="commissions.menu_commission_collections"
             action="commissions.configuration_collection_action"
-            sequence="8"
+            sequence="10"
             groups="commissions.group_commission_manager" />
 
         <menuitem id="menu_commission_group"
             name="Grupos"
             parent="commissions.menu_commission_root"
             action="commissions.commission_group_list_action"
-            sequence="10"
+            sequence="11"
             groups="commissions.group_commission_manager,commissions.group_commission_user" />
 
     </data>

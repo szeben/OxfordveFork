@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tsc_new_sales_analysis_tsc_new_sales_analysis,tsc_new_sales_analysis.tsc_new_sales_analysis,model_tsc_new_sales_analysis_tsc_new_sales_analysis,base.group_user,1,1,1,1
