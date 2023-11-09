@@ -41,8 +41,9 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:tsc_balance_accounting_board.tsc_account_journal_kanban_view
 msgid ""
 "<span title=\"Balance in Another Currency\">Balance in Another "
-"currency</span>"
-msgstr "<span title=\"Saldo en Otra Moneda\">Saldo en Otra Moneda</span>"
+"Currency</span>"
+msgstr "<span title=\"Balance en Otra Moneda\">Balance en Otra "
+"Moneda</span>"
 
 #. module: tsc_balance_accounting_board
 #: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_journal__message_needaction
@@ -59,6 +60,11 @@ msgstr "Nº de archivos adjuntos"
 #: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_journal__tsc_other_currency_balance
 msgid "Balance in another currency"
 msgstr "Saldo en otra moneda"
+
+#. module: tsc_balance_accounting_board
+#: model:ir.model.fields,help:tsc_balance_accounting_board.field_account_journal__tsc_other_currency_balance_symbol
+msgid "Currency sign, to be used when printing amounts."
+msgstr "Signo de Moneda, para ser usado al imprimir montos."
 
 #. module: tsc_balance_accounting_board
 #: model:ir.model.fields,field_description:tsc_balance_accounting_board.field_account_bank_statement_import_journal_creation__tsc_another_currency_balance_value
