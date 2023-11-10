@@ -10,6 +10,18 @@ class tsc_AccountPayment(models.Model):
                                        store=False, readonly=False,
                                        compute='tsc_compute_tsc_journal_ids')
 
+    def tsc_get_default_journal(self):
+        tsc_journals = self.env['account.journal'].search([
+                    ('type', 'in', ('bank', 'cash')),
+                    '|',
+                     ('branch_id','=',False),
+                     ('branch_id','=',self.env.user.branch_id.id)
+                 ])
+        return tsc_journals[0] if len(tsc_journals) else False
+
+    journal_id = fields.Many2one(related='move_id.journal_id', store=True, index=True, copy=False, default=tsc_get_default_journal)
+    
+
     def tsc_return_filtered_journal(self):
         return self.env['account.journal'].search([('type', 'in', ('bank', 'cash')),
                  ('company_id', '=', self.company_id.id),
