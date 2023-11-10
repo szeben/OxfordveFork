@@ -46,11 +46,14 @@ class tsc_AccountJournal(models.Model):
                 
                 tsc_line_sum = sum(tsc_line['amount_currency'] for tsc_line in tsc_search_line)
 
-                if record.currency_id.id != False and record.currency_id.id != self.env.company.currency_id.id:
+                tsc_currency_id = record.currency_id.id
+
+                if tsc_currency_id != False and tsc_currency_id != self.env.company.currency_id.id:
                     
                     tsc_rate = 0
+                    
                     if record.tsc_other_currency_balance.id == self.env.company.currency_id.id:
-                        tsc_rate = self.env['res.currency.rate'].search([('currency_id.id', '=', record.currency_id.id)], limit=1).rate                    
+                        tsc_rate = self.env['res.currency.rate'].search([('currency_id.id', '=', tsc_currency_id)], limit=1).rate                    
                     else:
                         tsc_rate = self.env['res.currency.rate'].search([('currency_id.id', '=', record.tsc_other_currency_balance.id)], limit=1).rate     
                     if tsc_rate:

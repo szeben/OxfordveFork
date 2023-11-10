@@ -19,17 +19,21 @@ class tsc_PaymentRegisterExtension(models.TransientModel):
         compute='_compute_tsc_available_partner_bank_ids',
     )
 
-    tsc_move_type = fields.Char(string="Account Move Type", 
-                                  compute='_compute_tsc_move_type',)
+    tsc_move_type = fields.Boolean(string="Account Move Type", 
+                                  compute='_compute_tsc_move_type')
 
+    
     @api.depends('can_edit_wizard')
     def _compute_tsc_move_type(self):
         for wizard in self:
+            wizard.tsc_move_type = False
+            tsc_context_ids = self._context.get('active_ids', [])
             if wizard.can_edit_wizard:
-                wizard.tsc_move_type = self.env['account.move'].browse(self._context.get('active_ids', [])).move_type
-            else:
-                wizard.tsc_move_type = None
-    
+                tsc_account_move = self.env['account.move'].browse(tsc_context_ids)
+                tsc_account_move_types = [tsc_type["move_type"] for tsc_type in tsc_account_move]
+                wizard.tsc_move_type = tsc_account_move_types in ['out_refund', 'in_refund']
+
+            
     @api.depends('can_edit_wizard')
     def _compute_tsc_available_partner_bank_ids(self):
         for wizard in self:
@@ -42,7 +46,10 @@ class tsc_PaymentRegisterExtension(models.TransientModel):
 
     def _create_payment_vals_from_wizard(self):
         res = super()._create_payment_vals_from_wizard()
-        res.update({'tsc_partner_bank_id': self.tsc_partner_bank_id.id, 'tsc_available_partner_bank_ids': self.tsc_available_partner_bank_ids.ids })
+        res.update({
+            'tsc_partner_bank_id': self.tsc_partner_bank_id.id, 
+            'tsc_available_partner_bank_ids': self.tsc_available_partner_bank_ids.ids 
+        })
         return res
 
             
