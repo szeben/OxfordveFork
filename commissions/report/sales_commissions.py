@@ -96,12 +96,23 @@ class CommissionSalesReportMixin(models.AbstractModel):
                 sr.categ_id AS categ_id,
                 pp.commission_group_id AS group_id,
                 sr.product_id AS product_id,
-                DATE(DATE_TRUNC('month', sr."date")) AS "date",
+                tz."value",
+                CASE
+                    WHEN tz."value" IS NOT NULL THEN DATE(DATE_TRUNC('month', sr."date" AT TIME ZONE tz."value"))
+                ELSE
+                    DATE(DATE_TRUNC('month', sr."date"))
+                END AS "date",
                 sr.qty_invoiced AS total_sold,
                 sr.untaxed_amount_invoiced AS amount_sale,
                 pp.commission_by_category
             FROM sale_report sr
             LEFT JOIN product_product pp ON (pp.id = sr.product_id)
+            LEFT JOIN (
+                SELECT "value"
+                FROM ir_config_parameter
+                WHERE "key" = 'commissions.tz'
+                LIMIT 1
+            ) tz ON (TRUE)
         """,
         "_sol": """
             SELECT
