@@ -10,7 +10,7 @@
             <xpath expr="group/group[@name='group1']" position="inside">
                 <field name="tsc_available_partner_bank_ids" invisible="1"/>
                 <field name="tsc_move_type" invisible="1"/>
-                <field name="tsc_partner_bank_id" attrs="{'invisible': ['|', ('payment_type','!=','inbound'), ('tsc_move_type','in',['out_refund', 'in_refund'])]}" options="{'no_create': True, 'no_open': True, 'no_create_edit': True, 'no_quick_create': True}"/>
+                <field name="tsc_partner_bank_id" attrs="{'invisible': ['|', ('payment_type','!=','inbound'), ('tsc_move_type','=',True)]}" options="{'no_create': True, 'no_open': True, 'no_create_edit': True, 'no_quick_create': True}"/>
             </xpath>
         </field>
     </record>
