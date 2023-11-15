@@ -808,5 +808,38 @@
             </field>
         </record>
 
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.sale</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="10" />
+            <field name="inherit_id" ref="sale.res_config_settings_view_form" />
+            <field name="arch" type="xml">
+
+                <div
+                    class="app_settings_block o_not_app"
+                    data-key="sale_management"
+                    position="inside"
+                >
+                    <h2 class="mt32">Comisiones</h2>
+                    <div class="row mt16 o_settings_container" id="commissions_setting_container">
+                        <div class="col-12 col-lg-6 o_setting_box" id="commissions_timezone">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Zona horaria</span>
+                                <a href="#" title="Documentation" class="o_doc_link" target="_blank"></a>
+                                <div class="text-muted">
+                                    Configurar la zona horaria de las comisiones
+                                </div>
+                                <div class="text-muted">
+                                    <field name="commissions_tz" widget="timezone_mismatch" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </field>
+        </record>
+
     </data>
 </odoo>

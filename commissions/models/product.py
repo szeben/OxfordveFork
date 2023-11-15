@@ -32,7 +32,7 @@ class ProductProduct(models.Model):
     )
     commission_by_category = fields.Boolean(
         string="¿Tiene comisión por categoria?",
-        default=False
+        default=True,
     )
 
     def check_is_commission_or_group(self):
