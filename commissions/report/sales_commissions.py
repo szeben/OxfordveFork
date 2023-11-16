@@ -98,7 +98,7 @@ class CommissionSalesReportMixin(models.AbstractModel):
                 sr.product_id AS product_id,
                 tz."value",
                 CASE
-                    WHEN tz."value" IS NOT NULL THEN DATE(DATE_TRUNC('month', sr."date" AT TIME ZONE tz."value"))
+                    WHEN tz."value" IS NOT NULL THEN DATE(DATE_TRUNC('month', sr."date" AT TIME ZONE current_setting('TIMEZONE') AT TIME ZONE tz."value"))
                 ELSE
                     DATE(DATE_TRUNC('month', sr."date"))
                 END AS "date",
