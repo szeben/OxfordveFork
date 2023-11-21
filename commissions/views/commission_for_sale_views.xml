@@ -149,11 +149,9 @@
             <field name="name">assigned.commissions.report.view.pivot</field>
             <field name="model">commission.assignment.report</field>
             <field name="arch" type="xml">
-                <pivot string="Comisiones asignadas" display_quantity="0" sample="1"
-                    default_order="team_name_index asc">
+                <pivot string="Comisiones asignadas" js_class="assigned_commissions_pivot_view" display_quantity="0" sample="1">
                     <field name="date" interval="month" type="row" />
                     <field name="team_id" type="row" />
-                    <field name="team_name_index" type="measure" invisible="1" />
                     <field name="total_vendidos" type="measure" string="Cant. Ventas" />
                     <field name="total_amount_sales" type="measure" string="Ventas en $" />
                     <field name="amount_commissions" type="measure" string="Com. Ventas" />

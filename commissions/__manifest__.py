@@ -34,5 +34,11 @@
         'views/commission_for_sale_views.xml',
         'views/commission_menuitem.xml',
     ],
+
+    'assets': {    
+        'web.assets_backend': [
+            'commissions/static/src/js/assigned_commissions_pivot_view.js',
+        ]
+    },
     
 }

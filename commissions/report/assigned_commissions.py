@@ -116,14 +116,6 @@ class CommissionAssignmentReport(models.Model):
                     commission_category cc
                 """,
             ),
-            (
-                "ct",
-                """
-                SELECT
-                    id, ROW_NUMBER() OVER (ORDER BY name) as team_name_index
-                FROM crm_team
-                """
-            ),
         )
 
         return Report._get_with_query(
@@ -135,7 +127,6 @@ class CommissionAssignmentReport(models.Model):
             SELECT
                 ROW_NUMBER() OVER () AS "id",
                 uc.branch_id,
-                ct.team_name_index,
                 uc.team_id,
                 uc.date,
                 SUM(uc.total_sold) AS total_vendidos,
@@ -145,10 +136,8 @@ class CommissionAssignmentReport(models.Model):
                 SUM(uc.debit) AS debit,
                 SUM(uc.commission + uc.commission_by_collection) AS total_commissions
             FROM ucommissions uc
-                LEFT JOIN ct ON (uc.team_id = ct.id)
             WHERE uc.date IS NOT NULL
             GROUP BY
-                ct.team_name_index,
                 uc.team_id,
                 uc.branch_id,
                 uc.date
@@ -167,11 +156,6 @@ class CommissionAssignmentReport(models.Model):
         'crm.team',
         string="Equipo de ventas",
         readonly=True
-    )
-    team_name_index = fields.Integer(
-        string="Nombre del equipo de ventas",
-        readonly=True,
-        group_operator="min",
     )
 
     date = fields.Date(
